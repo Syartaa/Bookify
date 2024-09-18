@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const sequelize = require('./util/database');
+const userRoutes = require('../src/routes/user');
 
 // Initialize express
 const app = express();
@@ -23,5 +24,9 @@ async function startServer() {
       console.error('Error occurred while synchronizing database:', error);
     }
   }
+
+  app.use(
+    '/user',userRoutes
+  )
   
   startServer();
