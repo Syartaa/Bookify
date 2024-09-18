@@ -1,18 +1,27 @@
-// server/src/app.js
-
+require('dotenv').config();
 const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const sequelize = require('./util/database');
+
+// Initialize express
 const app = express();
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
-// Middleware to parse JSON
-app.use(express.json());
+app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(bodyParser.json());
 
-// Define a simple route
-app.get('/', (req, res) => {
-    res.send('Welcome to Bookify Server!');
-});
-
-// Start the server
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-});
+// Database synchronization and server start
+async function startServer() {
+    try {
+      await sequelize.sync({ logging: console.log });
+      console.log('Database synchronized successfully');
+      app.listen(PORT, () => {
+        console.log(`Server is running and listening on port ${PORT}`);
+      });
+    } catch (error) {
+      console.error('Error occurred while synchronizing database:', error);
+    }
+  }
+  
+  startServer();
