@@ -1,5 +1,6 @@
 const { Sequelize } = require("sequelize");
 const sequelize = require("../util/database");
+const { DataTypes } = Sequelize; 
 
 const User = sequelize.define('user',{
     id:{
@@ -14,6 +15,10 @@ const User = sequelize.define('user',{
     password: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      role: {
+        type: DataTypes.ENUM('admin', 'user'), // You can add more roles if needed
+        defaultValue: 'user' // Default to 'user' role
       },
 })
 

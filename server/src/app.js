@@ -5,6 +5,15 @@ const cors = require('cors');
 const sequelize = require('./util/database');
 const userRoutes = require('../src/routes/user');
 
+const user = require('./models/user');
+const book = require('./models/book');
+const category = require('./models/category');
+const author = require('./models/author');
+const loan = require('./models/loan');
+const reservation = require('./models/reservation');
+const fine = require('./models/fine');
+const review = require('./models/review');
+
 // Initialize express
 const app = express();
 const PORT = process.env.PORT || 3001;
