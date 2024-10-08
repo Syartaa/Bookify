@@ -16,6 +16,7 @@ const review = require('./models/review');
 
 const authorRoutes = require('./routes/author');
 const categoryRoutes = require('./routes/category');
+const bookRoutes = require('./routes/book');
 
 // Initialize express
 const app = express();
@@ -42,5 +43,6 @@ async function startServer() {
   )
   app.use('/author', authorRoutes);
   app.use('/category', categoryRoutes);
+  app.use('/book', bookRoutes);
   
   startServer();
