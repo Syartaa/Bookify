@@ -15,6 +15,7 @@ const fine = require('./models/fine');
 const review = require('./models/review');
 
 const authorRoutes = require('./routes/author');
+const categoryRoutes = require('./routes/category');
 
 // Initialize express
 const app = express();
@@ -40,5 +41,6 @@ async function startServer() {
     '/user',userRoutes
   )
   app.use('/author', authorRoutes);
+  app.use('/category', categoryRoutes);
   
   startServer();
