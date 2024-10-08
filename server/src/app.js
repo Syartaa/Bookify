@@ -14,6 +14,8 @@ const reservation = require('./models/reservation');
 const fine = require('./models/fine');
 const review = require('./models/review');
 
+const authorRoutes = require('./routes/author');
+
 // Initialize express
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -37,5 +39,6 @@ async function startServer() {
   app.use(
     '/user',userRoutes
   )
+  app.use('/author', authorRoutes);
   
   startServer();
