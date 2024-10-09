@@ -17,6 +17,12 @@ const review = require('./models/review');
 const authorRoutes = require('./routes/author');
 const categoryRoutes = require('./routes/category');
 const bookRoutes = require('./routes/book');
+const reservationRoutes = require('./routes/reservation');
+const loanRoutes = require('./routes/loan');
+const fineRoutes = require('./routes/fine');
+const reviewRoutes = require('./routes/review');
+
+const userAuthRoutes = require('./routes/auth/user.js');
 
 // Initialize express
 const app = express();
@@ -38,11 +44,17 @@ async function startServer() {
     }
   }
 
+  app.use("/auth/user", userAuthRoutes);
+
   app.use(
     '/user',userRoutes
   )
   app.use('/author', authorRoutes);
   app.use('/category', categoryRoutes);
   app.use('/book', bookRoutes);
+  app.use('/reservation', reservationRoutes);
+  app.use('/loan', loanRoutes);
+  app.use('/fine', fineRoutes);
+  app.use('/review', reviewRoutes);
   
   startServer();
