@@ -1,5 +1,5 @@
 import React from 'react';
-import { useUser } from '../../helper/userContext';
+import { useUser } from '../../../helper/userContext';
 //import { useStateContext } from '../../../contexts/ContextProvider';
 
 export default function DashboardView() {
