@@ -11,11 +11,11 @@ const RequireAuth = ({ allowedRoles }) => {
     user = JSON.parse(Cookies.get('user'));
   } catch (error) {
     console.error('Error parsing user data:', error);
-    return <Navigate to="/hr/signin" />;
+    return <Navigate to="/login" />;
   }
 
   if (!token) {
-    return <Navigate to="/hr/signin" />;
+    return <Navigate to="/login" />;
   }
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {

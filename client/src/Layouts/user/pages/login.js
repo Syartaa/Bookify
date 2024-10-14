@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Cookies from 'js-cookie';
+
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -7,6 +10,7 @@ export default function Login() {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -14,13 +18,14 @@ export default function Login() {
       ...prevData,
       [name]: value,
     }));
+    console.log(formData); // Log to check formData
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
-
+    setError("");  // Clear previous errors
+    setLoading(true);  // Start the loading state
+  
     try {
       const response = await fetch("http://localhost:3001/auth/user/login", {
         method: "POST",
@@ -32,22 +37,34 @@ export default function Login() {
           password: formData.password,
         }),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
-        // Handle successful login, e.g., redirect or show a success message
-        console.log("Login successful", data);
+
+        console.log(data);
+        // Store token and user data in cookies
+        Cookies.set('token', data.token, { sameSite: 'None', secure: true });
+        Cookies.set('user', JSON.stringify(data.user), { sameSite: 'None', secure: true });
+        
+  
+        // Navigate based on the user role
+        if (data.user.role === "admin") {
+          navigate("/");  // Redirect to the admin dashboard
+        } else if (data.user.role === "user") {
+          navigate("/user-home");  // Redirect to the user home page
+        }
       } else {
-        setError(data.error || "Login failed");
+        setError(data.error || "Login failed, please try again.");
       }
     } catch (err) {
       console.error("Error during login:", err);
-      setError("Internal server error");
+      setError("Internal server error, please try again later.");
     } finally {
-      setLoading(false);
+      setLoading(false);  // Stop the loading state
     }
   };
+  
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
