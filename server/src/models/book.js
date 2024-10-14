@@ -16,7 +16,11 @@ const Book = sequelize.define("book", {
 
   isbn: Sequelize.STRING,
   publishedDate: Sequelize.DATE,
-
+  description: Sequelize.STRING,
+  image: {
+    type: Sequelize.STRING, // Use STRING to store the URL/path of the image
+    allowNull: true, // Optional: Set to true if the image is not mandatory
+  },
   availabilityStatus: {
     type: DataTypes.ENUM('available', 'borrowed','reserved'), // You can add more roles if needed
     defaultValue: 'available' // Default to 'available' role

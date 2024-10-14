@@ -24,6 +24,7 @@ const reviewRoutes = require('./routes/review');
 
 const userAuthRoutes = require('./routes/auth/user.js');
 
+
 // Initialize express
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -34,7 +35,7 @@ app.use(bodyParser.json());
 // Database synchronization and server start
 async function startServer() {
     try {
-      await sequelize.sync({ logging: console.log });
+      await sequelize.sync({ logging: console.log,  });
       console.log('Database synchronized successfully');
       app.listen(PORT, () => {
         console.log(`Server is running and listening on port ${PORT}`);
@@ -56,5 +57,8 @@ async function startServer() {
   app.use('/loan', loanRoutes);
   app.use('/fine', fineRoutes);
   app.use('/review', reviewRoutes);
+
+  app.use('/uploads', express.static('uploads'));
+
   
   startServer();

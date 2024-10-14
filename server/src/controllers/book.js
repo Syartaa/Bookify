@@ -26,7 +26,8 @@ const getBookById = async (req, res) => {
 
 // Create a new book
 const createBook = async (req, res) => {
-    const { title, isbn, publishedDate, availabilityStatus, categoryId, authorId } = req.body;
+    const { title, isbn, publishedDate, availabilityStatus, categoryId, authorId, description} = req.body;
+    const image = req.file ? req.file.path : null; // Get the image path from the request
 
     try {
         const book = await Book.create({
@@ -36,6 +37,8 @@ const createBook = async (req, res) => {
             availabilityStatus,
             categoryId,
             authorId,
+            description,
+            image, // Store the image path in the database
         });
 
         res.status(201).json(book);
@@ -48,7 +51,8 @@ const createBook = async (req, res) => {
 // Update a book
 const updateBook = async (req, res) => {
     const { id } = req.params;
-    const { title, isbn, publishedDate, availabilityStatus, categoryId, authorId } = req.body;
+    const { title, isbn, publishedDate, availabilityStatus, categoryId, authorId,description } = req.body;
+    const image = req.file ? req.file.path : null; // Get the new image path if uploaded
 
     try {
         const book = await Book.findByPk(id);
@@ -64,6 +68,8 @@ const updateBook = async (req, res) => {
             availabilityStatus: availabilityStatus || book.availabilityStatus,
             categoryId: categoryId || book.categoryId,
             authorId: authorId || book.authorId,
+            description:description || book.description,
+            image: image || book.image, // Update image only if a new one is uploaded
         });
 
         res.json(book);
