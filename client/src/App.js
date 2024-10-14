@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { UserProvider } from "./helper/userContext";
 import DashboardLayout from "./Layouts/dashboard/dashboardLayout";
+import { ThemeProvider } from '@material-tailwind/react';
 
 import RequireAuth from "./helper/requireAuth";
 import UserHome from "./Layouts/user/pages/home"; // The user-specific page
@@ -11,6 +12,7 @@ import Unauthorized from "./Layouts/components/unauthorized";
 
 function App() {
   return (
+    <ThemeProvider>
     <Router>
       <UserProvider>
         <Routes>
@@ -31,6 +33,7 @@ function App() {
         </Routes>
       </UserProvider>
     </Router>
+    </ThemeProvider>
   );
 }
 
