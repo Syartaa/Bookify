@@ -1,4 +1,3 @@
-// components/EditBook.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useUser } from "../../../../helper/userContext";
@@ -12,6 +11,7 @@ function EditBook({ isOpen, onClose, onSave, bookId, categories, authors }) {
     const [authorId, setAuthorId] = useState("");
     const [availabilityStatus, setAvailabilityStatus] = useState("available");
     const [description, setDescription] = useState("");
+    const [image, setImage] = useState(null); // New state for image
     const { token } = useUser();
 
     useEffect(() => {
@@ -38,6 +38,7 @@ function EditBook({ isOpen, onClose, onSave, bookId, categories, authors }) {
             setAuthorId(book.authorId);
             setAvailabilityStatus(book.availabilityStatus);
             setDescription(book.description);
+            setImage(null); // Reset image
         } catch (err) {
             console.error("Error fetching book details:", err);
         }
@@ -49,20 +50,23 @@ function EditBook({ isOpen, onClose, onSave, bookId, categories, authors }) {
             const config = {
                 headers: {
                     Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data", // Set the content type for file upload
                 },
             };
 
-            const updatedBook = {
-                title,
-                isbn,
-                publishedDate,
-                categoryId,
-                authorId,
-                availabilityStatus,
-                description,
-            };
+            const formData = new FormData();
+            formData.append("title", title);
+            formData.append("isbn", isbn);
+            formData.append("publishedDate", publishedDate);
+            formData.append("categoryId", categoryId);
+            formData.append("authorId", authorId);
+            formData.append("availabilityStatus", availabilityStatus);
+            formData.append("description", description);
+            if (image) {
+                formData.append("image", image); // Append the image if selected
+            }
 
-            await axios.put(`http://localhost:3001/book/${bookId}`, updatedBook, config);
+            await axios.put(`http://localhost:3001/book/${bookId}`, formData, config);
             onSave(); // Refresh the list after saving
             onClose(); // Close the modal after saving
         } catch (err) {
@@ -155,6 +159,15 @@ function EditBook({ isOpen, onClose, onSave, bookId, categories, authors }) {
                             required
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <Label htmlFor="image" value="Upload Image" />
+                        <input
+                            type="file"
+                            id="image"
+                            accept="image/*" // Restrict to image files
+                            onChange={(e) => setImage(e.target.files[0])} // Get the first selected file
                         />
                     </div>
                     <div className="flex justify-end space-x-2">
