@@ -13,6 +13,7 @@ import Dashboard from "./Layouts/dashboard/pages/dashboard";
 import AuthorList from "./Layouts/dashboard/pages/Author/authorList";
 import CategoryList from "./Layouts/dashboard/pages/Category/categoryList";
 import BookList from "./Layouts/dashboard/pages/Books/bookList";
+import ReservationList from "./Layouts/dashboard/pages/Reservation/ReservationList";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route path="author" element={<AuthorList />} />
             <Route path="category" element={<CategoryList />} />
             <Route path="book" element={<BookList />} />
+            <Route path="reservation" element={<ReservationList />} />
             </Route>
           </Route>
 
