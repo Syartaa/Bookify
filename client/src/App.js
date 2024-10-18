@@ -12,6 +12,7 @@ import Unauthorized from "./Layouts/components/unauthorized";
 import Dashboard from "./Layouts/dashboard/pages/dashboard";
 import AuthorList from "./Layouts/dashboard/pages/Author/authorList";
 import CategoryList from "./Layouts/dashboard/pages/Category/categoryList";
+import BookList from "./Layouts/dashboard/pages/Books/bookList";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="author" element={<AuthorList />} />
             <Route path="category" element={<CategoryList />} />
+            <Route path="book" element={<BookList />} />
             </Route>
           </Route>
 

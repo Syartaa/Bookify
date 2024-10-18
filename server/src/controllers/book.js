@@ -26,7 +26,8 @@ const getBookById = async (req, res) => {
 
 // Create a new book
 const createBook = async (req, res) => {
-    const { title, isbn, publishedDate, availabilityStatus, categoryId, authorId, description} = req.body;
+    console.log(req.body); // Log the request body
+    const { title, isbn, publishedDate, availabilityStatus, categoryId, authorId, description } = req.body;
     const image = req.file ? req.file.path : null; // Get the image path from the request
 
     try {
@@ -44,9 +45,13 @@ const createBook = async (req, res) => {
         res.status(201).json(book);
     } catch (error) {
         console.error('Error creating book:', error.message);
+        if (error.errors) {
+            error.errors.forEach(err => console.error(err.message)); // Log validation errors
+        }
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 // Update a book
 const updateBook = async (req, res) => {
