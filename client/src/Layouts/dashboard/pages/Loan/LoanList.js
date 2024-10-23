@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import CreateReservation from "./CreateReservation"; // CreateReservation modal component
-import EditReservation from "./EditReservation"; // EditReservation modal component
+import CreateLoan from "./CreateLoan"; // CreateLoan modal component
+import EditLoan from "./EditLoan"; // EditLoan modal component
 import { useUser } from "../../../../helper/userContext";
 import { Table, Alert } from "flowbite-react"; // Importing Alert for error handling
 
-function ReservationList() {
-    const [reservations, setReservations] = useState([]);
-    const [filteredReservations, setFilteredReservations] = useState([]);
+function LoanList() {
+    const [loans, setLoans] = useState([]);
+    const [filteredLoans, setFilteredLoans] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [selectedReservationId, setSelectedReservationId] = useState(null);
+    const [selectedLoanId, setSelectedLoanId] = useState(null);
     const [loading, setLoading] = useState(true); // Loading state
     const [error, setError] = useState(null); // Error state
     const [books, setBooks] = useState([]); // State for books
     const [users, setUsers] = useState([]); // State for users
     const { token } = useUser();
 
-    const fetchAllReservations = async () => {
+    const fetchAllLoans = async () => {
         setLoading(true); // Start loading
         setError(null); // Reset error
         try {
@@ -27,12 +27,12 @@ function ReservationList() {
                     Authorization: `Bearer ${token}`,
                 },
             };
-            const res = await axios.get("http://localhost:3001/reservation", config);
-            setReservations(res.data);
-            setFilteredReservations(res.data);
+            const res = await axios.get("http://localhost:3001/loan", config);
+            setLoans(res.data);
+            setFilteredLoans(res.data);
         } catch (err) {
-            console.error("Error fetching reservations:", err);
-            setError("Failed to load reservations. Please try again later."); // Set error message
+            console.error("Error fetching loans:", err);
+            setError("Failed to load loans. Please try again later."); // Set error message
         } finally {
             setLoading(false); // End loading
         }
@@ -70,7 +70,7 @@ function ReservationList() {
 
     useEffect(() => {
         if (token) {
-            fetchAllReservations();
+            fetchAllLoans();
             fetchBooks(); // Fetch books on mount
             fetchUsers(); // Fetch users on mount
         }
@@ -83,20 +83,20 @@ function ReservationList() {
                     Authorization: `Bearer ${token}`,
                 },
             };
-            await axios.delete(`http://localhost:3001/reservation/${id}`, config);
-            fetchAllReservations();
+            await axios.delete(`http://localhost:3001/loan/${id}`, config);
+            fetchAllLoans();
         } catch (err) {
             console.error(err);
-            setError("Failed to delete reservation. Please try again."); // Set error message
+            setError("Failed to delete loan. Please try again."); // Set error message
         }
     };
 
     const handleSearch = (query) => {
         setSearchQuery(query);
-        const filtered = reservations.filter((reservation) =>
-            reservation.status.toLowerCase().includes(query.toLowerCase())
+        const filtered = loans.filter((loan) =>
+            loan.status.toLowerCase().includes(query.toLowerCase())
         );
-        setFilteredReservations(filtered);
+        setFilteredLoans(filtered);
     };
 
     return (
@@ -128,7 +128,9 @@ function ReservationList() {
             <div className="overflow-x-auto">
                 <Table hoverable>
                     <Table.Head>
-                        <Table.HeadCell>Reservation Date</Table.HeadCell>
+                        <Table.HeadCell>Borrow Date</Table.HeadCell>
+                        <Table.HeadCell>Return Date</Table.HeadCell>
+                        <Table.HeadCell>Due Date</Table.HeadCell>
                         <Table.HeadCell>Status</Table.HeadCell>
                         <Table.HeadCell>Book</Table.HeadCell>
                         <Table.HeadCell>User</Table.HeadCell>
@@ -139,22 +141,25 @@ function ReservationList() {
                     <Table.Body className="divide-y">
                         {loading ? ( // Show loading state
                             <Table.Row>
-                                <Table.Cell colSpan="5" className="text-center">Loading...</Table.Cell>
+                                <Table.Cell colSpan="7" className="text-center">Loading...</Table.Cell>
                             </Table.Row>
-                        ) : filteredReservations.length > 0 ? (
-                            filteredReservations.map((item) => (
+                        ) : filteredLoans.length > 0 ? (
+                            filteredLoans.map((item) => (
                                 <Table.Row key={item.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                                        {new Date(item.reservationDate).toLocaleDateString()}
+                                        {new Date(item.borrowDate).toLocaleDateString()}
                                     </Table.Cell>
-                                    <Table.Cell>{item.status}</Table.Cell>
-                                    <Table.Cell>{item.book?.title}</Table.Cell>
-                                    <Table.Cell>{item.user?.name}</Table.Cell>
+                                    <Table.Cell>{item.returnDate ? new Date(item.returnDate).toLocaleDateString() : "Not returned"}</Table.Cell>
+                <Table.Cell>{new Date(item.dueDate).toLocaleDateString()}</Table.Cell>
+                <Table.Cell>{item.status}</Table.Cell>
+                <Table.Cell>{item.book ? item.book.title : "Unknown Book"}</Table.Cell> {/* Book title */}
+                <Table.Cell>{item.user ? item.user.name : "Unknown User"}</Table.Cell> {/* User name */}
+
                                     <Table.Cell>
                                         <button
                                             onClick={() => {
                                                 setIsEditModalOpen(true);
-                                                setSelectedReservationId(item.id);
+                                                setSelectedLoanId(item.id);
                                             }}
                                             className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
                                         >
@@ -171,7 +176,7 @@ function ReservationList() {
                             ))
                         ) : (
                             <Table.Row>
-                                <Table.Cell colSpan="5" className="text-center">No reservations found</Table.Cell>
+                                <Table.Cell colSpan="7" className="text-center">No loans found</Table.Cell>
                             </Table.Row>
                         )}
                     </Table.Body>
@@ -181,15 +186,15 @@ function ReservationList() {
             {isCreateModalOpen && (
                 <div className="modal-container">
                     <div className="modal-content">
-                        <CreateReservation
+                        <CreateLoan
                             isOpen={isCreateModalOpen}
                             onClose={() => setIsCreateModalOpen(false)}
                             onSave={() => {
                                 setIsCreateModalOpen(false);
-                                fetchAllReservations();
+                                fetchAllLoans();
                             }}
-                            books={books} // Pass books to CreateReservation
-                            users={users} // Pass users to CreateReservation
+                            books={books} // Pass books to CreateLoan
+                            users={users} // Pass users to CreateLoan
                         />
                     </div>
                 </div>
@@ -197,16 +202,16 @@ function ReservationList() {
             {isEditModalOpen && (
                 <div className="modal-container">
                     <div className="modal-content">
-                        <EditReservation
-                            reservationId={selectedReservationId}
+                        <EditLoan
+                            loanId={selectedLoanId}
                             isOpen={isEditModalOpen}
                             onClose={() => setIsEditModalOpen(false)}
                             onSave={() => {
                                 setIsEditModalOpen(false);
-                                fetchAllReservations();
+                                fetchAllLoans();
                             }}
-                            books={books} // Pass books to EditReservation
-                            users={users} // Pass users to EditReservation
+                            books={books} // Pass books to EditLoan
+                            users={users} // Pass users to EditLoan
                         />
                     </div>
                 </div>
@@ -216,4 +221,4 @@ function ReservationList() {
     );
 }
 
-export default ReservationList;
+export default LoanList;

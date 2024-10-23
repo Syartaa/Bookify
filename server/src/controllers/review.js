@@ -1,9 +1,16 @@
+const Book = require('../models/book');
 const Review = require('../models/review');
+const User = require('../models/user');
 
 // Get all reviews
 const getAllReviews = async (req, res) => {
     try {
-        const reviews = await Review.findAll();
+        const reviews = await Review.findAll({
+            include: [
+                { model: Book, attributes: ['id', 'title'] },
+                { model: User, attributes: ['id', 'name'] }
+            ],
+        });
         res.json(reviews);
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });

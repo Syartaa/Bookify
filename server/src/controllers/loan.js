@@ -1,20 +1,34 @@
+const Book = require('../models/book');
 const Loan = require('../models/loan');
+const User = require('../models/user');
 
 // Get all loans
 const getAllLoans = async (req, res) => {
     try {
-        const loans = await Loan.findAll();
+        const loans = await Loan.findAll({
+            include: [
+                { model: Book, attributes: ['id', 'title'] },
+                { model: User, attributes: ['id', 'name'] }
+            ],
+        });
         res.json(loans);
     } catch (error) {
+        
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 // Get a loan by ID
 const getLoanById = async (req, res) => {
     const { id } = req.params;
     try {
-        const loan = await Loan.findByPk(id);
+        const loan = await Loan.findByPk(id, {
+            include: [
+                { model: Book, attributes: ['id', 'title'] }, // Include Book model
+                { model: User, attributes: ['id', 'name'] }   // Include User model
+            ],
+        });
         if (!loan) {
             return res.status(404).json({ error: 'Loan not found' });
         }

@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import CreateReservation from "./CreateReservation"; // CreateReservation modal component
-import EditReservation from "./EditReservation"; // EditReservation modal component
+import CreateFine from "./CreateFine"; // CreateFine modal component
+import EditFine from "./EditFine"; // EditFine modal component
 import { useUser } from "../../../../helper/userContext";
 import { Table, Alert } from "flowbite-react"; // Importing Alert for error handling
 
-function ReservationList() {
-    const [reservations, setReservations] = useState([]);
-    const [filteredReservations, setFilteredReservations] = useState([]);
+function FineList() {
+    const [fines, setFines] = useState([]);
+    const [filteredFines, setFilteredFines] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [selectedReservationId, setSelectedReservationId] = useState(null);
+    const [selectedFineId, setSelectedFineId] = useState(null);
     const [loading, setLoading] = useState(true); // Loading state
     const [error, setError] = useState(null); // Error state
-    const [books, setBooks] = useState([]); // State for books
+    const [loans, setLoans] = useState([]); // State for loans
     const [users, setUsers] = useState([]); // State for users
     const { token } = useUser();
 
-    const fetchAllReservations = async () => {
+    const fetchAllFines = async () => {
         setLoading(true); // Start loading
         setError(null); // Reset error
         try {
@@ -27,29 +27,29 @@ function ReservationList() {
                     Authorization: `Bearer ${token}`,
                 },
             };
-            const res = await axios.get("http://localhost:3001/reservation", config);
-            setReservations(res.data);
-            setFilteredReservations(res.data);
+            const res = await axios.get("http://localhost:3001/fine", config);
+            setFines(res.data);
+            setFilteredFines(res.data);
         } catch (err) {
-            console.error("Error fetching reservations:", err);
-            setError("Failed to load reservations. Please try again later."); // Set error message
+            console.error("Error fetching fines:", err);
+            setError("Failed to load fines. Please try again later."); // Set error message
         } finally {
             setLoading(false); // End loading
         }
     };
 
-    const fetchBooks = async () => {
+    const fetchLoans = async () => {
         try {
             const config = {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             };
-            const res = await axios.get("http://localhost:3001/book", config);
-            setBooks(res.data);
+            const res = await axios.get("http://localhost:3001/loan", config);
+            setLoans(res.data);
         } catch (err) {
-            console.error("Error fetching books:", err);
-            setError("Failed to load books. Please try again later.");
+            console.error("Error fetching loans:", err);
+            setError("Failed to load loans. Please try again later.");
         }
     };
 
@@ -70,8 +70,8 @@ function ReservationList() {
 
     useEffect(() => {
         if (token) {
-            fetchAllReservations();
-            fetchBooks(); // Fetch books on mount
+            fetchAllFines();
+            fetchLoans(); // Fetch loans on mount
             fetchUsers(); // Fetch users on mount
         }
     }, [token]);
@@ -83,20 +83,20 @@ function ReservationList() {
                     Authorization: `Bearer ${token}`,
                 },
             };
-            await axios.delete(`http://localhost:3001/reservation/${id}`, config);
-            fetchAllReservations();
+            await axios.delete(`http://localhost:3001/fine/${id}`, config);
+            fetchAllFines();
         } catch (err) {
             console.error(err);
-            setError("Failed to delete reservation. Please try again."); // Set error message
+            setError("Failed to delete fine. Please try again."); // Set error message
         }
     };
 
     const handleSearch = (query) => {
         setSearchQuery(query);
-        const filtered = reservations.filter((reservation) =>
-            reservation.status.toLowerCase().includes(query.toLowerCase())
+        const filtered = fines.filter((fine) =>
+            fine.paymentStatus.toLowerCase().includes(query.toLowerCase())
         );
-        setFilteredReservations(filtered);
+        setFilteredFines(filtered);
     };
 
     return (
@@ -128,9 +128,9 @@ function ReservationList() {
             <div className="overflow-x-auto">
                 <Table hoverable>
                     <Table.Head>
-                        <Table.HeadCell>Reservation Date</Table.HeadCell>
-                        <Table.HeadCell>Status</Table.HeadCell>
-                        <Table.HeadCell>Book</Table.HeadCell>
+                        <Table.HeadCell>Amount</Table.HeadCell>
+                        <Table.HeadCell>Payment Status</Table.HeadCell>
+                        <Table.HeadCell>Loan</Table.HeadCell>
                         <Table.HeadCell>User</Table.HeadCell>
                         <Table.HeadCell>
                             <span className="sr-only">Actions</span>
@@ -141,20 +141,20 @@ function ReservationList() {
                             <Table.Row>
                                 <Table.Cell colSpan="5" className="text-center">Loading...</Table.Cell>
                             </Table.Row>
-                        ) : filteredReservations.length > 0 ? (
-                            filteredReservations.map((item) => (
+                        ) : filteredFines.length > 0 ? (
+                            filteredFines.map((item) => (
                                 <Table.Row key={item.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                                        {new Date(item.reservationDate).toLocaleDateString()}
+                                    {item.amount != null ? Number(item.amount).toFixed(2) : "N/A"}
                                     </Table.Cell>
-                                    <Table.Cell>{item.status}</Table.Cell>
-                                    <Table.Cell>{item.book?.title}</Table.Cell>
+                                    <Table.Cell>{item.paymentStatus}</Table.Cell>
+                                    <Table.Cell>{item.loan?.id}</Table.Cell>
                                     <Table.Cell>{item.user?.name}</Table.Cell>
                                     <Table.Cell>
                                         <button
                                             onClick={() => {
                                                 setIsEditModalOpen(true);
-                                                setSelectedReservationId(item.id);
+                                                setSelectedFineId(item.id);
                                             }}
                                             className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
                                         >
@@ -171,7 +171,7 @@ function ReservationList() {
                             ))
                         ) : (
                             <Table.Row>
-                                <Table.Cell colSpan="5" className="text-center">No reservations found</Table.Cell>
+                                <Table.Cell colSpan="5" className="text-center">No fines found</Table.Cell>
                             </Table.Row>
                         )}
                     </Table.Body>
@@ -181,15 +181,15 @@ function ReservationList() {
             {isCreateModalOpen && (
                 <div className="modal-container">
                     <div className="modal-content">
-                        <CreateReservation
+                        <CreateFine
                             isOpen={isCreateModalOpen}
                             onClose={() => setIsCreateModalOpen(false)}
                             onSave={() => {
                                 setIsCreateModalOpen(false);
-                                fetchAllReservations();
+                                fetchAllFines();
                             }}
-                            books={books} // Pass books to CreateReservation
-                            users={users} // Pass users to CreateReservation
+                            loans={loans} // Pass loans to CreateFine
+                            users={users} // Pass users to CreateFine
                         />
                     </div>
                 </div>
@@ -197,16 +197,16 @@ function ReservationList() {
             {isEditModalOpen && (
                 <div className="modal-container">
                     <div className="modal-content">
-                        <EditReservation
-                            reservationId={selectedReservationId}
+                        <EditFine
+                            fineId={selectedFineId}
                             isOpen={isEditModalOpen}
                             onClose={() => setIsEditModalOpen(false)}
                             onSave={() => {
                                 setIsEditModalOpen(false);
-                                fetchAllReservations();
+                                fetchAllFines();
                             }}
-                            books={books} // Pass books to EditReservation
-                            users={users} // Pass users to EditReservation
+                            loans={loans} // Pass loans to EditFine
+                            users={users} // Pass users to EditFine
                         />
                     </div>
                 </div>
@@ -216,4 +216,4 @@ function ReservationList() {
     );
 }
 
-export default ReservationList;
+export default FineList;

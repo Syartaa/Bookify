@@ -1,9 +1,16 @@
+const Book = require('../models/book');
 const Reservation = require('../models/reservation');
+const User = require('../models/user');
 
 // Get all reservations
 const getAllReservations = async (req, res) => {
     try {
-        const reservations = await Reservation.findAll();
+        const reservations = await Reservation.findAll({
+            include: [
+                { model: Book, attributes: ['id', 'title'] },
+                { model: User, attributes: ['id', 'name'] }
+            ],
+        });
         res.json(reservations);
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });

@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import CreateReservation from "./CreateReservation"; // CreateReservation modal component
-import EditReservation from "./EditReservation"; // EditReservation modal component
+import CreateReview from "./CreateReview"; // CreateReview modal component
+import EditReview from "./EditReview"; // EditReview modal component
 import { useUser } from "../../../../helper/userContext";
 import { Table, Alert } from "flowbite-react"; // Importing Alert for error handling
 
-function ReservationList() {
-    const [reservations, setReservations] = useState([]);
-    const [filteredReservations, setFilteredReservations] = useState([]);
+function ReviewList() {
+    const [reviews, setReviews] = useState([]);
+    const [filteredReviews, setFilteredReviews] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [selectedReservationId, setSelectedReservationId] = useState(null);
+    const [selectedReviewId, setSelectedReviewId] = useState(null);
     const [loading, setLoading] = useState(true); // Loading state
     const [error, setError] = useState(null); // Error state
     const [books, setBooks] = useState([]); // State for books
     const [users, setUsers] = useState([]); // State for users
     const { token } = useUser();
 
-    const fetchAllReservations = async () => {
+    const fetchAllReviews = async () => {
         setLoading(true); // Start loading
         setError(null); // Reset error
         try {
@@ -27,12 +27,12 @@ function ReservationList() {
                     Authorization: `Bearer ${token}`,
                 },
             };
-            const res = await axios.get("http://localhost:3001/reservation", config);
-            setReservations(res.data);
-            setFilteredReservations(res.data);
+            const res = await axios.get("http://localhost:3001/review", config);
+            setReviews(res.data);
+            setFilteredReviews(res.data);
         } catch (err) {
-            console.error("Error fetching reservations:", err);
-            setError("Failed to load reservations. Please try again later."); // Set error message
+            console.error("Error fetching reviews:", err);
+            setError("Failed to load reviews. Please try again later."); // Set error message
         } finally {
             setLoading(false); // End loading
         }
@@ -70,7 +70,7 @@ function ReservationList() {
 
     useEffect(() => {
         if (token) {
-            fetchAllReservations();
+            fetchAllReviews();
             fetchBooks(); // Fetch books on mount
             fetchUsers(); // Fetch users on mount
         }
@@ -83,20 +83,20 @@ function ReservationList() {
                     Authorization: `Bearer ${token}`,
                 },
             };
-            await axios.delete(`http://localhost:3001/reservation/${id}`, config);
-            fetchAllReservations();
+            await axios.delete(`http://localhost:3001/review/${id}`, config);
+            fetchAllReviews();
         } catch (err) {
             console.error(err);
-            setError("Failed to delete reservation. Please try again."); // Set error message
+            setError("Failed to delete review. Please try again."); // Set error message
         }
     };
 
     const handleSearch = (query) => {
         setSearchQuery(query);
-        const filtered = reservations.filter((reservation) =>
-            reservation.status.toLowerCase().includes(query.toLowerCase())
+        const filtered = reviews.filter((review) =>
+            review.comment.toLowerCase().includes(query.toLowerCase())
         );
-        setFilteredReservations(filtered);
+        setFilteredReviews(filtered);
     };
 
     return (
@@ -128,8 +128,8 @@ function ReservationList() {
             <div className="overflow-x-auto">
                 <Table hoverable>
                     <Table.Head>
-                        <Table.HeadCell>Reservation Date</Table.HeadCell>
-                        <Table.HeadCell>Status</Table.HeadCell>
+                        <Table.HeadCell>Rating</Table.HeadCell>
+                        <Table.HeadCell>Comment</Table.HeadCell>
                         <Table.HeadCell>Book</Table.HeadCell>
                         <Table.HeadCell>User</Table.HeadCell>
                         <Table.HeadCell>
@@ -141,20 +141,20 @@ function ReservationList() {
                             <Table.Row>
                                 <Table.Cell colSpan="5" className="text-center">Loading...</Table.Cell>
                             </Table.Row>
-                        ) : filteredReservations.length > 0 ? (
-                            filteredReservations.map((item) => (
+                        ) : filteredReviews.length > 0 ? (
+                            filteredReviews.map((item) => (
                                 <Table.Row key={item.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                                        {new Date(item.reservationDate).toLocaleDateString()}
+                                        {item.rating}
                                     </Table.Cell>
-                                    <Table.Cell>{item.status}</Table.Cell>
+                                    <Table.Cell>{item.comment}</Table.Cell>
                                     <Table.Cell>{item.book?.title}</Table.Cell>
                                     <Table.Cell>{item.user?.name}</Table.Cell>
                                     <Table.Cell>
                                         <button
                                             onClick={() => {
                                                 setIsEditModalOpen(true);
-                                                setSelectedReservationId(item.id);
+                                                setSelectedReviewId(item.id);
                                             }}
                                             className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
                                         >
@@ -171,7 +171,7 @@ function ReservationList() {
                             ))
                         ) : (
                             <Table.Row>
-                                <Table.Cell colSpan="5" className="text-center">No reservations found</Table.Cell>
+                                <Table.Cell colSpan="5" className="text-center">No reviews found</Table.Cell>
                             </Table.Row>
                         )}
                     </Table.Body>
@@ -181,15 +181,15 @@ function ReservationList() {
             {isCreateModalOpen && (
                 <div className="modal-container">
                     <div className="modal-content">
-                        <CreateReservation
+                        <CreateReview
                             isOpen={isCreateModalOpen}
                             onClose={() => setIsCreateModalOpen(false)}
                             onSave={() => {
                                 setIsCreateModalOpen(false);
-                                fetchAllReservations();
+                                fetchAllReviews();
                             }}
-                            books={books} // Pass books to CreateReservation
-                            users={users} // Pass users to CreateReservation
+                            books={books} // Pass books to CreateReview
+                            users={users} // Pass users to CreateReview
                         />
                     </div>
                 </div>
@@ -197,16 +197,16 @@ function ReservationList() {
             {isEditModalOpen && (
                 <div className="modal-container">
                     <div className="modal-content">
-                        <EditReservation
-                            reservationId={selectedReservationId}
+                        <EditReview
+                            reviewId={selectedReviewId}
                             isOpen={isEditModalOpen}
                             onClose={() => setIsEditModalOpen(false)}
                             onSave={() => {
                                 setIsEditModalOpen(false);
-                                fetchAllReservations();
+                                fetchAllReviews();
                             }}
-                            books={books} // Pass books to EditReservation
-                            users={users} // Pass users to EditReservation
+                            books={books} // Pass books to EditReview
+                            users={users} // Pass users to EditReview
                         />
                     </div>
                 </div>
@@ -216,4 +216,4 @@ function ReservationList() {
     );
 }
 
-export default ReservationList;
+export default ReviewList;

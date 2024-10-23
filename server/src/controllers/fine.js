@@ -1,9 +1,16 @@
 const Fine = require('../models/fine');
+const Loan = require('../models/loan');
+const User = require('../models/user');
 
 // Get all fines
 const getAllFines = async (req, res) => {
     try {
-        const fines = await Fine.findAll();
+        const fines = await Fine.findAll({
+            include: [
+                { model: Loan, attributes: ['id', 'status'] },
+                { model: User, attributes: ['id', 'name'] }
+            ],
+        });
         res.json(fines);
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });
