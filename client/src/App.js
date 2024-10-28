@@ -19,6 +19,7 @@ import ReviewList from "./Layouts/dashboard/pages/Review/ReviewList";
 import FineList from "./Layouts/dashboard/pages/Fine/FineList";
 import Home from "./Layouts/user/pages/home";
 import Titles from "./Layouts/user/pages/titles";
+import Authors from "./Layouts/user/pages/authors";
 function App() {
   return (
     <ThemeProvider>
@@ -43,6 +44,7 @@ function App() {
           <Route element={<RequireAuth allowedRoles={["user"]} />}>
           <Route path="/user-home" element={<Home />} />
           <Route path="/titles" element={<Titles />} />
+          <Route path="/authors" element={<Authors />} />
 
           </Route>
 
