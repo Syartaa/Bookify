@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Button, Modal, Label, TextInput, Select } from "flowbite-react";
 
+
 function CreateFine({ isOpen, onClose, onSave, loans, users }) {
     const [amount, setAmount] = useState("");
     const [status, setStatus] = useState("unpaid");
