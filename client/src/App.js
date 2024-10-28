@@ -17,6 +17,7 @@ import ReservationList from "./Layouts/dashboard/pages/Reservation/ReservationLi
 import LoanList from "./Layouts/dashboard/pages/Loan/LoanList";
 import ReviewList from "./Layouts/dashboard/pages/Review/ReviewList";
 import FineList from "./Layouts/dashboard/pages/Fine/FineList";
+import UserLayout from "./Layouts/user/components/UserLayout";
 
 function App() {
   return (
@@ -40,7 +41,10 @@ function App() {
 
           {/* Protected user route */}
           <Route element={<RequireAuth allowedRoles={["user"]} />}>
-            <Route path="/user-home" element={<UserHome />} />
+            <Route path="/" element={<UserLayout />} >
+            <Route path="home" element={<UserHome />} />
+
+            </Route>
           </Route>
 
           {/* Open routes */}
