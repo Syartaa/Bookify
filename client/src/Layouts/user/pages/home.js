@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaUserCircle, FaBookOpen, FaQuoteLeft } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import greatGatsbyImg from "../../../image/book1.jpeg";
 import nineteenEightyFourImg from "../../../image/book2.jpeg";
 import toKillAMockingbirdImg from "../../../image/book3.jpeg";
@@ -7,7 +8,6 @@ import prideAndPrejudiceImg from "../../../image/book4.jpeg";
 import catcherInTheRyeImg from "../../../image/book5.jpeg";
 import mobyDickImg from "../../../image/book6.jpeg";
 import quote11 from "../../../image/quote11.jpg";
-import quote2 from "../../../image/quote2.avif";
 import quote3 from "../../../image/quote33.jpg";
 import quote4 from "../../../image/quote4.jpg";
 import quote5 from "../../../image/quote5.jpg";
@@ -25,11 +25,7 @@ const booksData = [
   { title: "Moby-Dick", author: "Herman Melville", image: mobyDickImg },
 ];
 
-const sliderImages = [
-  quote11,
-   quote3, quote4, quote5, quote6, quote44
-   ,quote55,quote77
-];
+const sliderImages = [quote11, quote3, quote4, quote5, quote6, quote44, quote55, quote77];
 
 const Home = () => {
   const [selectedBook, setSelectedBook] = useState(null);
@@ -41,41 +37,49 @@ const Home = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prevSlide) => (prevSlide === sliderImages.length - 1 ? 0 : prevSlide + 1));
-    }, 3000); 
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="min-h-screen bg-[#fdf5f0] flex flex-col items-center font-serif">
-     
+      {/* Header */}
+      <header className="w-full bg-white shadow-md py-4 px-8 flex justify-between items-center">
+        <div className="text-3xl font-bold text-gray-800">BOOKIFY</div>
+        <nav className="space-x-8 flex items-center">
+          <Link to="/payments" className="text-gray-700 hover:text-pink-500">Payments</Link>
+          <Link to="/titles" className="text-gray-700 hover:text-pink-500">Titles</Link>
+          <Link to="/articles" className="text-gray-700 hover:text-pink-500">Articles</Link>
+          <Link to="/contact" className="text-gray-700 hover:text-pink-500">Contact Us</Link>
+          <FaUserCircle className="text-3xl text-gray-700 hover:text-pink-500" />
+        </nav>
+      </header>
+
       {/* Hero Section with Automatic Slider */}
       <section className="text-center mt-12 mb-8 flex flex-col items-center">
         <h1 className="text-5xl font-bold text-[#563f32]">Unlock the Magic of Reading</h1>
         <p className="text-gray-600 mt-4 mb-8">Discover new books and authors</p>
 
-        {/* Slider with Side Elements */}
-        <div className="relative w-full max-w-5xl flex justify-between items-center mt-8">
-          {/* Left Side Text */}
-          <div className="w-1/4 text-center flex flex-col items-start">
-            <FaQuoteLeft className="text-3xl text-pink-500 mb-4" />
-            <p className="text-sm text-gray-700 italic">"A room without books is like a body without a soul."</p>
-            <p className="text-xs mt-2">- Marcus Tullius Cicero</p>
+        {/* Slider */}
+        <div className="relative w-full max-w-5xl flex justify-between items-center mt-8 px-16">
+          <div className="w-1/4 text-left flex flex-col items-start space-y-2 -ml-8">
+            <FaQuoteLeft className="text-3xl text-pink-500 mb-2" />
+            <p className="text-sm text-gray-700 italic leading-tight">
+              "A room without books is like a body without a soul."
+            </p>
+            <p className="text-xs mt-1">- Marcus Tullius Cicero</p>
           </div>
-
-          {/* Automatic Image Slider */}
-          <div className="relative w-[6000px] h-[400px] mx-auto">
+          <div className="relative w-[600px] h-[400px] mx-auto">
             <img
               src={sliderImages[currentSlide]}
               alt={`Slide ${currentSlide + 1}`}
               className="w-full h-full object-cover rounded-lg shadow-lg"
             />
           </div>
-
-          {/* Right Side Elements */}
-          <div className="w-1/4 text-center flex flex-col items-end">
-            <FaBookOpen className="text-4xl text-pink-500 mb-4" />
-            <p className="text-sm text-gray-700 italic">Discover, Read, Repeat.</p>
-            <p className="text-xs mt-2">Your journey to a new world begins here.</p>
+          <div className="w-1/4 text-right flex flex-col items-end space-y-2 -mr-8">
+            <FaBookOpen className="text-4xl text-pink-500 mb-2" />
+            <p className="text-sm text-gray-700 italic leading-tight">Discover, Read, Repeat.</p>
+            <p className="text-xs mt-1">Your journey to a new world begins here.</p>
           </div>
         </div>
       </section>
