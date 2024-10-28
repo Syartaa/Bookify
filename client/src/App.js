@@ -17,7 +17,8 @@ import ReservationList from "./Layouts/dashboard/pages/Reservation/ReservationLi
 import LoanList from "./Layouts/dashboard/pages/Loan/LoanList";
 import ReviewList from "./Layouts/dashboard/pages/Review/ReviewList";
 import FineList from "./Layouts/dashboard/pages/Fine/FineList";
-
+import Home from "./Layouts/user/pages/home";
+import Titles from "./Layouts/user/pages/titles";
 function App() {
   return (
     <ThemeProvider>
@@ -40,7 +41,9 @@ function App() {
 
           {/* Protected user route */}
           <Route element={<RequireAuth allowedRoles={["user"]} />}>
-            <Route path="/user-home" element={<UserHome />} />
+          <Route path="/user-home" element={<Home />} />
+          <Route path="/titles" element={<Titles />} />
+
           </Route>
 
           {/* Open routes */}
