@@ -16,7 +16,10 @@ const Book = sequelize.define("book", {
 
   isbn: Sequelize.STRING,
   publishedDate: Sequelize.DATE,
-  description: Sequelize.STRING,
+  description: {
+    type: Sequelize.TEXT('long'), // Use 'long' variant for larger text in MySQL
+    allowNull: true,
+  },
   image: {
     type: Sequelize.STRING, // Use STRING to store the URL/path of the image
     allowNull: true, // Optional: Set to true if the image is not mandatory
