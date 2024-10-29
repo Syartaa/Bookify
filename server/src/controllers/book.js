@@ -21,15 +21,23 @@ const getAllBooks = async (req, res) => {
 const getBookById = async (req, res) => {
     const { id } = req.params;
     try {
-        const book = await Book.findByPk(id);
-        if (!book) {
-            return res.status(404).json({ error: 'Book not found' });
-        }
-        res.json(book);
+      const book = await Book.findByPk(id, {
+        include: [
+          { model: Author, attributes: ['id', 'name'] },
+          { model: Cateogory, attributes: ['id', 'name'] },
+        ],
+      });
+  
+      if (!book) {
+        return res.status(404).json({ error: 'Book not found' });
+      }
+  
+      res.json(book);
     } catch (error) {
-        res.status(500).json({ error: 'Internal server error' });
+      res.status(500).json({ error: 'Internal server error' });
     }
-};
+  };
+  
 
 // Create a new book
 const createBook = async (req, res) => {

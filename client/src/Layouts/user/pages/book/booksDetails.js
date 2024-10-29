@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import ReviewSection from './ReviewSection'; // Adjust the path as necessary
 
 const BookDetails = () => {
   const { id } = useParams();
@@ -10,6 +11,7 @@ const BookDetails = () => {
     const fetchBook = async () => {
       try {
         const response = await axios.get(`http://localhost:3001/book/${id}`);
+        console.log("Book Data:", response.data); // Log the response to verify
         setBook(response.data);
       } catch (error) {
         console.error("Error fetching book details:", error);
@@ -29,62 +31,77 @@ const BookDetails = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-10">
-      <div className="flex flex-col md:flex-row items-start md:items-center gap-10">
-        {/* Book Image */}
-        <div className="flex-shrink-0">
-          <img
-            src={book.image}
-            alt={book.title}
-            className="w-64 h-96 object-cover rounded-md shadow-lg"
-          />
-        </div>
-
+    <div className="min-h-screen bg-white p-16">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-12 items-start">
         {/* Book Details Section */}
-        <div className="flex flex-col justify-start">
-          <h1 className="text-5xl font-extrabold text-gray-800">{book.title}</h1>
-          <p className="text-2xl text-gray-600 mt-2">by {book.author}</p>
+        <div className="flex-1">
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">{book.title}</h1>
+          <p className="text-2xl text-gray-600 mb-6">
+            by {book.author && book.author.name ? book.author.name : "Unknown Author"}
+          </p>
 
-          {/* Description */}
-          <div className="mt-8">
-            <h2 className="text-xl font-semibold text-gray-700">Description</h2>
-            <p className="mt-2 text-gray-600">{book.description}</p>
+          <div className="flex items-center mb-6">
+            <span
+              className={`px-4 py-2 rounded-full text-lg font-semibold ${
+                book.availabilityStatus === "available"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+              }`}
+            >
+              {book.availabilityStatus}
+            </span>
           </div>
 
-          {/* Book Info */}
-          <div className="mt-6 grid grid-cols-2 gap-4">
-            <p className="text-md text-gray-800">
-              <strong>ISBN:</strong> {book.ISBN}
+          <div className="mb-10">
+            <h2 className="text-xl font-semibold text-gray-700 mb-2">About this ebook</h2>
+            <p className="text-lg text-gray-600 leading-relaxed">{book.description}</p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6 text-lg text-gray-700">
+            <p>
+              <strong>ISBN:</strong> {book.isbn}
             </p>
-            <p className="text-md text-gray-800">
-              <strong>Published on:</strong> {new Date(book.publicationDate).toLocaleDateString()}
+            <p>
+              <strong>Published on:</strong>{" "}
+              {new Date(book.publishedDate).toLocaleDateString()}
             </p>
-            <p className="text-md text-gray-800">
-              <strong>Category:</strong> {book.category}
-            </p>
-            <p className={`text-md font-semibold ${book.available ? 'text-green-500' : 'text-red-500'}`}>
-              Status: {book.available ? "Available" : "Currently Unavailable"}
+            <p>
+              <strong>Category:</strong> {book.category.name}
             </p>
           </div>
 
-          {/* Buttons */}
-          <div className="mt-8 flex gap-4">
+          <div className="mt-8 flex gap-6">
             <button
               onClick={handleReserve}
-              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300"
-              disabled={!book.available}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300"
+              disabled={book.availabilityStatus !== "available"}
             >
               Reserve
             </button>
             <button
               onClick={handleLoan}
-              className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300"
-              disabled={!book.available}
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300"
+              disabled={book.availabilityStatus !== "available"}
             >
               Loan
             </button>
           </div>
         </div>
+
+        {/* Book Image */}
+        <div className="flex-shrink-0">
+          <img
+            src={`http://localhost:3001/${book.image}`}
+            alt={book.title}
+            className="w-80 h-[480px] object-cover rounded-lg shadow-lg"
+          />
+        </div>
+      </div>
+
+      {/* Add the Review Section Below Book Details */}
+
+      <div className="mt-15">
+        <ReviewSection bookId={book.id} />
       </div>
     </div>
   );
