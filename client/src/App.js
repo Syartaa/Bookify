@@ -22,6 +22,9 @@ import UserLayout from "./Layouts/user/components/UserLayout";
 import Home from "./Layouts/user/pages/home";
 import Titles from "./Layouts/user/pages/titles";
 import Authors from "./Layouts/user/pages/authors";
+import ArticlesPage from "./Layouts/user/pages/articles";
+import ArticleDetail from "./Layouts/user/components/ArticleDetail";
+
 function App() {
   return (
     <ThemeProvider>
@@ -47,6 +50,9 @@ function App() {
           <Route path="/user-home" element={<Home />} />
           <Route path="/titles" element={<Titles />} />
           <Route path="/authors" element={<Authors />} />
+          <Route path="/articles" element={<ArticlesPage />} />
+          <Route path="/articles/:id" element={<ArticleDetail />} />
+
 
           </Route>
 
