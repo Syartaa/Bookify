@@ -26,6 +26,38 @@ const booksData = [
 ];
 
 const sliderImages = [quote11, quote3, quote4, quote5, quote6, quote44, quote55, quote77];
+const quotes = [
+  {
+    text: "A room without books is like a body without a soul.",
+    author: "Marcus Tullius Cicero",
+    color: "bg-gradient-to-r from-pink-500 to-purple-500",
+  },
+  {
+    text: "So many books, so little time.",
+    author: "Frank Zappa",
+    color: "bg-gradient-to-r from-green-400 to-blue-500",
+  },
+  {
+    text: "The only thing that you absolutely have to know, is the location of the library.",
+    author: "Albert Einstein",
+    color: "bg-gradient-to-r from-yellow-500 to-red-500",
+  },
+  {
+    text: "Reading is to the mind what exercise is to the body.",
+    author: "Joseph Addison",
+    color: "bg-gradient-to-r from-indigo-500 to-blue-400",
+  },
+  {
+    text: "I do believe something very magical can happen when you read a good book.",
+    author: "J.K. Rowling",
+    color: "bg-gradient-to-r from-purple-500 to-pink-500",
+  },
+  {
+    text: "Books are a uniquely portable magic.",
+    author: "Stephen King",
+    color: "bg-gradient-to-r from-blue-500 to-teal-500",
+  },
+];
 
 const Home = () => {
   const [selectedBook, setSelectedBook] = useState(null);
@@ -60,8 +92,13 @@ const Home = () => {
         <h1 className="text-5xl font-bold text-[#563f32]">Unlock the Magic of Reading</h1>
         <p className="text-gray-600 mt-4 mb-8">Discover new books and authors</p>
 
-        {/* Slider */}
-        <div className="relative w-full max-w-5xl mt-8 px-16">
+        {/* Slider with Decorative Elements */}
+        <div className="relative w-full max-w-5xl mt-8 px-8 flex items-center">
+          {/* Decorative Left Side */}
+          <div className="absolute left-0 top-1/2 transform -translate-y-1/2">
+            <span className="text-4xl font-bold text-gray-400">📚</span>
+          </div>
+
           <div className="w-full h-[400px] mx-auto">
             <img
               src={sliderImages[currentSlide]}
@@ -69,23 +106,26 @@ const Home = () => {
               className="w-full h-full object-cover rounded-lg shadow-lg"
             />
           </div>
-        </div>
 
-        {/* Quote and Tagline Below Slider */}
-        <div className="flex flex-col items-center mt-8 space-y-6 px-8">
-          <div className="text-center">
-            <FaQuoteLeft className="text-3xl text-pink-500 mb-2" />
-            <p className="text-sm text-gray-700 italic leading-tight">
-              "A room without books is like a body without a soul."
-            </p>
-            <p className="text-xs mt-1">- Marcus Tullius Cicero</p>
-          </div>
-          <div className="text-center">
-            <FaBookOpen className="text-4xl text-pink-500 mb-2" />
-            <p className="text-sm text-gray-700 italic leading-tight">Discover, Read, Repeat.</p>
-            <p className="text-xs mt-1">Your journey to a new world begins here.</p>
+          {/* Decorative Right Side */}
+          <div className="absolute right-0 top-1/2 transform -translate-y-1/2">
+            <span className="text-4xl font-bold text-gray-400">✨</span>
           </div>
         </div>
+      </section>
+
+      {/* Quotes Section */}
+      <section className="w-full max-w-5xl mx-auto px-8 py-12 grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 text-white">
+        {quotes.map((quote, index) => (
+          <div
+            key={index}
+            className={`${quote.color} p-6 rounded-lg shadow-lg text-center flex flex-col items-center justify-center`}
+          >
+            <FaQuoteLeft className="text-3xl mb-2 opacity-75" />
+            <p className="text-lg italic mb-2">"{quote.text}"</p>
+            <p className="text-sm mt-1">- {quote.author}</p>
+          </div>
+        ))}
       </section>
 
       {/* Books Grid */}
