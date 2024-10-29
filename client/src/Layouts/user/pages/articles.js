@@ -1,137 +1,124 @@
 import React from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/swiper-bundle.css';
 import { FaBookOpen } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
 
+// Sample article data
 const articles = [
   {
     id: 1,
     title: "The Future of Digital Reading",
     author: "John Doe",
     date: "October 28, 2024",
-    genre: "Non-fiction, Technology",
-    publisher: "TechWorld Publications",
-    pageCount: 300,
-    content: "With advancements in digital technologies, reading habits are shifting towards eBooks, and mobile apps...",
-    fullContent: "In this article, we’ll dive deeper into how this shift is influencing readers, the digital library revolution, and what the future holds for online bookshops...",
+    content: "With advancements in digital technologies, reading habits are shifting towards eBooks and mobile apps...",
+    imageUrl: "https://pagedone.io/asset/uploads/1696244059.png",
   },
   {
     id: 2,
     title: "Top 10 Books to Read This Year",
     author: "Jane Smith",
     date: "September 15, 2024",
-    genre: "Literature",
-    publisher: "Readers Guild",
-    pageCount: 250,
     content: "Whether you're a fiction lover or a non-fiction enthusiast, our top 10 books for this year will keep you entertained...",
-    fullContent: "From thrilling mysteries to insightful biographies, this list covers something for every reader's taste. Join us as we explore each book in detail, covering why they stood out this year...",
+    imageUrl: "https://pagedone.io/asset/uploads/1696244074.png",
   },
   {
     id: 3,
     title: "Mastering Web Development in 2024",
     author: "Alex Johnson",
     date: "August 10, 2024",
-    genre: "Technology, Web Development",
-    publisher: "CodeWave",
-    pageCount: 320,
-    fullContent: "This article covers the latest trends in web development, including popular frameworks, essential tools, and insights into mastering frontend and backend technologies in 2024.",
+    content: "This article covers the latest trends in web development, including popular frameworks...",
+    imageUrl: "https://pagedone.io/asset/uploads/1696244059.png",
   },
-  {
-    id: 4,
-    title: "Understanding Artificial Intelligence",
-    author: "Sarah Lee",
-    date: "July 5, 2024",
-    genre: "Science, Technology",
-    publisher: "AI Insights",
-    pageCount: 275,
-    fullContent: "An in-depth look at AI's impact on various industries, from healthcare to finance, exploring how machine learning algorithms and neural networks are reshaping our world.",
-  },
-  {
-    id: 5,
-    title: "Best Practices for Mental Health",
-    author: "Emma Thompson",
-    date: "June 20, 2024",
-    genre: "Self-Help, Psychology",
-    publisher: "Wellbeing Press",
-    pageCount: 200,
-    fullContent: "Covering essential mental health practices, this article provides valuable insights and expert recommendations for maintaining mental wellness in a fast-paced world.",
-  },
-  {
-    id: 6,
-    title: "Climate Change and Its Effects",
-    author: "Michael Green",
-    date: "May 12, 2024",
-    genre: "Environmental Science",
-    publisher: "EcoLife Publications",
-    pageCount: 310,
-    fullContent: "Exploring the latest research on climate change, this article discusses global warming, its impact on ecosystems, and actionable steps individuals can take to help the environment.",
-  },
-  {
-    id: 7,
-    title: "The Rise of Remote Work",
-    author: "Linda Harper",
-    date: "April 25, 2024",
-    genre: "Business, Technology",
-    publisher: "FutureWorks",
-    pageCount: 290,
-    fullContent: "Examining the shift towards remote work, this article highlights benefits, challenges, and predictions for the future of work in a digital-first world.",
-  },
-  {
-    id: 8,
-    title: "Healthy Eating: Tips and Recipes",
-    author: "David Brown",
-    date: "March 15, 2024",
-    genre: "Health, Nutrition",
-    publisher: "Healthy Living Publications",
-    pageCount: 180,
-    fullContent: "This article provides a comprehensive guide to healthy eating, featuring tips for balanced meals and easy-to-make recipes to incorporate into a nutritious lifestyle.",
-  },
-  {
-    id: 9,
-    title: "Exploring Space: The Next Frontier",
-    author: "Chris Martinez",
-    date: "February 28, 2024",
-    genre: "Science, Astronomy",
-    publisher: "Galactic Publications",
-    pageCount: 400,
-    fullContent: "A captivating exploration of recent space missions, advancements in space travel technology, and what lies ahead as we venture deeper into the cosmos.",
-  },
-  {
-    id: 10,
-    title: "Financial Planning for Young Adults",
-    author: "Samantha Clark",
-    date: "January 10, 2024",
-    genre: "Finance, Self-Help",
-    publisher: "MoneyWise",
-    pageCount: 220,
-    fullContent: "A beginner's guide to personal finance, this article covers budgeting, saving, and investment strategies tailored to young adults entering the workforce.",
-  },
-  // Add more articles here
+  // Add more articles as needed...
 ];
 
 const ArticlesPage = () => {
   return (
-    <div className="min-h-screen p-8 bg-pink-50">
-      <h1 className="text-5xl font-bold text-center mb-10 text-coral-700">Articles</h1>
-      <div className="max-w-4xl mx-auto space-y-8">
-        {articles.map((article) => (
-          <div key={article.id} className="bg-white shadow-md rounded-lg p-8 border-l-4 border-coral-400">
-            <div className="flex items-center mb-4">
-              <FaBookOpen className="text-coral-500 text-2xl mr-3" />
-              <h2 className="text-3xl font-semibold text-coral-700">{article.title}</h2>
+    <section className="py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-center flex-wrap md:flex-wrap lg:flex-nowrap lg:flex-row lg:justify-between gap-8">
+          <div className="w-full flex justify-between flex-col lg:w-2/5">
+            <div className="block lg:text-left text-center">
+              <h2 className="text-4xl font-bold text-gray-900 leading-[3.25rem] mb-5">
+                Our latest <span className="text-indigo-600">articles</span>
+              </h2>
+              <p className="text-gray-500 mb-10 max-lg:max-w-xl max-lg:mx-auto">
+                Welcome to our articles section, where knowledge meets inspiration. Explore insightful articles, expert tips, and the latest trends in our field.
+              </p>
+              <a href="javascript:;" className="cursor-pointer border border-gray-300 shadow-sm rounded-full py-3.5 px-7 w-52 lg:mx-0 mx-auto flex justify-center text-gray-900 font-semibold transition-all duration-300 hover:bg-gray-100">
+                View All
+              </a>
             </div>
-            <p className="text-gray-500 text-sm mb-4">
-              By <span className="font-medium">{article.author}</span> on {article.date}
-            </p>
-            <p className="text-gray-700 mb-4">{article.content}</p>
-            <Link to={`/articles/${article.id}`}>
-              <button className="px-4 py-2 bg-coral-500 text-gray-500 font-semibold rounded-lg hover:bg-coral-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg">
-                Read More
+            {/* Slider controls */}
+            <div className="flex items-center lg:justify-start justify-center lg:mt-0 mt-8 gap-8 mb-4">
+              <button id="slider-button-left" className="swiper-button-prev group flex justify-center items-center border border-solid border-indigo-600 w-11 h-11 transition-all duration-500 rounded-full hover:bg-indigo-600">
+                {/* SVG for Left Arrow */}
+                <svg className="h-6 w-6 text-indigo-600 group-hover:text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20.9999 12L4.99992 12M9.99992 6L4.70703 11.2929C4.3737 11.6262 4.20703 11.7929 4.20703 12C4.20703 12.2071 4.3737 12.3738 4.70703 12.7071L9.99992 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </button>
-            </Link>
+              <button id="slider-button-right" className="swiper-button-next group flex justify-center items-center border border-solid border-indigo-600 w-11 h-11 transition-all duration-500 rounded-full hover:bg-indigo-600">
+                {/* SVG for Right Arrow */}
+                <svg className="h-6 w-6 text-indigo-600 group-hover:text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 12L19 12M14 18L19.2929 12.7071C19.6262 12.3738 19.7929 12.2071 19.7929 12C19.7929 11.7929 19.6262 11.6262 19.2929 11.2929L14 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            </div>
           </div>
-        ))}
+
+          <div className="w-full lg:w-3/5">
+            {/* Slider wrapper */}
+            <Swiper
+              className="mySwiper"
+              slidesPerView={2}
+              spaceBetween={28}
+              loop={true}
+              pagination={{
+                clickable: true,
+              }}
+              navigation={{
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+              }}
+              breakpoints={{
+                0: {
+                  slidesPerView: 1,
+                  spaceBetween: 20,
+                },
+                568: {
+                  slidesPerView: 2,
+                  spaceBetween: 28,
+                },
+                768: {
+                  slidesPerView: 2,
+                  spaceBetween: 28,
+                },
+                1024: {
+                  slidesPerView: 2,
+                  spaceBetween: 32,
+                },
+              }}
+            >
+              {articles.map((article) => (
+                <SwiperSlide key={article.id} className="w-full max-lg:max-w-xl lg:w-1/2 group">
+                  <div className="flex items-center mb-9">
+                    <img src={article.imageUrl} alt={article.title} className="rounded-2xl w-full object-cover" />
+                  </div>
+                  <h3 className="text-xl text-gray-900 font-medium leading-8 mb-4 group-hover:text-indigo-600">{article.title}</h3>
+                  <p className="text-gray-500 leading-6 transition-all duration-500 mb-8">{article.content}</p>
+                  <a href="javascript:;" className="cursor-pointer flex items-center gap-2 text-lg text-indigo-700 font-semibold">
+                    Read more
+                    <svg width="15" height="12" viewBox="0 0 15 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1.25 6L13.25 6M9.5 10.5L13.4697 6.53033C13.7197 6.28033 13.8447 6.15533 13.8447 6C13.8447 5.84467 13.7197 5.71967 13.4697 5.46967L9.5 1.5" stroke="#4338CA" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </a>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

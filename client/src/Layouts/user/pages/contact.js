@@ -23,7 +23,7 @@ const Contact = () => {
             </p>
             <div className="flex md:items-center md:justify-start justify-center">
               <button
-                className="w-36 h-12 rounded-full bg-pink-400 transition-all duration-700 hover:bg-pink-500 shadow text-white text-center text-base font-semibold leading-6"
+                className="w-36 h-12 rounded-full bg-pink-400 transition-all duration-700 hover:bg-orange-200 shadow text-white text-center text-base font-semibold leading-6"
                 onClick={handleContactClick} // Add onClick event
               >
                 Contact Us
@@ -45,7 +45,7 @@ const Contact = () => {
             </div>
             <div>
               <h6 className="text-gray-500 text-sm font-medium leading-5 pb-3 md:text-start text-center">Support us</h6>
-              <h3 className="text-black text-xl font-semibold leading-8 md:text-start text-center">We love and appreciate book lovers</h3>
+              <h3 className="text-black text-xl font-semibold leading-8 md:text-start text-center">We love and appreciate book</h3>
             </div>
           </div>
         </div>
