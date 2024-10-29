@@ -47,11 +47,9 @@ const quotes = [
 
 const Home = () => {
   const [books, setBooks] = useState([]);
-  const [selectedBook, setSelectedBook] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const openModal = (book) => setSelectedBook(book);
-  const closeModal = () => setSelectedBook(null);
+ 
 
   // Fetch books data from the backend API
   useEffect(() => {
@@ -109,52 +107,24 @@ const Home = () => {
       {/* Books Grid */}
       <section className="w-full max-w-6xl mx-auto px-4 py-8 mt-16 bg-white rounded-lg shadow-md">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {books.map((book, index) => (
-            <div key={index} className="bg-[#fdf5f0] rounded-lg p-6 shadow-md">
-              <img
-                src={book.image}
-                alt={book.title}
-                className="w-full h-48 object-cover rounded-lg mb-4"
-              />
+          {books.map((book) => (
+            <div key={book.id} className="bg-[#fdf5f0] rounded-lg p-6 shadow-md">
+              <img src={book.image} alt={book.title} className="w-full h-48 object-cover rounded-lg mb-4" />
               <h3 className="text-xl font-semibold text-gray-800">{book.title}</h3>
               <p className="text-gray-600 mt-2">Author: {book.author.name}</p>
-              <button
+              <Link
+                to={`/books/${book.id}`} // Link to the BookDetails page with the book's id
                 className="mt-4 inline-block bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600"
-                onClick={() => openModal(book)}
               >
                 View Details
-              </button>
+              </Link>
             </div>
           ))}
         </div>
       </section>
 
       {/* Modal */}
-      {selectedBook && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full relative">
-            <button
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-              onClick={closeModal}
-            >
-              X
-            </button>
-            <h2 className="text-2xl font-bold mb-4">{selectedBook.title}</h2>
-            <p className="text-gray-600 mb-4">Author: {selectedBook.author.name}</p>
-            <img
-              src={selectedBook.image}
-              alt={selectedBook.title}
-              className="w-full h-48 object-cover rounded-lg mb-4"
-            />
-            <button
-              className="bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600"
-              onClick={closeModal}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 };
