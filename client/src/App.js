@@ -44,19 +44,9 @@ function App() {
 
           {/* Protected user route */}
           <Route element={<RequireAuth allowedRoles={["user"]} />}>
-<<<<<<< HEAD
           <Route path="/user-home" element={<Home />} />
           <Route path="/titles" element={<Titles />} />
           <Route path="/authors" element={<Authors />} />
-=======
-            <Route path="/" element={<UserLayout />} >
-            <Route path="home" element={<UserHome />} />
-            <Route path="/user-home" element={<Home />} />
-            <Route path="/titles" element={<Titles />} />
-            
-            </Route>
-          
->>>>>>> 35465d86fb250d0196568fed16252e1b7ce269b0
 
           </Route>
 

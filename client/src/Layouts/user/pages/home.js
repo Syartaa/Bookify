@@ -43,7 +43,6 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-[#fdf5f0] flex flex-col items-center font-serif">
-<<<<<<< HEAD
       {/* Header */}
       <header className="w-full bg-white shadow-md py-4 px-8 flex justify-between items-center">
         <div className="text-3xl font-bold text-gray-800">BOOKIFY</div>
@@ -55,9 +54,6 @@ const Home = () => {
           <FaUserCircle className="text-3xl text-gray-700 hover:text-pink-500" />
         </nav>
       </header>
-=======
-    
->>>>>>> 35465d86fb250d0196568fed16252e1b7ce269b0
 
       {/* Hero Section with Automatic Slider */}
       <section className="text-center mt-12 mb-8 flex flex-col items-center">
