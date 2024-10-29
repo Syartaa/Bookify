@@ -8,7 +8,7 @@ function Navbar() {
         <div className="text-3xl font-bold text-gray-800">BOOKIFY</div>
         <nav className="space-x-8 flex items-center">
           <a href="/home" className="text-gray-700 hover:text-pink-500">Home</a>
-          <a href="/aboutus" className="text-gray-700 hover:text-pink-500">About us</a>
+          <a href="/authors" className="text-gray-700 hover:text-pink-500">Authors</a>
           <a href="/titles" className="text-gray-700 hover:text-pink-500">Titles</a>
           <a href="/articles" className="text-gray-700 hover:text-pink-500">Articles</a>
           <a href="/contact" className="text-gray-700 hover:text-pink-500">Contact Us</a>

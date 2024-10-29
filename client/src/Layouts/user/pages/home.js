@@ -75,17 +75,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-[#fdf5f0] flex flex-col items-center font-serif">
-      {/* Header */}
-      <header className="w-full bg-white shadow-md py-4 px-8 flex justify-between items-center">
-        <div className="text-3xl font-bold text-gray-800">BOOKIFY</div>
-        <nav className="space-x-8 flex items-center">
-          <Link to="/authors" className="text-gray-700 hover:text-pink-500">Authors</Link>
-          <Link to="/titles" className="text-gray-700 hover:text-pink-500">Titles</Link>
-          <Link to="/articles" className="text-gray-700 hover:text-pink-500">Articles</Link>
-          <Link to="/contact" className="text-gray-700 hover:text-pink-500">Contact Us</Link>
-          <FaUserCircle className="text-3xl text-gray-700 hover:text-pink-500" />
-        </nav>
-      </header>
+     
 
       {/* Hero Section with Automatic Slider */}
       <section className="text-center mt-12 mb-8 flex flex-col items-center">

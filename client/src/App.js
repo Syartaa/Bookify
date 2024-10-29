@@ -47,12 +47,13 @@ function App() {
 
           {/* Protected user route */}
           <Route element={<RequireAuth allowedRoles={["user"]} />}>
-          <Route path="/user-home" element={<Home />} />
+          <Route path="/" element={<UserLayout />}>
+          <Route path="/home" element={<Home />} />
           <Route path="/titles" element={<Titles />} />
           <Route path="/authors" element={<Authors />} />
           <Route path="/articles" element={<ArticlesPage />} />
           <Route path="/articles/:id" element={<ArticleDetail />} />
-
+          </Route>
 
           </Route>
 
