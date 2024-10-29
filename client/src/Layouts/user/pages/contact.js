@@ -1,26 +1,20 @@
 import React, { useState } from 'react';
 
 const Contact = () => {
-  // State to manage the visibility of contact info and form inputs
   const [showContactInfo, setShowContactInfo] = useState(false);
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
 
-  // Function to toggle contact info and form visibility
   const handleContactClick = () => {
     setShowContactInfo(!showContactInfo);
-    setFormSubmitted(false); // Reset form submitted state when toggling
+    setFormSubmitted(false);
   };
 
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Here you would typically send the data to your backend
     console.log('Email:', email);
     console.log('Message:', message);
-    
-    // Reset form fields
     setEmail('');
     setMessage('');
     setFormSubmitted(true);
@@ -41,38 +35,40 @@ const Contact = () => {
             <div className="flex md:items-center md:justify-start justify-center">
               <button
                 className="w-36 h-12 rounded-full bg-pink-400 transition-all duration-700 hover:bg-orange-200 shadow text-white text-center text-base font-semibold leading-6"
-                onClick={handleContactClick} // Add onClick event
+                onClick={handleContactClick}
               >
                 Contact Us
               </button>
             </div>
-            {showContactInfo && !formSubmitted && ( // Conditionally render the form
+            {showContactInfo && !formSubmitted && (
               <form onSubmit={handleSubmit} className="mt-4 text-center">
-                <h6 className="text-gray-500 text-sm font-medium leading-5 pb-3">Email Address</h6>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="border border-gray-300 rounded-md p-2 mb-3 w-64"
-                  placeholder="Enter your email"
-                  required
-                />
-                <h6 className="text-gray-500 text-sm font-medium leading-5 pb-3">Message</h6>
-                <textarea
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  className="border border-gray-300 rounded-md p-2 mb-3 w-64 h-32"
-                  placeholder="Type your message"
-                  required
-                ></textarea>
-                <div>
-                  <button
-                    type="submit"
-                    className="w-36 h-12 rounded-full bg-pink-400 transition-all duration-700 hover:bg-orange-200 shadow text-white text-center text-base font-semibold leading-6"
-                  >
-                    Send Message
-                  </button>
+                <div className="flex flex-col items-center mb-4">
+                  <label className="text-gray-500 text-sm font-medium leading-5 pb-3">Email Address</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="border border-gray-300 rounded-lg p-4 w-80 lg:w-96 text-base focus:outline-none focus:border-pink-400 shadow-md"
+                    placeholder="Enter your email"
+                    required
+                  />
                 </div>
+                <div className="flex flex-col items-center mb-6">
+                  <label className="text-gray-500 text-sm font-medium leading-5 pb-3">Message</label>
+                  <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    className="border border-gray-300 rounded-lg p-4 w-80 lg:w-96 h-40 text-base focus:outline-none focus:border-pink-400 shadow-md resize-none"
+                    placeholder="Type your message"
+                    required
+                  ></textarea>
+                </div>
+                <button
+                  type="submit"
+                  className="w-36 h-12 rounded-full bg-pink-400 transition-all duration-700 hover:bg-orange-200 shadow text-white text-center text-base font-semibold leading-6"
+                >
+                  Send Message
+                </button>
               </form>
             )}
             {formSubmitted && (
@@ -86,7 +82,7 @@ const Contact = () => {
             </div>
             <div>
               <h6 className="text-gray-500 text-sm font-medium leading-5 pb-3 md:text-start text-center">Support us</h6>
-              <h3 className="text-black text-xl font-semibold leading-8 md:text-start text-center">We love and appreciate book</h3>
+              <h3 className="text-black text-xl font-semibold leading-8 md:text-start text-center">We love and appreciate books</h3>
             </div>
           </div>
         </div>
