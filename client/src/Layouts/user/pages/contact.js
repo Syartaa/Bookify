@@ -1,12 +1,29 @@
 import React, { useState } from 'react';
 
 const Contact = () => {
-  // State to manage the visibility of contact info
+  // State to manage the visibility of contact info and form inputs
   const [showContactInfo, setShowContactInfo] = useState(false);
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
-  // Function to toggle contact info visibility
+  // Function to toggle contact info and form visibility
   const handleContactClick = () => {
     setShowContactInfo(!showContactInfo);
+    setFormSubmitted(false); // Reset form submitted state when toggling
+  };
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Here you would typically send the data to your backend
+    console.log('Email:', email);
+    console.log('Message:', message);
+    
+    // Reset form fields
+    setEmail('');
+    setMessage('');
+    setFormSubmitted(true);
   };
 
   return (
@@ -29,13 +46,37 @@ const Contact = () => {
                 Contact Us
               </button>
             </div>
-            {showContactInfo && ( // Conditionally render contact info
-              <div className="mt-4 text-center">
+            {showContactInfo && !formSubmitted && ( // Conditionally render the form
+              <form onSubmit={handleSubmit} className="mt-4 text-center">
                 <h6 className="text-gray-500 text-sm font-medium leading-5 pb-3">Email Address</h6>
-                <h3 className="text-black text-xl font-semibold leading-8">bookify@gmail.com</h3>
-                <h6 className="text-gray-500 text-sm font-medium leading-5 pb-3 mt-4">Phone Number</h6>
-                <h3 className="text-black text-xl font-semibold leading-8">470-601-1911</h3>
-              </div>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="border border-gray-300 rounded-md p-2 mb-3 w-64"
+                  placeholder="Enter your email"
+                  required
+                />
+                <h6 className="text-gray-500 text-sm font-medium leading-5 pb-3">Message</h6>
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="border border-gray-300 rounded-md p-2 mb-3 w-64 h-32"
+                  placeholder="Type your message"
+                  required
+                ></textarea>
+                <div>
+                  <button
+                    type="submit"
+                    className="w-36 h-12 rounded-full bg-pink-400 transition-all duration-700 hover:bg-orange-200 shadow text-white text-center text-base font-semibold leading-6"
+                  >
+                    Send Message
+                  </button>
+                </div>
+              </form>
+            )}
+            {formSubmitted && (
+              <p className="text-green-500 mt-4">Your message has been sent successfully!</p>
             )}
           </div>
           <div className="border-l-2 md:border-pink-600 border-white px-10 py-6">
