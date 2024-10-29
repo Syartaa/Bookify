@@ -61,22 +61,26 @@ const Home = () => {
         <p className="text-gray-600 mt-4 mb-8">Discover new books and authors</p>
 
         {/* Slider */}
-        <div className="relative w-full max-w-5xl flex justify-between items-center mt-8 px-16">
-          <div className="w-1/4 text-left flex flex-col items-start space-y-2 -ml-8">
-            <FaQuoteLeft className="text-3xl text-pink-500 mb-2" />
-            <p className="text-sm text-gray-700 italic leading-tight">
-              "A room without books is like a body without a soul."
-            </p>
-            <p className="text-xs mt-1">- Marcus Tullius Cicero</p>
-          </div>
-          <div className="relative w-[600px] h-[400px] mx-auto">
+        <div className="relative w-full max-w-5xl mt-8 px-16">
+          <div className="w-full h-[400px] mx-auto">
             <img
               src={sliderImages[currentSlide]}
               alt={`Slide ${currentSlide + 1}`}
               className="w-full h-full object-cover rounded-lg shadow-lg"
             />
           </div>
-          <div className="w-1/4 text-right flex flex-col items-end space-y-2 -mr-8">
+        </div>
+
+        {/* Quote and Tagline Below Slider */}
+        <div className="flex flex-col items-center mt-8 space-y-6 px-8">
+          <div className="text-center">
+            <FaQuoteLeft className="text-3xl text-pink-500 mb-2" />
+            <p className="text-sm text-gray-700 italic leading-tight">
+              "A room without books is like a body without a soul."
+            </p>
+            <p className="text-xs mt-1">- Marcus Tullius Cicero</p>
+          </div>
+          <div className="text-center">
             <FaBookOpen className="text-4xl text-pink-500 mb-2" />
             <p className="text-sm text-gray-700 italic leading-tight">Discover, Read, Repeat.</p>
             <p className="text-xs mt-1">Your journey to a new world begins here.</p>
@@ -133,8 +137,6 @@ const Home = () => {
           </div>
         </div>
       )}
-
-      
     </div>
   );
 };
