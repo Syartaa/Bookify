@@ -52,7 +52,7 @@ export default function Login() {
         if (data.user.role === "admin") {
           navigate("/");  // Redirect to the admin dashboard
         } else if (data.user.role === "user") {
-          navigate("/user-home");  // Redirect to the user home page
+          navigate("/home");  // Redirect to the user home page
         }
       } else {
         setError(data.error || "Login failed, please try again.");
