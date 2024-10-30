@@ -25,15 +25,15 @@ const Authors = () => {
 
     // Render the component
     return (
-        <div className="max-w-3xl mx-auto p-4 bg-white rounded-lg shadow-md">
-            <h1 className="text-2xl font-bold text-center text-gray-800 mb-4">Authors</h1>
+        <div className="max-w-4xl mx-auto p-6 bg-gray-50 rounded-lg shadow-lg">
+            <h1 className="text-3xl font-extrabold text-center text-gray-900 mb-6">Authors</h1>
             {error && <p className="text-red-500 text-center mb-4">{error}</p>}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {authors.length > 0 ? (
                     authors.map((author) => (
-                        <div key={author.id} className="bg-gray-100 p-4 rounded-lg hover:shadow-lg transition-shadow duration-200">
-                            <h2 className="text-lg font-semibold text-blue-600">{author.name}</h2>
-                            <p className="text-gray-600">
+                        <div key={author.id} className="bg-white p-5 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:shadow-xl">
+                            <h2 className="text-xl font-semibold text-indigo-600">{author.name}</h2>
+                            <p className="text-gray-700 mt-2">
                                 {author.bio ? author.bio : 'No bio available.'}
                             </p>
                         </div>
