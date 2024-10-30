@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import axios from 'axios';
+import HeroSection from '../components/HeroSection';
 
 const Titles = () => {
   const [books, setBooks] = useState([]); // State to hold books
@@ -9,6 +11,8 @@ const Titles = () => {
 
   const apiUrl = 'http://localhost:3001/book';
   const categoryUrl = 'http://localhost:3001/category'; // Adjust as needed
+
+  const navigate = useNavigate(); // Initialize useNavigate
 
   // Fetch books from API
   const fetchBooks = async () => {
@@ -40,13 +44,16 @@ const Titles = () => {
       ? books
       : books.filter((book) => book.category.name === selectedCategory);
 
+  // Function to navigate to BookDetails page
+  const handleBookClick = (bookId) => {
+    navigate(`/books/${bookId}`); // Navigate to book details page with bookId
+  };
+
   return (
     <div className="min-h-screen bg-[#fdf5f0]">
-      <div className="p-8 bg-white shadow-md sticky top-0 z-10">
-        <h1 className="text-4xl font-bold text-center text-gray-900 mb-8">
-          Book Titles
-        </h1>
+      <HeroSection /> {/* Hero Section at the top */}
 
+      <div className="p-8 bg-white shadow-md">
         {error && <p className="text-red-500 text-center mt-4">{error}</p>}
 
         {/* Category Tabs */}
@@ -83,7 +90,8 @@ const Titles = () => {
           filteredBooks.map((book) => (
             <div
               key={book.id}
-              className="flex p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+              onClick={() => handleBookClick(book.id)} // Navigate on click
+              className="flex p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-transform duration-300 transform hover:scale-105 cursor-pointer"
             >
               <img
                 src={`http://localhost:3001/${book.image}`}
