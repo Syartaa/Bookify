@@ -1,20 +1,21 @@
-// Navbar.js
 import React from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import logoo from "../../../image/logoo.jpg"; 
 
 function Navbar() {
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate(); 
 
   const handleLogout = () => {
-    // Perform any necessary logout logic here (e.g., clearing tokens)
-    // Then redirect to the login page
     navigate("/login");
   };
 
   return (
     <header className="w-full bg-white shadow-md py-4 px-8 flex justify-between items-center">
-      <div className="text-3xl font-bold text-gray-800">BOOKIFY</div>
+      <div className="flex items-center">
+        <img src={logoo} alt="Logo" className="h-10 mr-2" /> {/* Adjust height as needed */}
+        <div className="text-3xl font-bold text-gray-800">BOOKIFY</div>
+      </div>
       <nav className="space-x-8 flex items-center">
         <a href="/home" className="text-gray-700 hover:text-pink-500">Home</a>
         <a href="/authors" className="text-gray-700 hover:text-pink-500">Authors</a>
