@@ -94,10 +94,34 @@ const deleteReview = async (req, res) => {
     }
 };
 
+// Get all reviews for a specific book
+const getReviewsByBookId = async (req, res) => {
+    const { bookId } = req.params; // Get bookId from request parameters
+    try {
+        const reviews = await Review.findAll({
+            where: { bookId }, // Filter by bookId
+            include: [
+                { model: User, attributes: ['id', 'name'] } // Include user details
+            ],
+        });
+
+        if (reviews.length === 0) {
+            return res.status(404).json({ message: 'No reviews found for this book.' });
+        }
+
+        res.json(reviews);
+    } catch (error) {
+        console.error('Error fetching reviews:', error.message);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
 module.exports = {
     getAllReviews,
     getReviewById,
     createReview,
     updateReview,
     deleteReview,
+    getReviewsByBookId, // Export the new method
 };
+
