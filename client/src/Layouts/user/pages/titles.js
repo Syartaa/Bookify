@@ -85,51 +85,50 @@ const Titles = () => {
       </div>
 
       {/* Book Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 p-8">
-        {filteredBooks.length > 0 ? (
-          filteredBooks.map((book) => (
-            <div
-              key={book.id}
-              onClick={() => handleBookClick(book.id)} // Navigate on click
-              className="flex p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-transform duration-300 transform hover:scale-105 cursor-pointer"
-            >
-              <img
-                src={`http://localhost:3001/${book.image}`}
-                alt={book.title}
-                className="w-40 h-60 object-cover rounded-lg mr-6"
-              />
-              <div className="flex flex-col justify-between">
-                <div>
-                  <h2 className="text-2xl font-semibold text-gray-800">
-                    {book.title}
-                  </h2>
-                  <p className="text-lg text-gray-600 mt-1">
-                    {typeof book.author === 'string'
-                      ? book.author
-                      : book.author.name}
-                  </p>
-                  <div className="flex items-center mt-4">
-                    <span className="text-yellow-500 text-xl">
-                      {'★'.repeat(book.rating || 0)}
-                    </span>
-                    <span className="ml-2 text-lg text-gray-500">
-                      {book.rating ? book.rating.toFixed(1) : 'No rating'}
-                    </span>
-                    <span className="ml-2 text-lg text-gray-500">
-                      • {book.reviewsCount || 0} ratings
-                    </span>
-                  </div>
-                </div>
-                <p className="mt-4 text-lg text-gray-700 line-clamp-3">
-                  {book.description}
-                </p>
-              </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-7 p-8">
+  {filteredBooks.length > 0 ? (
+    filteredBooks.map((book) => (
+      <div
+        key={book.id}
+        onClick={() => handleBookClick(book.id)}
+        className="flex p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-transform duration-300 transform hover:scale-105 cursor-pointer w-full sm:w-[26rem]" // Adjusted width here
+      >
+        <img
+          src={`http://localhost:3001/${book.image}`}
+          alt={book.title}
+          className="w-32 h-48 object-cover rounded-lg mr-6"
+        />
+        <div className="flex flex-col justify-between flex-1">
+          <div>
+            <h2 className="text-2xl font-semibold text-gray-800">
+              {book.title}
+            </h2>
+            <p className="text-lg text-gray-600 mt-1">
+              {typeof book.author === 'string' ? book.author : book.author.name}
+            </p>
+            <div className="flex items-center mt-4">
+              <span className="text-yellow-500 text-xl">
+                {'★'.repeat(book.rating || 0)}
+              </span>
+              <span className="ml-2 text-lg text-gray-500">
+                {book.rating ? book.rating.toFixed(1) : 'No rating'}
+              </span>
+              <span className="ml-2 text-lg text-gray-500">
+                • {book.reviewsCount || 0} ratings
+              </span>
             </div>
-          ))
-        ) : (
-          <p className="text-center text-lg italic">No books found.</p>
-        )}
+          </div>
+          <p className="mt-4 text-lg text-gray-700 line-clamp-3">
+            {book.description}
+          </p>
+        </div>
       </div>
+    ))
+  ) : (
+    <p className="text-center text-lg italic">No books found.</p>
+  )}
+</div>
+
     </div>
   );
 };

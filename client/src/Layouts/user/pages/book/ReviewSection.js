@@ -22,10 +22,10 @@ const ReviewSection = ({ bookId, userId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (comment.trim().split(" ").length < 10) {
-      alert("Review must be at least 10 words.");
-      return;
-    }
+    // if (comment.trim().split(" ").length < 1000) {
+    //   alert("Review must be at least 10 words.");
+    //   return;
+    // }
     try {
       await axios.post(`http://localhost:3001/review`, {
         rating,
