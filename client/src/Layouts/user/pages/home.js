@@ -10,6 +10,7 @@ import quote6 from "../../../image/quote6.jpg";
 import quote44 from "../../../image/quote44.jpg";
 import quote55 from "../../../image/quote55.jpg";
 import quote77 from "../../../image/quote77.jpg";
+import AuthorSlider from "./book/AuthorSlider";
 
 const sliderImages = [quote11, quote3, quote4, quote5, quote6, quote44, quote55, quote77];
 const quotes = [
@@ -124,7 +125,7 @@ const Home = () => {
       </section>
 
       {/* Modal */}
-      
+      <AuthorSlider />
     </div>
   );
 };
