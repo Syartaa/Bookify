@@ -21,7 +21,7 @@ const Contact = () => {
   };
 
   return (
-    <section className="py-24 bg-pink-50">
+    <section className="py-24 bg-[#fdf5f0]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="md:flex gap-x-24 clear-left md:mb-16 mb-10">
           <div className="md:mb-0 mb-4">

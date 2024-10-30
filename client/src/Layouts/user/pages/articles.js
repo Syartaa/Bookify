@@ -45,7 +45,7 @@ const ArticlesPage = () => {
   };
 
   return (
-    <section className="py-24 bg-orange-100">
+    <section className="py-24 bg-[#fdf5f0]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex justify-center flex-wrap md:flex-wrap lg:flex-nowrap lg:flex-row lg:justify-between gap-8">
           <div className="w-full flex justify-between flex-col lg:w-2/5">
