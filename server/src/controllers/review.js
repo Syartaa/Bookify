@@ -34,6 +34,7 @@ const getReviewById = async (req, res) => {
 // Create a new review
 const createReview = async (req, res) => {
     const { rating, comment, bookId, userId } = req.body;
+    console.log('Creating review with userId:', userId);
 
     try {
         const review = await Review.create({

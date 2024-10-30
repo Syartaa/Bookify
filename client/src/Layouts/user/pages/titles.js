@@ -37,9 +37,10 @@ const Titles = () => {
                                 {typeof book.author === 'string' ? book.author : book.author.name}
                             </p>
                             <img
-                                src={`http://localhost:3001/uploads/${book.image}`} // Adjust according to your image path
+                                src={`http://localhost:3001/${book.image}`} // Adjust according to your image path
                                 alt={book.title}
                                 className="mt-2 w-full h-auto rounded-md"
+                                style={{ width: '100%', height: '270px', objectFit: 'cover' }}
                             />
                         </div>
                     ))

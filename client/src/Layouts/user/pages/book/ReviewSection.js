@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const ReviewSection = ({ bookId }) => {
+const ReviewSection = ({ bookId , userId}) => {
   const [reviews, setReviews] = useState([]);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -21,7 +21,7 @@ const ReviewSection = ({ bookId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`http://localhost:3001/review`, { rating, comment, bookId });
+      await axios.post(`http://localhost:3001/review`, { rating, comment, bookId ,userId});
       setComment("");
       setRating(0);
       const response = await axios.get(`http://localhost:3001/review?bookId=${bookId}`);
