@@ -87,7 +87,7 @@ console.log("First author:", res.data[0]); // Log the first author object
 
       <div className="overflow-x-auto">
         <Table hoverable>
-          <Table.Head>
+          <Table.Head><Table.HeadCell>Image</Table.HeadCell>
             <Table.HeadCell>Name</Table.HeadCell>
             <Table.HeadCell>Bio</Table.HeadCell>
             <Table.HeadCell>
@@ -98,6 +98,17 @@ console.log("First author:", res.data[0]); // Log the first author object
             {filteredAuthors.length > 0 ? (
               filteredAuthors.map((item) => (
                 <Table.Row key={item.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                   <Table.Cell>
+          {item.image ? (
+            <img
+              src={`http://localhost:3001/${item.image}`} // Adjust the path as needed
+              alt={item.name}
+              className="w-16 h-16 object-cover rounded"
+            />
+          ) : (
+            "No image"
+          )}
+        </Table.Cell>
                   <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                     {item.name}
                   </Table.Cell>

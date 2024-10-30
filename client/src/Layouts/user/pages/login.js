@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from 'js-cookie';
 
-
 export default function Login() {
   const [formData, setFormData] = useState({
     email: "",
@@ -18,7 +17,6 @@ export default function Login() {
       ...prevData,
       [name]: value,
     }));
-    console.log(formData); // Log to check formData
   };
 
   const handleSubmit = async (e) => {
@@ -41,13 +39,15 @@ export default function Login() {
       const data = await response.json();
   
       if (response.ok) {
+        console.log("Login successful:", data); // Log the success data
 
-        console.log(data);
         // Store token and user data in cookies
-        Cookies.set('token', data.token, { sameSite: 'None', secure: true });
-        Cookies.set('user', JSON.stringify(data.user), { sameSite: 'None', secure: true });
+        Cookies.set('token', data.token, { sameSite: 'None', secure: false }); // Set secure: false for local testing
+        Cookies.set('user', JSON.stringify(data.user), { sameSite: 'None', secure: false });
         
-  
+        // Optionally, you can extract userId here if needed
+        const userId = data.user.id; // Adjust based on your user object structure
+
         // Navigate based on the user role
         if (data.user.role === "admin") {
           navigate("/");  // Redirect to the admin dashboard
@@ -55,6 +55,8 @@ export default function Login() {
           navigate("/home");  // Redirect to the user home page
         }
       } else {
+        // Log full response data for better debugging
+        console.error("Login failed response:", data);
         setError(data.error || "Login failed, please try again.");
       }
     } catch (err) {
@@ -64,7 +66,6 @@ export default function Login() {
       setLoading(false);  // Stop the loading state
     }
   };
-  
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">

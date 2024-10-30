@@ -6,6 +6,7 @@ import { Modal, Button, Label, TextInput } from "flowbite-react";
 function EditAuthor({ authorId, isOpen, onClose, onSave }) {
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
+  const [image, setImage] = useState(null); // For storing the image file
   const { token } = useUser();
 
   useEffect(() => {
@@ -19,6 +20,7 @@ function EditAuthor({ authorId, isOpen, onClose, onSave }) {
         const res = await axios.get(`http://localhost:3001/author/${authorId}`, config);
         setName(res.data.name);
         setBio(res.data.bio);
+        setImage(res.data.image); // Assuming image URL is returned in the response
       } catch (error) {
         console.error("Error fetching author:", error);
       }
@@ -29,15 +31,27 @@ function EditAuthor({ authorId, isOpen, onClose, onSave }) {
     }
   }, [authorId, token, isOpen]);
 
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("bio", bio);
+      if (image) {
+        formData.append("image", image); // Include the image file if it's selected
+      }
+
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
         },
       };
-      await axios.put(`http://localhost:3001/author/${authorId}`, { name, bio }, config);
+      await axios.put(`http://localhost:3001/author/${authorId}`, formData, config);
       onSave(); // Refresh the list after saving
       onClose(); // Close the modal after saving
     } catch (error) {
@@ -53,9 +67,7 @@ function EditAuthor({ authorId, isOpen, onClose, onSave }) {
           <h3 className="text-xl font-medium text-gray-900 text-center">Edit Author</h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <div className="mb-2 block">
-                <Label htmlFor="editAuthorName" value="Author Name" />
-              </div>
+              <Label htmlFor="editAuthorName" value="Author Name" />
               <TextInput
                 id="editAuthorName"
                 value={name}
@@ -65,9 +77,7 @@ function EditAuthor({ authorId, isOpen, onClose, onSave }) {
               />
             </div>
             <div>
-              <div className="mb-2 block">
-                <Label htmlFor="editAuthorBio" value="Author Bio" />
-              </div>
+              <Label htmlFor="editAuthorBio" value="Author Bio" />
               <TextInput
                 id="editAuthorBio"
                 as="textarea"
@@ -77,6 +87,18 @@ function EditAuthor({ authorId, isOpen, onClose, onSave }) {
                 placeholder="Enter author's bio"
                 required
               />
+            </div>
+            <div>
+              <Label htmlFor="editAuthorImage" value="Author Image" />
+              <input
+                type="file"
+                id="editAuthorImage"
+                onChange={handleImageChange}
+                className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg"
+              />
+              {image && typeof image === "string" && (
+                <img src={`http://localhost:3001/${image}`} alt="Author" className="w-16 h-16 mt-2 object-cover rounded" />
+              )}
             </div>
           </form>
           <div className="flex justify-end space-x-2">

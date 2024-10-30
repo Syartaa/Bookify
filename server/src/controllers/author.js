@@ -1,4 +1,6 @@
 const Author = require('../models/author');
+const Book = require('../models/book');
+const Category = require('../models/category');
 
 // Get all authors
 const getAllAuthors = async (req, res) => {
@@ -27,16 +29,18 @@ const getAuthorById = async (req, res) => {
 // Create a new author
 const createAuthor = async (req, res) => {
     const { name, bio } = req.body;
+    const image = req.file ? req.file.path : null; // Get the image path from the request
 
     try {
         const author = await Author.create({
             name,
             bio,
+            image, // Save the image path
         });
 
         res.status(201).json(author);
     } catch (error) {
-        console.error('Error creating author:', error.message); // More detailed error logging
+        console.error('Error creating author:', error.message);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
@@ -45,6 +49,7 @@ const createAuthor = async (req, res) => {
 const updateAuthor = async (req, res) => {
     const { id } = req.params;
     const { name, bio } = req.body;
+    const image = req.file ? req.file.path : null; // Get the new image path if uploaded
 
     try {
         const author = await Author.findByPk(id);
@@ -56,6 +61,7 @@ const updateAuthor = async (req, res) => {
         await author.update({
             name: name || author.name,
             bio: bio || author.bio,
+            image: image || author.image, // Update image only if a new one is uploaded
         });
 
         res.json(author);
@@ -67,7 +73,7 @@ const updateAuthor = async (req, res) => {
 
 // Delete an author
 const deleteAuthor = async (req, res) => {
-    const { id } = req.params; // No need for Number() since id is already a string
+    const { id } = req.params;
 
     try {
         const deletedAuthor = await Author.findByPk(id);

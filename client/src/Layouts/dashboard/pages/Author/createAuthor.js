@@ -6,24 +6,37 @@ import { Button, Modal, Label, TextInput } from "flowbite-react";
 function CreateAuthor({ isOpen, onClose, onSave }) {
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
+  const [image, setImage] = useState(null); // To store the image file
   const { token } = useUser();
+
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("bio", bio);
+      if (image) {
+        formData.append("image", image); // Include the image file if selected
+      }
+
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
         },
       };
-      await axios.post("http://localhost:3001/author", { name, bio }, config);
+      await axios.post("http://localhost:3001/author", formData, config);
       onSave(); // Refresh the list after saving
       setName(""); // Reset the input field
       setBio(""); // Reset the input field
+      setImage(null); // Reset the image field
       onClose(); // Close the modal after saving
     } catch (error) {
       console.error("Error creating author:", error);
-      // Optionally, you could add user feedback for errors here
     }
   };
 
@@ -35,9 +48,7 @@ function CreateAuthor({ isOpen, onClose, onSave }) {
           <h3 className="text-xl font-medium text-gray-900 text-center">Create Author</h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <div className="mb-2 block">
-                <Label htmlFor="authorName" value="Author Name" />
-              </div>
+              <Label htmlFor="authorName" value="Author Name" />
               <TextInput
                 id="authorName"
                 value={name}
@@ -47,9 +58,7 @@ function CreateAuthor({ isOpen, onClose, onSave }) {
               />
             </div>
             <div>
-              <div className="mb-2 block">
-                <Label htmlFor="authorBio" value="Author Bio" />
-              </div>
+              <Label htmlFor="authorBio" value="Author Bio" />
               <TextInput
                 id="authorBio"
                 as="textarea"
@@ -58,6 +67,15 @@ function CreateAuthor({ isOpen, onClose, onSave }) {
                 onChange={(e) => setBio(e.target.value)}
                 placeholder="Enter author's bio"
                 required
+              />
+            </div>
+            <div>
+              <Label htmlFor="authorImage" value="Author Image" />
+              <input
+                type="file"
+                id="authorImage"
+                onChange={handleImageChange}
+                className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg"
               />
             </div>
           </form>

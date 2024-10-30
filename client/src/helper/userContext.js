@@ -10,24 +10,20 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const getUserFromCookies = () => {
       const userData = Cookies.get('user');
-      const token = Cookies.get('token');
-      let parsedUser = null;
-      let parsedToken = null;
-  
+      const tokenData = Cookies.get('token');
+
       if (userData) {
         try {
-          parsedUser = JSON.parse(userData); // Attempt to parse JSON
+          const parsedUser = JSON.parse(userData);
+          setUser(parsedUser);
         } catch (e) {
-          console.error("Failed to parse user data:", e);
+          console.error('Failed to parse user data:', e);
         }
       }
 
-      if (token) {
-        parsedToken = token; // No parsing needed if it's a simple string
+      if (tokenData) {
+        setToken(tokenData); // No parsing needed for token
       }
-  
-      setUser(parsedUser); // Set the parsed user
-      setToken(parsedToken); // Set the token
     };
 
     getUserFromCookies();
