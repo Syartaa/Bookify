@@ -25,7 +25,7 @@ const Contact = () => {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="md:flex gap-x-24 clear-left md:mb-16 mb-10">
           <div className="md:mb-0 mb-4">
-            <h2 className="text-black font-manrope text-4xl font-semibold leading-10 mb-5 md:text-left text-center">
+            <h2 className="text-[#563f32] font-manrope text-4xl font-semibold leading-10 mb-5 md:text-left text-center">
               Get In Touch with Bookify
             </h2>
             <p className="text-gray-600 text-lg font-normal leading-7 mb-7 md:text-left text-center">
@@ -77,12 +77,12 @@ const Contact = () => {
           </div>
           <div className="border-l-2 md:border-pink-600 border-white px-10 py-6">
             <div className="mb-8">
-              <h6 className="text-gray-500 text-sm font-medium leading-5 pb-3 md:text-start text-center">Follow us on social media</h6>
-              <h3 className="text-black text-xl font-semibold leading-8 md:text-start text-center">@bookify</h3>
+              <h6 className="text-black text-sm font-medium leading-5 pb-3 md:text-start text-center">Follow us on social media</h6>
+              <h3 className="text-[#563f32] text-xl font-semibold leading-8 md:text-start text-center">@bookify</h3>
             </div>
             <div>
-              <h6 className="text-gray-500 text-sm font-medium leading-5 pb-3 md:text-start text-center">Support us</h6>
-              <h3 className="text-black text-xl font-semibold leading-8 md:text-start text-center">We love and appreciate books</h3>
+              <h6 className="text-black text-sm font-medium leading-5 pb-3 md:text-start text-center">Support us</h6>
+              <h3 className="text-[#563f32] text-xl font-semibold leading-8 md:text-start text-center">We love and appreciate books</h3>
             </div>
           </div>
         </div>

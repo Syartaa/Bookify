@@ -25,8 +25,7 @@ const Authors = () => {
     // Render the component
     return (
         <div className="bg-[#fdf5f0] min-h-screen p-8">
-            <h1 className="text-4xl font-bold text-center text-orange mb-8">Our Authors</h1>
-            <h1 className="text-4xl font-bold text-center text-black mb-8">Authors</h1>
+            <h1 className="text-4xl font-bold text-center text-[#563f32] mb-8">Authors</h1>
             {error && <p className="text-red-500 text-center mb-4">{error}</p>}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {authors.length > 0 ? (
