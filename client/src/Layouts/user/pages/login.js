@@ -17,10 +17,13 @@ export default function Login() {
       ...prevData,
       [name]: value,
     }));
+    console.log(formData); // Log to check formData
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
     setError("");  // Clear previous errors
     setLoading(true);  // Start the loading state
   
@@ -39,15 +42,14 @@ export default function Login() {
       const data = await response.json();
   
       if (response.ok) {
-        console.log("Login successful:", data); // Log the success data
-
+        // Handle successful login, e.g., redirect or show a success message
+        console.log("Login successful", data);
+        console.log(data);
         // Store token and user data in cookies
-        Cookies.set('token', data.token, { sameSite: 'None', secure: false }); // Set secure: false for local testing
-        Cookies.set('user', JSON.stringify(data.user), { sameSite: 'None', secure: false });
+        Cookies.set('token', data.token, { sameSite: 'None', secure: true });
+        Cookies.set('user', JSON.stringify(data.user), { sameSite: 'None', secure: true });
         
-        // Optionally, you can extract userId here if needed
-        const userId = data.user.id; // Adjust based on your user object structure
-
+  
         // Navigate based on the user role
         if (data.user.role === "admin") {
           navigate("/");  // Redirect to the admin dashboard
@@ -55,17 +57,19 @@ export default function Login() {
           navigate("/home");  // Redirect to the user home page
         }
       } else {
-        // Log full response data for better debugging
-        console.error("Login failed response:", data);
+        setError(data.error || "Login failed");
         setError(data.error || "Login failed, please try again.");
       }
     } catch (err) {
       console.error("Error during login:", err);
+      setError("Internal server error");
       setError("Internal server error, please try again later.");
     } finally {
+      setLoading(false);
       setLoading(false);  // Stop the loading state
     }
   };
+  
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">

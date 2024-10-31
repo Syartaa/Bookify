@@ -8,13 +8,14 @@ const RequireAuth = ({ allowedRoles }) => {
   let user = null;
 
   try {
-    user = JSON.parse(Cookies.get('user'));
+    const userData = Cookies.get('user');
+    user = userData ? JSON.parse(userData) : null; // Check if userData exists before parsing
   } catch (error) {
     console.error('Error parsing user data:', error);
     return <Navigate to="/login" />;
   }
 
-  if (!token) {
+  if (!token || !user) {
     return <Navigate to="/login" />;
   }
 
