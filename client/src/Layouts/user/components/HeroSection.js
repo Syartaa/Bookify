@@ -6,17 +6,17 @@ const HeroSection = () => {
     <div className="bg-gray-50 py-16 px-8 sm:px-12 lg:px-24 flex flex-col lg:flex-row items-center justify-between">
       {/* Text Content */}
       <div className="max-w-lg text-center lg:text-left mb-8 lg:mb-0">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">
+        <h1 className="text-4xl font-bold text-[#563f32] mb-4 leading-tight">
           Enjoy popular ebooks when you subscribe
         </h1>
-        <p className="text-lg text-gray-600 mb-6">
+        <p className="text-lg text-[#563f32] mb-6">
           Discover millions of ebooks, audiobooks, and so much more for just
           <span className="font-semibold"> €10.99/month.</span>
         </p>
         <button className="bg-black text-white py-3 px-6 rounded-lg hover:bg-gray-800 transition duration-300">
           Read free for 30 days
         </button>
-        <p className="mt-4 text-sm text-gray-500">Cancel anytime.</p>
+        <p className="mt-4 text-sm text-[#563f32]">Cancel anytime.</p>
       </div>
 
       {/* Image Section */}
