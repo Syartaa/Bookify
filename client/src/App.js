@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { UserProvider } from "./helper/userContext";
 import DashboardLayout from "./Layouts/dashboard/pages/dashboardLayout";
-import { ThemeProvider } from '@material-tailwind/react';
+import { ThemeProvider } from "@material-tailwind/react";
 
 import RequireAuth from "./helper/requireAuth";
 import UserHome from "./Layouts/user/pages/home"; // The user-specific page
@@ -25,49 +25,48 @@ import Authors from "./Layouts/user/pages/authors";
 import ArticlesPage from "./Layouts/user/pages/articles";
 import ArticleDetail from "./Layouts/user/components/ArticleDetail";
 import Contact from "./Layouts/user/pages/contact";
-import BookDetails from "./Layouts/user/pages/book/booksDetails";
+import LoanPage from "./Layouts/user/pages/loanpage";
 
 function App() {
   return (
     <ThemeProvider>
-    <Router>
-      <UserProvider>
-        <Routes>
-          {/* Protected admin route */}
-          <Route element={<RequireAuth allowedRoles={["admin"]} />}>
-            <Route path="/" element={<DashboardLayout />} >
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="author" element={<AuthorList />} />
-            <Route path="category" element={<CategoryList />} />
-            <Route path="book" element={<BookList />} />
-            <Route path="reservation" element={<ReservationList />} />
-            <Route path="loan" element={<LoanList />} />
-            <Route path="review" element={<ReviewList />} />
-            <Route path="fine" element={<FineList />} />
+      <Router>
+        <UserProvider>
+          <Routes>
+            {/* Protected admin route */}
+            <Route element={<RequireAuth allowedRoles={["admin"]} />}>
+              <Route path="/" element={<DashboardLayout />}>
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="author" element={<AuthorList />} />
+                <Route path="category" element={<CategoryList />} />
+                <Route path="book" element={<BookList />} />
+                <Route path="reservation" element={<ReservationList />} />
+                <Route path="loan" element={<LoanList />} />
+                <Route path="review" element={<ReviewList />} />
+                <Route path="fine" element={<FineList />} />
+              </Route>
             </Route>
-          </Route>
 
-          {/* Protected user route */}
-          <Route element={<RequireAuth allowedRoles={["user"]} />}>
-          <Route path="/" element={<UserLayout />}>
-          <Route path="/home" element={<Home />} />
-          <Route path="/titles" element={<Titles />} />
-          <Route path="/authors" element={<Authors />} />
-          <Route path="/articles" element={<ArticlesPage />} />
-          <Route path="/articles/:id" element={<ArticleDetail />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/books/:id" element={<BookDetails />} />
-          </Route>
+            {/* Protected user route */}
+            <Route element={<RequireAuth allowedRoles={["user"]} />}>
+              <Route path="/" element={<UserLayout />}>
+                <Route path="/home" element={<Home />} />
+                <Route path="/titles" element={<Titles />} />
+                <Route path="/authors" element={<Authors />} />
+                <Route path="/articles" element={<ArticlesPage />} />
+                <Route path="/articles/:id" element={<ArticleDetail />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/loans" element={<LoanPage />} />
+              </Route>
+            </Route>
 
-          </Route>
-
-          {/* Open routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/unauthorized" element={<Unauthorized />} />
-        </Routes>
-      </UserProvider>
-    </Router>
+            {/* Open routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/unauthorized" element={<Unauthorized />} />
+          </Routes>
+        </UserProvider>
+      </Router>
     </ThemeProvider>
   );
 }
