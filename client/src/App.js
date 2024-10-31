@@ -27,6 +27,7 @@ import ArticleDetail from "./Layouts/user/components/ArticleDetail";
 import Contact from "./Layouts/user/pages/contact";
 import BookDetails from "./Layouts/user/pages/book/booksDetails";
 import ReservationsPage from "./Layouts/user/pages/ReservationsPage";
+import FavoriteScreen from "./Layouts/user/pages/book/FavoriteScreen";
 
 function App() {
   return (
@@ -59,6 +60,8 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/books/:id" element={<BookDetails />} />
           <Route path="/reservations" element={<ReservationsPage />} />
+          <Route path="/favorites" element={<FavoriteScreen />} />
+
           </Route>
 
           </Route>
