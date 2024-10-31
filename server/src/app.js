@@ -13,6 +13,7 @@ const loan = require('./models/loan');
 const reservation = require('./models/reservation');
 const fine = require('./models/fine');
 const review = require('./models/review');
+const favorite = require('./models/favortie');
 
 const authorRoutes = require('./routes/author');
 const categoryRoutes = require('./routes/category');
@@ -21,6 +22,7 @@ const reservationRoutes = require('./routes/reservation');
 const loanRoutes = require('./routes/loan');
 const fineRoutes = require('./routes/fine');
 const reviewRoutes = require('./routes/review');
+const favoriteRoutes = require('./routes/favorite');
 
 const userAuthRoutes = require('./routes/auth/user.js');
 
@@ -57,6 +59,7 @@ async function startServer() {
   app.use('/loan', loanRoutes);
   app.use('/fine', fineRoutes);
   app.use('/review', reviewRoutes);
+  app.use('/favorite', favoriteRoutes);
 
   app.use('/uploads', express.static('uploads'));
 
