@@ -78,13 +78,7 @@ function Navbar() {
           />
           {showLogout && (
             <div className="absolute right-0 mt-2 bg-white border rounded shadow-lg z-20 w-48">
-              <button
-                onClick={() => navigate("/my-books")}
-                className="block px-4 py-2 text-base text-gray-800 hover:bg-gray-100 w-full text-left"
-                style={{ fontFamily: "Poppins, sans-serif" }}
-              >
-                My Books
-              </button>
+              
               <button
                 onClick={() => navigate("/reservations")}
                 className="block px-4 py-2 text-base text-gray-800 hover:bg-gray-100 w-full text-left"

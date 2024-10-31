@@ -26,6 +26,7 @@ import ArticlesPage from "./Layouts/user/pages/articles";
 import ArticleDetail from "./Layouts/user/components/ArticleDetail";
 import Contact from "./Layouts/user/pages/contact";
 import BookDetails from "./Layouts/user/pages/book/booksDetails";
+import ReservationsPage from "./Layouts/user/pages/ReservationsPage";
 
 function App() {
   return (
@@ -57,6 +58,7 @@ function App() {
           <Route path="/articles/:id" element={<ArticleDetail />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/books/:id" element={<BookDetails />} />
+          <Route path="/reservations" element={<ReservationsPage />} />
           </Route>
 
           </Route>

@@ -1,4 +1,6 @@
+const Author = require('../models/author');
 const Book = require('../models/book');
+const Cateogory = require('../models/category');
 const Reservation = require('../models/reservation');
 const User = require('../models/user');
 
@@ -7,7 +9,11 @@ const getAllReservations = async (req, res) => {
     try {
         const reservations = await Reservation.findAll({
             include: [
-                { model: Book, attributes: ['id', 'title'] },
+                { model: Book,
+                    include: [
+                      { model: Author, attributes: ["name"] }, // Include author details
+                      { model: Cateogory, attributes: ["name"] }, // Include category details },
+                    ]},
                 { model: User, attributes: ['id', 'name'] }
             ],
         });

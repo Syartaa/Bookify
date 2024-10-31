@@ -30,9 +30,37 @@ const BookDetails = () => {
   if (!book) return <div>Loading...</div>;
   if (!user) return <div>Loading user data...</div>; // Ensure user is loaded
 
-  const handleReserve = () => {
-    alert(`You have reserved ${book.title}!`);
+  const handleReserve = async () => {
+    // Ensure the user ID and book ID are available
+    if (!userId || !book) {
+      alert('Unable to reserve the book. Please try again.');
+      return;
+    }
+  
+    // Create reservation data
+    const reservationData = {
+      reservationDate: new Date().toISOString(), // Current date and time
+      status: 'active', // Status of the reservation
+      bookId: book.id, // ID of the book being reserved
+      userId: userId, // ID of the user making the reservation
+    };
+  
+    try {
+      // Make the API call to create the reservation
+      const response = await axios.post('http://localhost:3001/reservation', reservationData);
+  
+      // Log the response for debugging
+      console.log('Reservation Response:', response.data);
+  
+      // Show success alert
+      alert(`You have reserved ${book.title}!`);
+    } catch (error) {
+      // Handle any errors that occur during the reservation process
+      console.error('Error reserving book:', error);
+      alert('Failed to reserve the book. Please try again.');
+    }
   };
+  
 
   const handleLoan = () => {
     alert(`You have loaned ${book.title}!`);
