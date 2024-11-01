@@ -26,6 +26,8 @@ import ArticlesPage from "./Layouts/user/pages/articles";
 import ArticleDetail from "./Layouts/user/components/ArticleDetail";
 import Contact from "./Layouts/user/pages/contact";
 import LoanPage from "./Layouts/user/pages/loanpage";
+import ReservationsPage from "./Layouts/user/pages/ReservationsPage";
+import FavoriteScreen from "./Layouts/user/pages/book/FavoriteScreen";
 
 function App() {
   return (
@@ -47,18 +49,22 @@ function App() {
               </Route>
             </Route>
 
-            {/* Protected user route */}
-            <Route element={<RequireAuth allowedRoles={["user"]} />}>
-              <Route path="/" element={<UserLayout />}>
-                <Route path="/home" element={<Home />} />
-                <Route path="/titles" element={<Titles />} />
-                <Route path="/authors" element={<Authors />} />
-                <Route path="/articles" element={<ArticlesPage />} />
-                <Route path="/articles/:id" element={<ArticleDetail />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/loans" element={<LoanPage />} />
-              </Route>
-            </Route>
+          {/* Protected user route */}
+          <Route element={<RequireAuth allowedRoles={["user"]} />}>
+          <Route path="/" element={<UserLayout />}>
+          <Route path="/home" element={<Home />} />
+          <Route path="/titles" element={<Titles />} />
+          <Route path="/authors" element={<Authors />} />
+          <Route path="/articles" element={<ArticlesPage />} />
+          <Route path="/articles/:id" element={<ArticleDetail />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/books/:id" element={<BookDetails />} />
+          <Route path="/reservations" element={<ReservationsPage />} />
+          <Route path="/favorites" element={<FavoriteScreen />} />
+          <Route path="/loans" element={<LoanPage />} />
+          </Route>
+
+          </Route>
 
             {/* Open routes */}
             <Route path="/login" element={<Login />} />

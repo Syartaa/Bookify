@@ -14,6 +14,7 @@ function CreateBook({ isOpen, onClose, onSave, categories, authors }) {
     const [description, setDescription] = useState("");
     const [image, setImage] = useState(null); // New state for image
     const { token } = useUser();
+    const [popularity, setPopularity] = useState(0);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -33,6 +34,7 @@ function CreateBook({ isOpen, onClose, onSave, categories, authors }) {
             formData.append("authorId", authorId);
             formData.append("availabilityStatus", availabilityStatus);
             formData.append("description", description);
+            formData.append("popularity", popularity);
             if (image) {
                 formData.append("image", image); // Append the image file
             }
@@ -48,6 +50,7 @@ function CreateBook({ isOpen, onClose, onSave, categories, authors }) {
             setDescription("");
             setImage(null); // Reset image input
             onClose(); // Close the modal after saving
+            setPopularity(0);
         } catch (err) {
             console.error("Error creating book:", err);
         }
@@ -86,6 +89,7 @@ function CreateBook({ isOpen, onClose, onSave, categories, authors }) {
                             onChange={(e) => setPublishedDate(e.target.value)}
                         />
                     </div>
+                    
                     <div className="mb-4">
                         <Label htmlFor="category" value="Category" />
                         <Select
@@ -138,6 +142,18 @@ function CreateBook({ isOpen, onClose, onSave, categories, authors }) {
                             required
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <Label htmlFor="popularity" value="Popularity (1-5)" />
+                        <TextInput
+                            id="popularity"
+                            type="number"
+                            min="1"
+                            max="5"
+                            required
+                            value={popularity}
+                            onChange={(e) => setPopularity(e.target.value)}
                         />
                     </div>
                     <div className="mb-4">

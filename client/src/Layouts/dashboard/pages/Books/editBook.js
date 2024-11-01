@@ -13,6 +13,7 @@ function EditBook({ isOpen, onClose, onSave, bookId, categories, authors }) {
     const [description, setDescription] = useState("");
     const [image, setImage] = useState(null); // New state for image
     const { token } = useUser();
+    const [popularity, setPopularity] = useState(0);
 
     useEffect(() => {
         if (bookId) {
@@ -39,6 +40,7 @@ function EditBook({ isOpen, onClose, onSave, bookId, categories, authors }) {
             setAvailabilityStatus(book.availabilityStatus);
             setDescription(book.description);
             setImage(null); // Reset image
+            setPopularity(0);
         } catch (err) {
             console.error("Error fetching book details:", err);
         }
@@ -62,6 +64,7 @@ function EditBook({ isOpen, onClose, onSave, bookId, categories, authors }) {
             formData.append("authorId", authorId);
             formData.append("availabilityStatus", availabilityStatus);
             formData.append("description", description);
+            formData.append("popularity", popularity);
             if (image) {
                 formData.append("image", image); // Append the image if selected
             }
@@ -159,6 +162,18 @@ function EditBook({ isOpen, onClose, onSave, bookId, categories, authors }) {
                             required
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <Label htmlFor="popularity" value="Popularity (1-5)" />
+                        <TextInput
+                            id="popularity"
+                            type="number"
+                            min="1"
+                            max="5"
+                            required
+                            value={popularity}
+                            onChange={(e) => setPopularity(e.target.value)}
                         />
                     </div>
                     <div className="mb-4">

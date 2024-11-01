@@ -38,18 +38,31 @@ const getLoanById = async (req, res) => {
     }
 };
 
-// Create a new loan
+// In your backend loan controller
+
 const createLoan = async (req, res) => {
-    const { borrowDate, returnDate, dueDate, bookId, userId } = req.body;
+    const { bookId, userId } = req.body;
+    const borrowDate = new Date(); // Current date
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 14); // Set due date 2 weeks from now
 
     try {
+        // Check if the book is available
+        const book = await Book.findByPk(bookId);
+        if (!book || book.availabilityStatus !== 'available') {
+            return res.status(400).json({ error: 'Book is not available for loan.' });
+        }
+
+        // Create the loan
         const loan = await Loan.create({
             borrowDate,
-            returnDate,
             dueDate,
             bookId,
             userId,
         });
+
+        // Update the book status to "borrowed"
+        await book.update({ availabilityStatus: 'borrowed' });
 
         res.status(201).json(loan);
     } catch (error) {
@@ -57,6 +70,7 @@ const createLoan = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 // Update a loan
 const updateLoan = async (req, res) => {

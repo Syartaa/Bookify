@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import CreateReview from "./CreateReview"; // CreateReview modal component
-import EditReview from "./EditReview"; // EditReview modal component
+import CreateReview from "./CreateReview";
+import EditReview from "./EditReview";
 import { useUser } from "../../../../helper/userContext";
-import { Table, Alert } from "flowbite-react"; // Importing Alert for error handling
+import { Table, Alert } from "flowbite-react";
 
 function ReviewList() {
     const [reviews, setReviews] = useState([]);
@@ -12,15 +12,15 @@ function ReviewList() {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedReviewId, setSelectedReviewId] = useState(null);
-    const [loading, setLoading] = useState(true); // Loading state
-    const [error, setError] = useState(null); // Error state
-    const [books, setBooks] = useState([]); // State for books
-    const [users, setUsers] = useState([]); // State for users
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [books, setBooks] = useState([]);
+    const [users, setUsers] = useState([]);
     const { token } = useUser();
 
     const fetchAllReviews = async () => {
-        setLoading(true); // Start loading
-        setError(null); // Reset error
+        setLoading(true);
+        setError(null);
         try {
             const config = {
                 headers: {
@@ -32,9 +32,9 @@ function ReviewList() {
             setFilteredReviews(res.data);
         } catch (err) {
             console.error("Error fetching reviews:", err);
-            setError("Failed to load reviews. Please try again later."); // Set error message
+            setError("Failed to load reviews. Please try again later.");
         } finally {
-            setLoading(false); // End loading
+            setLoading(false);
         }
     };
 
@@ -71,8 +71,8 @@ function ReviewList() {
     useEffect(() => {
         if (token) {
             fetchAllReviews();
-            fetchBooks(); // Fetch books on mount
-            fetchUsers(); // Fetch users on mount
+            fetchBooks();
+            fetchUsers();
         }
     }, [token]);
 
@@ -87,8 +87,13 @@ function ReviewList() {
             fetchAllReviews();
         } catch (err) {
             console.error(err);
-            setError("Failed to delete review. Please try again."); // Set error message
+            setError("Failed to delete review. Please try again.");
         }
+    };
+
+    const handleEdit = (id) => {
+        setIsEditModalOpen(true);
+        setSelectedReviewId(id); // Set the selected review ID for editing
     };
 
     const handleSearch = (query) => {
@@ -101,7 +106,7 @@ function ReviewList() {
 
     return (
         <div className="bg-[#d9d9fb] p-5">
-            {error && <Alert color="failure">{error}</Alert>} {/* Display error message */}
+            {error && <Alert color="failure">{error}</Alert>}
 
             <div className="flex justify-between mb-4">
                 <button
@@ -137,7 +142,7 @@ function ReviewList() {
                         </Table.HeadCell>
                     </Table.Head>
                     <Table.Body className="divide-y">
-                        {loading ? ( // Show loading state
+                        {loading ? (
                             <Table.Row>
                                 <Table.Cell colSpan="5" className="text-center">Loading...</Table.Cell>
                             </Table.Row>
@@ -152,10 +157,7 @@ function ReviewList() {
                                     <Table.Cell>{item.user?.name}</Table.Cell>
                                     <Table.Cell>
                                         <button
-                                            onClick={() => {
-                                                setIsEditModalOpen(true);
-                                                setSelectedReviewId(item.id);
-                                            }}
+                                            onClick={() => handleEdit(item.id)} // Use handleEdit
                                             className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
                                         >
                                             Edit
@@ -179,39 +181,30 @@ function ReviewList() {
             </div>
 
             {isCreateModalOpen && (
-                <div className="modal-container">
-                    <div className="modal-content">
-                        <CreateReview
-                            isOpen={isCreateModalOpen}
-                            onClose={() => setIsCreateModalOpen(false)}
-                            onSave={() => {
-                                setIsCreateModalOpen(false);
-                                fetchAllReviews();
-                            }}
-                            books={books} // Pass books to CreateReview
-                            users={users} // Pass users to CreateReview
-                        />
-                    </div>
-                </div>
+                <CreateReview
+                    isOpen={isCreateModalOpen}
+                    onClose={() => setIsCreateModalOpen(false)}
+                    onSave={() => {
+                        setIsCreateModalOpen(false);
+                        fetchAllReviews();
+                    }}
+                    books={books}
+                    users={users}
+                />
             )}
             {isEditModalOpen && (
-                <div className="modal-container">
-                    <div className="modal-content">
-                        <EditReview
-                            reviewId={selectedReviewId}
-                            isOpen={isEditModalOpen}
-                            onClose={() => setIsEditModalOpen(false)}
-                            onSave={() => {
-                                setIsEditModalOpen(false);
-                                fetchAllReviews();
-                            }}
-                            books={books} // Pass books to EditReview
-                            users={users} // Pass users to EditReview
-                        />
-                    </div>
-                </div>
+                <EditReview
+                    reviewId={selectedReviewId} // Pass the reviewId to EditReview
+                    isOpen={isEditModalOpen}
+                    onClose={() => setIsEditModalOpen(false)}
+                    onSave={() => {
+                        setIsEditModalOpen(false);
+                        fetchAllReviews();
+                    }}
+                    books={books}
+                    users={users}
+                />
             )}
-            {(isCreateModalOpen || isEditModalOpen) && <div className="modal-backdrop"></div>}
         </div>
     );
 }

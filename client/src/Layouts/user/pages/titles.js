@@ -1,20 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import HeroSection from '../components/HeroSection';
+import { useUser } from '../../../helper/userContext';
+import { FaBookmark } from 'react-icons/fa';
+
 
 const Titles = () => {
-  const [books, setBooks] = useState([]); // State to hold books
-  const [categories, setCategories] = useState([]); // State to hold categories
-  const [selectedCategory, setSelectedCategory] = useState('All'); // Track selected category
-  const [error, setError] = useState(null); // Hold errors
+  const user = useUser(); // Access the user data
+  const userId = user?.user?.id; // Access the ID inside the nested 'user' object
+  const [books, setBooks] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [error, setError] = useState(null);
+  const [favorites, setFavorites] = useState([]); // Track favorite books
 
   const apiUrl = 'http://localhost:3001/book';
-  const categoryUrl = 'http://localhost:3001/category'; // Adjust as needed
+  const categoryUrl = 'http://localhost:3001/category';
+  const favoriteUrl = 'http://localhost:3001/favorite'; // Adjust as needed
 
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
-  // Fetch books from API
   const fetchBooks = async () => {
     try {
       const response = await axios.get(apiUrl);
@@ -24,7 +30,6 @@ const Titles = () => {
     }
   };
 
-  // Fetch categories from API
   const fetchCategories = async () => {
     try {
       const response = await axios.get(categoryUrl);
@@ -34,29 +39,51 @@ const Titles = () => {
     }
   };
 
+  const fetchFavorites = async () => {
+    try {
+      const response = await axios.get(`${favoriteUrl}/${userId}`);
+      setFavorites(response.data.map(fav => fav.bookId));
+    } catch (err) {
+      console.error("Error fetching favorites:", err.message);
+    }
+  };
+
   useEffect(() => {
     fetchBooks();
     fetchCategories();
+    fetchFavorites();
   }, []);
+
+  const handleFavoriteToggle = async (bookId) => {
+    try {
+      if (favorites.includes(bookId)) {
+        await axios.delete(`${favoriteUrl}/${userId}/${bookId}`);
+        setFavorites(favorites.filter(id => id !== bookId));
+      } else {
+        await axios.post(favoriteUrl, { userId, bookId });
+        setFavorites([...favorites, bookId]);
+      }
+    } catch (err) {
+      console.error("Error toggling favorite:", err.message);
+    }
+  };
 
   const filteredBooks =
     selectedCategory === 'All'
       ? books
       : books.filter((book) => book.category.name === selectedCategory);
 
-  // Function to navigate to BookDetails page
   const handleBookClick = (bookId) => {
-    navigate(`/books/${bookId}`); // Navigate to book details page with bookId
+    navigate(`/books/${bookId}`);
   };
 
   return (
     <div className="min-h-screen bg-[#fdf5f0]">
-      <HeroSection /> {/* Hero Section at the top */}
+      <HeroSection />
 
       <div className="p-8 bg-white shadow-md">
         {error && <p className="text-red-500 text-center mt-4">{error}</p>}
 
-        {/* Category Tabs */}
         <div className="flex justify-center space-x-8 mt-4 border-b border-gray-300 pb-4">
           <button
             onClick={() => setSelectedCategory('All')}
@@ -84,51 +111,62 @@ const Titles = () => {
         </div>
       </div>
 
-      {/* Book Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-7 p-8">
-  {filteredBooks.length > 0 ? (
-    filteredBooks.map((book) => (
-      <div
-        key={book.id}
-        onClick={() => handleBookClick(book.id)}
-        className="flex p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-transform duration-300 transform hover:scale-105 cursor-pointer w-full sm:w-[26rem]" // Adjusted width here
-      >
-        <img
-          src={`http://localhost:3001/${book.image}`}
-          alt={book.title}
-          className="w-32 h-48 object-cover rounded-lg mr-6"
-        />
-        <div className="flex flex-col justify-between flex-1">
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-800">
-              {book.title}
-            </h2>
-            <p className="text-lg text-gray-600 mt-1">
-              {typeof book.author === 'string' ? book.author : book.author.name}
-            </p>
-            <div className="flex items-center mt-4">
-              <span className="text-yellow-500 text-xl">
-                {'★'.repeat(book.rating || 0)}
-              </span>
-              <span className="ml-2 text-lg text-gray-500">
-                {book.rating ? book.rating.toFixed(1) : 'No rating'}
-              </span>
-              <span className="ml-2 text-lg text-gray-500">
-                • {book.reviewsCount || 0} ratings
-              </span>
+        {filteredBooks.length > 0 ? (
+          filteredBooks.map((book) => (
+            <div
+              key={book.id}
+              onClick={() => handleBookClick(book.id)}
+              className="flex p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-transform duration-300 transform hover:scale-105 cursor-pointer w-full sm:w-[26rem]"
+            >
+              <img
+                src={`http://localhost:3001/${book.image}`}
+                alt={book.title}
+                className="w-32 h-48 object-cover rounded-lg mr-6"
+              />
+              <div className="flex flex-col justify-between flex-1">
+                <div>
+                  <h2 className="text-2xl font-semibold text-gray-800">
+                    {book.title}
+                  </h2>
+                  <p className="text-lg text-gray-600 mt-1">
+                    {typeof book.author === 'string' ? book.author : book.author.name}
+                  </p>
+                  <div className="flex items-center mt-4">
+                    <span className="text-yellow-500 text-xl">
+                      {'★'.repeat(book.rating || 0)}
+                    </span>
+                    <span className="ml-2 text-lg text-gray-500">
+                      {book.rating ? book.rating.toFixed(1) : 'No rating'}
+                    </span>
+                    <span className="ml-2 text-lg text-gray-500">
+                      • {book.reviewsCount || 0} ratings
+                    </span>
+                  </div>
+                </div>
+                <p className="mt-4 text-lg text-gray-700 line-clamp-3">
+                  {book.description}
+                </p>
+                {/* Favorite Button */}
+                <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleFavoriteToggle(book.id);
+              }}
+              className="absolute top-4 right-4 p-2 ml-8 text-gray-500 hover:text-blue-500 transition-colors"
+            >
+              <FaBookmark 
+                className={`${favorites.includes(book.id) ? 'text-blue-500' : 'text-gray-300'}`} 
+                size={24} 
+              />
+            </button>
+              </div>
             </div>
-          </div>
-          <p className="mt-4 text-lg text-gray-700 line-clamp-3">
-            {book.description}
-          </p>
-        </div>
+          ))
+        ) : (
+          <p className="text-center text-lg italic">No books found.</p>
+        )}
       </div>
-    ))
-  ) : (
-    <p className="text-center text-lg italic">No books found.</p>
-  )}
-</div>
-
     </div>
   );
 };

@@ -1,6 +1,8 @@
 const Author = require('../models/author');
 const Book = require('../models/book');
 const Cateogory = require('../models/category');
+const { Op } = require("sequelize");
+
 
 // Get all books
 const getAllBooks = async (req, res) => {
@@ -42,7 +44,7 @@ const getBookById = async (req, res) => {
 // Create a new book
 const createBook = async (req, res) => {
     console.log(req.body); // Log the request body
-    const { title, isbn, publishedDate, availabilityStatus, categoryId, authorId, description } = req.body;
+    const { title, isbn, publishedDate, availabilityStatus, categoryId, authorId, description,popularity } = req.body;
     const image = req.file ? req.file.path : null; // Get the image path from the request
 
     try {
@@ -54,6 +56,7 @@ const createBook = async (req, res) => {
             categoryId,
             authorId,
             description,
+            popularity,
             image, // Store the image path in the database
         });
 
@@ -67,11 +70,27 @@ const createBook = async (req, res) => {
     }
 };
 
+// Get popular books
+const getPopularBooks = async (req, res) => {
+    try {
+        const popularBooks = await Book.findAll({
+            where: { popularity: { [Op.gt]: 0 } }, // Ensure popularity is greater than 0
+            order: [['popularity', 'DESC']],
+            limit: 5, // Adjust the limit as needed
+            include: [{ model: Author, attributes: ['name'] }], // Include author details
+        });
+        res.json(popularBooks);
+    } catch (error) {
+        console.error('Error fetching popular books:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
 
 // Update a book
 const updateBook = async (req, res) => {
     const { id } = req.params;
-    const { title, isbn, publishedDate, availabilityStatus, categoryId, authorId,description } = req.body;
+    const { title, isbn, publishedDate, availabilityStatus, categoryId, authorId,description,popularity } = req.body;
     const image = req.file ? req.file.path : null; // Get the new image path if uploaded
 
     try {
@@ -89,6 +108,7 @@ const updateBook = async (req, res) => {
             categoryId: categoryId || book.categoryId,
             authorId: authorId || book.authorId,
             description:description || book.description,
+            popularity:popularity || book.popularity,
             image: image || book.image, // Update image only if a new one is uploaded
         });
 
@@ -122,4 +142,5 @@ module.exports = {
     createBook,
     updateBook,
     deleteBook,
+    getPopularBooks,
 };

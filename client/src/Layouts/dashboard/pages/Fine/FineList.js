@@ -19,8 +19,8 @@ function FineList() {
     const { token } = useUser();
 
     const fetchAllFines = async () => {
-        setLoading(true); // Start loading
-        setError(null); // Reset error
+        setLoading(true);
+        setError(null);
         try {
             const config = {
                 headers: {
@@ -29,12 +29,14 @@ function FineList() {
             };
             const res = await axios.get("http://localhost:3001/fine", config);
             setFines(res.data);
+            console.log("Fetched fines data:", res.data);
+
             setFilteredFines(res.data);
         } catch (err) {
             console.error("Error fetching fines:", err);
-            setError("Failed to load fines. Please try again later."); // Set error message
+            setError("Failed to load fines. Please try again later.");
         } finally {
-            setLoading(false); // End loading
+            setLoading(false);
         }
     };
 
@@ -47,6 +49,7 @@ function FineList() {
             };
             const res = await axios.get("http://localhost:3001/loan", config);
             setLoans(res.data);
+
         } catch (err) {
             console.error("Error fetching loans:", err);
             setError("Failed to load loans. Please try again later.");
@@ -71,8 +74,8 @@ function FineList() {
     useEffect(() => {
         if (token) {
             fetchAllFines();
-            fetchLoans(); // Fetch loans on mount
-            fetchUsers(); // Fetch users on mount
+            fetchLoans();
+            fetchUsers();
         }
     }, [token]);
 
@@ -87,7 +90,7 @@ function FineList() {
             fetchAllFines();
         } catch (err) {
             console.error(err);
-            setError("Failed to delete fine. Please try again."); // Set error message
+            setError("Failed to delete fine. Please try again.");
         }
     };
 
@@ -99,9 +102,11 @@ function FineList() {
         setFilteredFines(filtered);
     };
 
+    
+
     return (
         <div className="bg-[#d9d9fb] p-5">
-            {error && <Alert color="failure">{error}</Alert>} {/* Display error message */}
+            {error && <Alert color="failure">{error}</Alert>}
 
             <div className="flex justify-between mb-4">
                 <button
@@ -137,7 +142,8 @@ function FineList() {
                         </Table.HeadCell>
                     </Table.Head>
                     <Table.Body className="divide-y">
-                        {loading ? ( // Show loading state
+                        
+                        {loading ? (
                             <Table.Row>
                                 <Table.Cell colSpan="5" className="text-center">Loading...</Table.Cell>
                             </Table.Row>
@@ -145,7 +151,7 @@ function FineList() {
                             filteredFines.map((item) => (
                                 <Table.Row key={item.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                                    {item.amount != null ? Number(item.amount).toFixed(2) : "N/A"}
+                                        {item.amount != null ? Number(item.amount).toFixed(2) : "N/A"}
                                     </Table.Cell>
                                     <Table.Cell>{item.paymentStatus}</Table.Cell>
                                     <Table.Cell>{item.loan?.id}</Table.Cell>
@@ -179,37 +185,29 @@ function FineList() {
             </div>
 
             {isCreateModalOpen && (
-                <div className="modal-container">
-                    <div className="modal-content">
-                        <CreateFine
-                            isOpen={isCreateModalOpen}
-                            onClose={() => setIsCreateModalOpen(false)}
-                            onSave={() => {
-                                setIsCreateModalOpen(false);
-                                fetchAllFines();
-                            }}
-                            loans={loans} // Pass loans to CreateFine
-                            users={users} // Pass users to CreateFine
-                        />
-                    </div>
-                </div>
+                <CreateFine
+                    isOpen={isCreateModalOpen}
+                    onClose={() => setIsCreateModalOpen(false)}
+                    onSave={() => {
+                        setIsCreateModalOpen(false);
+                        fetchAllFines();
+                    }}
+                    loans={loans}
+                    users={users}
+                />
             )}
-            {isEditModalOpen && (
-                <div className="modal-container">
-                    <div className="modal-content">
-                        <EditFine
-                            fineId={selectedFineId}
-                            isOpen={isEditModalOpen}
-                            onClose={() => setIsEditModalOpen(false)}
-                            onSave={() => {
-                                setIsEditModalOpen(false);
-                                fetchAllFines();
-                            }}
-                            loans={loans} // Pass loans to EditFine
-                            users={users} // Pass users to EditFine
-                        />
-                    </div>
-                </div>
+            {isEditModalOpen && selectedFineId && (
+                <EditFine
+                    fineId={selectedFineId}
+                    isOpen={isEditModalOpen}
+                    onClose={() => setIsEditModalOpen(false)}
+                    onSave={() => {
+                        setIsEditModalOpen(false);
+                        fetchAllFines();
+                    }}
+                    loans={loans}
+                    users={users}
+                />
             )}
             {(isCreateModalOpen || isEditModalOpen) && <div className="modal-backdrop"></div>}
         </div>

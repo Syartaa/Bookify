@@ -2,20 +2,31 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Button, Modal, Label, TextInput, Select } from "flowbite-react";
 
-function EditReview({ isOpen, onClose, onSave, review, books, users }) {
-    const [rating, setRating] = useState(review?.rating || 1);
-    const [comment, setComment] = useState(review?.comment || "");
-    const [bookId, setBookId] = useState(review?.bookId || "");
-    const [userId, setUserId] = useState(review?.userId || "");
+function EditReview({ isOpen, onClose, onSave, reviewId, books, users }) {
+    const [rating, setRating] = useState(1);
+    const [comment, setComment] = useState("");
+    const [bookId, setBookId] = useState("");
+    const [userId, setUserId] = useState("");
 
     useEffect(() => {
-        if (review) {
+        if (reviewId) {
+            fetchReviewDetails();
+        }
+    }, [reviewId]);
+
+    const fetchReviewDetails = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3001/review/${reviewId}`);
+            const review = response.data;
+
             setRating(review.rating);
             setComment(review.comment);
             setBookId(review.bookId);
             setUserId(review.userId);
+        } catch (err) {
+            console.error("Error fetching review details:", err);
         }
-    }, [review]);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -26,12 +37,11 @@ function EditReview({ isOpen, onClose, onSave, review, books, users }) {
                 bookId,
                 userId,
             };
-            await axios.put(`http://localhost:3001/review/${review.id}`, updatedReview);
+            await axios.put(`http://localhost:3001/review/${reviewId}`, updatedReview);
             onSave(); // Refresh the review list after saving
             onClose(); // Close the modal after saving
         } catch (err) {
             console.error("Error updating review:", err);
-            // Handle error (e.g., show a notification)
         }
     };
 
