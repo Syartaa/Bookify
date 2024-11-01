@@ -28,6 +28,7 @@ import Contact from "./Layouts/user/pages/contact";
 import LoanPage from "./Layouts/user/pages/loanpage";
 import ReservationsPage from "./Layouts/user/pages/ReservationsPage";
 import FavoriteScreen from "./Layouts/user/pages/book/FavoriteScreen";
+import BookDetails from "./Layouts/user/pages/book/booksDetails";
 
 function App() {
   return (
