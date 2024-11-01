@@ -1,6 +1,6 @@
 const Author = require('../models/author');
 const Book = require('../models/book');
-const Cateogory = require('../models/category');
+const Category = require('../models/category');
 const Reservation = require('../models/reservation');
 const User = require('../models/user');
 
@@ -9,11 +9,13 @@ const getAllReservations = async (req, res) => {
     try {
         const reservations = await Reservation.findAll({
             include: [
-                { model: Book,
+                { 
+                    model: Book,
                     include: [
-                      { model: Author, attributes: ["name"] }, // Include author details
-                      { model: Cateogory, attributes: ["name"] }, // Include category details },
-                    ]},
+                        { model: Author, attributes: ["name"] },
+                        { model: Category, attributes: ["name"] }
+                    ]
+                },
                 { model: User, attributes: ['id', 'name'] }
             ],
         });
@@ -33,6 +35,26 @@ const getReservationById = async (req, res) => {
         }
         res.json(reservation);
     } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+// Check if a specific user has reserved a specific book
+const checkReservationStatus = async (req, res) => {
+    const { userId, bookId } = req.params;
+
+    try {
+        const reservation = await Reservation.findOne({
+            where: { userId, bookId },
+        });
+
+        if (reservation) {
+            return res.json({ isReserved: true, reservation });
+        }
+
+        res.json({ isReserved: false });
+    } catch (error) {
+        console.error('Error checking reservation status:', error.message);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
@@ -67,7 +89,6 @@ const updateReservation = async (req, res) => {
             return res.status(404).json({ error: 'Reservation not found' });
         }
 
-        // Update reservation fields
         await reservation.update({
             reservationDate: reservationDate || reservation.reservationDate,
             status: status || reservation.status,
@@ -99,10 +120,30 @@ const deleteReservation = async (req, res) => {
     }
 };
 
+// Delete a reservation by userId and bookId (Unreserve)
+const deleteReservationByUserAndBook = async (req, res) => {
+    const { userId, bookId } = req.params;
+
+    try {
+        const reservation = await Reservation.findOne({ where: { userId, bookId } });
+        if (!reservation) {
+            return res.status(404).json({ error: 'Reservation not found' });
+        }
+
+        await reservation.destroy();
+        res.json({ message: 'Reservation unreserved successfully' });
+    } catch (error) {
+        console.error('Error unreserving reservation:', error.message);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
 module.exports = {
     getAllReservations,
     getReservationById,
+    checkReservationStatus,
     createReservation,
     updateReservation,
     deleteReservation,
+    deleteReservationByUserAndBook,
 };

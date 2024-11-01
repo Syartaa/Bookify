@@ -27,12 +27,8 @@ function ReservationsPage() {
 
   const handleLoan = async (bookId) => {
     try {
-        // Replace with the actual userId (you might get this from context or props)
-        const userId = 1; // Example user ID, replace with dynamic value as needed
-
-        // Make the POST request to create a loan
+        const userId = 1; // Replace with dynamic user ID if needed
         await axios.post(`http://localhost:3001/loan`, { bookId, userId });
-
         alert("Book loaned successfully!");
 
         // Fetch updated reservations after loan creation
@@ -44,8 +40,22 @@ function ReservationsPage() {
     } finally {
         setLoading(false);
     }
-};
+  };
 
+  // New function to handle unreserving a book
+  const handleUnreserve = async (reservationId) => {
+    try {
+      await axios.delete(`http://localhost:3001/reservation/${reservationId}`);
+      alert("Reservation cancelled successfully!");
+
+      // Fetch updated reservations after unreserving
+      const response = await axios.get("http://localhost:3001/reservation");
+      setReservations(response.data);
+    } catch (err) {
+      console.error("Error cancelling reservation:", err);
+      alert("Failed to cancel reservation.");
+    }
+  };
 
   if (loading) {
     return <p className="text-center mt-8 text-lg">Loading...</p>;
@@ -73,7 +83,7 @@ function ReservationsPage() {
             <div
               key={reservation.id}
               className="bg-white rounded-lg shadow-lg p-5 flex flex-col justify-between hover:shadow-2xl transition-shadow"
-              style={{ minHeight: '500px' }} // Ensure all cards have the same minimum height
+              style={{ minHeight: '500px' }}
             >
               <div className="flex items-start space-x-4">
                 <img
@@ -127,15 +137,24 @@ function ReservationsPage() {
                   </div>
                 </div>
               </div>
+
               {/* Loan Button */}
               {reservation.book.availabilityStatus === "available" && (
                 <button
                   onClick={() => handleLoan(reservation.book.id)}
-                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors w-full"
+                  className="mt-10 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors w-full"
                 >
                   Loan Book
                 </button>
               )}
+
+              {/* Unreserve Button */}
+              <button
+                onClick={() => handleUnreserve(reservation.id)}
+                className=" px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors w-full"
+              >
+                Unreserve Book
+              </button>
             </div>
           ))}
         </div>

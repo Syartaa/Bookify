@@ -1,4 +1,3 @@
-// BookDetails.js
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -8,12 +7,9 @@ import { useUser } from '../../../../helper/userContext';
 const BookDetails = () => {
   const { id } = useParams();
   const [book, setBook] = useState(null);
-  const user = useUser(); // Access the user data
-  const userId = user?.user?.id; // Access the ID inside the nested 'user' object
-
-
-  console.log('User:', user);
-  console.log('User ID:', userId); // Check if userId is available
+  const [isReserved, setIsReserved] = useState(false); // Track if the user has reserved the book
+  const user = useUser();
+  const userId = user?.user?.id;
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -24,46 +20,56 @@ const BookDetails = () => {
         console.error('Error fetching book details:', error);
       }
     };
+
+    const checkReservationStatus = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3001/reservation/user/${userId}/book/${id}`);
+        setIsReserved(response.data.isReserved);
+      } catch (error) {
+        console.error('Error checking reservation status:', error);
+      }
+    };
+
     fetchBook();
-  }, [id]);
+    if (userId) checkReservationStatus();
+  }, [id, userId]);
 
   if (!book) return <div>Loading...</div>;
-  if (!user) return <div>Loading user data...</div>; // Ensure user is loaded
+  if (!user) return <div>Loading user data...</div>;
 
   const handleReserve = async () => {
-    // Ensure the user ID and book ID are available
     if (!userId || !book) {
       alert('Unable to reserve the book. Please try again.');
       return;
     }
   
-    // Create reservation data
     const reservationData = {
-      reservationDate: new Date().toISOString(), // Current date and time
-      status: 'active', // Status of the reservation
-      bookId: book.id, // ID of the book being reserved
-      userId: userId, // ID of the user making the reservation
+      reservationDate: new Date().toISOString(),
+      status: 'active',
+      bookId: book.id,
+      userId: userId,
     };
   
     try {
-      // Make the API call to create the reservation
       const response = await axios.post('http://localhost:3001/reservation', reservationData);
-  
-      // Log the response for debugging
       console.log('Reservation Response:', response.data);
-  
-      // Show success alert
       alert(`You have reserved ${book.title}!`);
+      setIsReserved(true); // Update reservation status
     } catch (error) {
-      // Handle any errors that occur during the reservation process
       console.error('Error reserving book:', error);
       alert('Failed to reserve the book. Please try again.');
     }
   };
-  
 
-  const handleLoan = () => {
-    alert(`You have loaned ${book.title}!`);
+  const handleUnreserve = async () => {
+    try {
+      await axios.delete(`http://localhost:3001/reservation/user/${userId}/book/${id}`);
+      alert(`You have unreserved ${book.title}!`);
+      setIsReserved(false); // Update reservation status
+    } catch (error) {
+      console.error('Error unreserving book:', error);
+      alert('Failed to unreserve the book. Please try again.');
+    }
   };
 
   return (
@@ -110,15 +116,24 @@ const BookDetails = () => {
           </div>
 
           <div className="mt-8 flex gap-6">
+            {isReserved ? (
+              <button
+                onClick={handleUnreserve}
+                className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300"
+              >
+                Unreserve
+              </button>
+            ) : (
+              <button
+                onClick={handleReserve}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300"
+                disabled={book.availabilityStatus !== 'available'}
+              >
+                Reserve
+              </button>
+            )}
             <button
-              onClick={handleReserve}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300"
-              disabled={book.availabilityStatus !== 'available'}
-            >
-              Reserve
-            </button>
-            <button
-              onClick={handleLoan}
+              onClick={() => alert(`You have loaned ${book.title}!`)}
               className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300"
               disabled={book.availabilityStatus !== 'available'}
             >
@@ -136,7 +151,6 @@ const BookDetails = () => {
         </div>
       </div>
 
-      {/* Review Section */}
       <div className="mt-15">
         {userId ? (
           <ReviewSection bookId={book.id} userId={userId} />

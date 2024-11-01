@@ -120,10 +120,12 @@ const Home = () => {
           </div>
         ))}
       </section>
-
+      <h2 className="text-3xl font-bold text-center mt-3">Popular Books</h2>
       {/* Books Grid */}
       <section className="w-full max-w-6xl mx-auto px-4 py-8 mt-16 bg-white rounded-lg shadow-md">
+      
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+             
                 {popularBooks.map((book) => (
                     <div key={book.id} className="bg-[#fdf5f0] rounded-lg p-6 shadow-md">
                         <img
