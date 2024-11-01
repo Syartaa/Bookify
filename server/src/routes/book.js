@@ -16,6 +16,7 @@ const upload = multer({ storage });
 
 // Define routes
 router.get('/', BookController.getAllBooks);
+router.get('/popularbooks', BookController.getPopularBooks);
 router.get('/:id', BookController.getBookById);
 router.post('/', upload.single('image'), BookController.createBook); // Use multer middleware
 router.put('/:id', upload.single('image'), BookController.updateBook); // Use multer middleware

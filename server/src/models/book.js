@@ -4,7 +4,6 @@ const { DataTypes } = Sequelize;
 const Cateogory = require("./category");
 const Author = require("./author");
 
-
 const Book = sequelize.define("book", {
   id: {
     type: Sequelize.INTEGER,
@@ -16,6 +15,7 @@ const Book = sequelize.define("book", {
 
   isbn: Sequelize.STRING,
   publishedDate: Sequelize.DATE,
+  
   description: {
     type: Sequelize.TEXT('long'), // Use 'long' variant for larger text in MySQL
     allowNull: true,
@@ -25,8 +25,8 @@ const Book = sequelize.define("book", {
     allowNull: true, // Optional: Set to true if the image is not mandatory
   },
   availabilityStatus: {
-    type: DataTypes.ENUM('available', 'borrowed','reserved'), // You can add more roles if needed
-    defaultValue: 'available' // Default to 'available' role
+    type: DataTypes.ENUM('available', 'borrowed', 'reserved'), // You can add more roles if needed
+    defaultValue: 'available', // Default to 'available' role
   },
 
   categoryId: {
@@ -38,7 +38,6 @@ const Book = sequelize.define("book", {
     allowNull: false,
   },
 
-  
   authorId: {
     type: Sequelize.INTEGER,
     references: {
@@ -47,12 +46,19 @@ const Book = sequelize.define("book", {
     },
     allowNull: false,
   },
+
+  popularity: {
+    type: Sequelize.INTEGER, // Field to store popularity score (e.g., 1 to 5)
+    defaultValue: 0, // Default value for popularity
+    allowNull: false,
+  },
 });
 
-Cateogory.hasMany(Book, { foreignKey: "categoryId" })
-Book.belongsTo(Cateogory, { foreignKey: "categoryId" })
+// Relationships
+Cateogory.hasMany(Book, { foreignKey: "categoryId" });
+Book.belongsTo(Cateogory, { foreignKey: "categoryId" });
 
-Author.hasMany(Book, { foreignKey: "authorId" })
-Book.belongsTo(Author, { foreignKey: "authorId" })
+Author.hasMany(Book, { foreignKey: "authorId" });
+Book.belongsTo(Author, { foreignKey: "authorId" });
 
 module.exports = Book;

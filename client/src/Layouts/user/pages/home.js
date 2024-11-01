@@ -49,6 +49,7 @@ const quotes = [
 const Home = () => {
   const [books, setBooks] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [popularBooks, setPopularBooks] = useState([]);
 
  
 
@@ -64,6 +65,21 @@ const Home = () => {
     };
     fetchBooks();
   }, []);
+
+
+  useEffect(() => {
+    const fetchPopularBooks = async () => {
+        try {
+            const response = await axios.get('http://localhost:3001/book/popularbooks'); // Update this URL to match your new endpoint
+            setPopularBooks(response.data);
+        } catch (error) {
+            console.error('Error fetching popular books:', error);
+        }
+    };
+
+    fetchPopularBooks();
+}, []);
+
 
   // Slider effect for quotes
   useEffect(() => {
@@ -107,27 +123,27 @@ const Home = () => {
 
       {/* Books Grid */}
       <section className="w-full max-w-6xl mx-auto px-4 py-8 mt-16 bg-white rounded-lg shadow-md">
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-    {books.map((book) => (
-      <div key={book.id} className="bg-[#fdf5f0] rounded-lg p-6 shadow-md">
-        <img
-          src={`http://localhost:3001/${book.image}`}
-          alt={book.title}
-          className="w-full object-contain rounded-lg mb-4"
-          style={{ height: '300px' }} // Adjust height to make the image smaller
-        />
-        <h3 className="text-xl font-semibold text-gray-800">{book.title}</h3>
-        <p className="text-gray-600 mt-2">Author: {book.author.name}</p>
-        <Link
-          to={`/books/${book.id}`}
-          className="mt-4 inline-block bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600"
-        >
-          View Details
-        </Link>
-      </div>
-    ))}
-  </div>
-</section>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {popularBooks.map((book) => (
+                    <div key={book.id} className="bg-[#fdf5f0] rounded-lg p-6 shadow-md">
+                        <img
+                            src={`http://localhost:3001/${book.image}`}
+                            alt={book.title}
+                            className="w-full object-contain rounded-lg mb-4"
+                            style={{ height: '300px' }} // Adjust height to make the image smaller
+                        />
+                        <h3 className="text-xl font-semibold text-gray-800">{book.title}</h3>
+                        <p className="text-gray-600 mt-2">Author: {book.author.name}</p>
+                        <Link
+                            to={`/books/${book.id}`}
+                            className="mt-4 inline-block bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600"
+                        >
+                            View Details
+                        </Link>
+                    </div>
+                ))}
+            </div>
+        </section>
 
 
       {/* Modal */}
