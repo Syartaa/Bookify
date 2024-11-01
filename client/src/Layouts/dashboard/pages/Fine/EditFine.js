@@ -1,22 +1,37 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Button, Modal, Label, TextInput, Select } from "flowbite-react";
+import { Button, Modal, Label, TextInput, Select, Alert } from "flowbite-react";
 
-function EditFine({ isOpen, onClose, onSave, fine, loans, users }) {
-    const [amount, setAmount] = useState(fine.amount || "");
-    const [status, setStatus] = useState(fine.status || "unpaid");
-    const [loanId, setLoanId] = useState(fine.loanId || "");
-    const [userId, setUserId] = useState(fine.userId || "");
+function EditFine({ isOpen, onClose, onSave, fineId, loans, users }) {
+    const [amount, setAmount] = useState("");
+    const [status, setStatus] = useState("unpaid");
+    const [loanId, setLoanId] = useState("");
+    const [userId, setUserId] = useState("");
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        setAmount(fine.amount || "");
-        setStatus(fine.status || "unpaid");
-        setLoanId(fine.loanId || "");
-        setUserId(fine.userId || "");
-    }, [fine]);
+        const fetchFineDetails = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3001/fine/${fineId}`);
+                const fine = response.data;
+                setAmount(fine.amount || "");
+                setStatus(fine.status || "unpaid");
+                setLoanId(fine.loanId || "");
+                setUserId(fine.userId || "");
+            } catch (err) {
+                console.error("Error fetching fine details:", err);
+                setError("Failed to load fine details.");
+            }
+        };
+
+        if (fineId && isOpen) {
+            fetchFineDetails();
+        }
+    }, [fineId, isOpen]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError(null);
         try {
             const updatedFine = {
                 amount,
@@ -24,12 +39,12 @@ function EditFine({ isOpen, onClose, onSave, fine, loans, users }) {
                 loanId,
                 userId,
             };
-            await axios.put(`http://localhost:3001/fine/${fine.id}`, updatedFine);
+            await axios.put(`http://localhost:3001/fine/${fineId}`, updatedFine);
             onSave(); // Refresh the fine list after saving
             onClose(); // Close the modal after saving
         } catch (err) {
             console.error("Error updating fine:", err);
-            // Handle error (e.g., show a notification)
+            setError("Failed to update fine. Please try again.");
         }
     };
 
@@ -37,6 +52,7 @@ function EditFine({ isOpen, onClose, onSave, fine, loans, users }) {
         <Modal show={isOpen} onClose={onClose} size="md">
             <Modal.Header>Edit Fine</Modal.Header>
             <Modal.Body>
+                {error && <Alert color="failure">{error}</Alert>}
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="mb-4">
                         <Label htmlFor="amount" value="Amount" />
