@@ -70,7 +70,7 @@ function ReservationsPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
+    <div className="max-w-5xl mx-auto p-6 ">
       <h1
         className="text-3xl font-bold mb-6 text-gray-800"
         style={{ fontFamily: "Poppins, sans-serif" }}
@@ -142,7 +142,7 @@ function ReservationsPage() {
               {reservation.book.availabilityStatus === "available" && (
                 <button
                   onClick={() => handleLoan(reservation.book.id)}
-                  className="mt-10 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors w-full"
+                  className="mt-14 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors w-full"
                 >
                   Loan Book
                 </button>
@@ -151,7 +151,7 @@ function ReservationsPage() {
               {/* Unreserve Button */}
               <button
                 onClick={() => handleUnreserve(reservation.id)}
-                className=" px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors w-full"
+                className="mb-6 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors w-full"
               >
                 Unreserve Book
               </button>
