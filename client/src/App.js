@@ -29,6 +29,7 @@ import LoanPage from "./Layouts/user/pages/loanpage";
 import ReservationsPage from "./Layouts/user/pages/ReservationsPage";
 import FavoriteScreen from "./Layouts/user/pages/book/FavoriteScreen";
 import BookDetails from "./Layouts/user/pages/book/booksDetails";
+import AccountSettings from "./Layouts/user/pages/accountSettings";
 
 function App() {
   return (
@@ -63,6 +64,7 @@ function App() {
           <Route path="/reservations" element={<ReservationsPage />} />
           <Route path="/favorites" element={<FavoriteScreen />} />
           <Route path="/loans" element={<LoanPage />} />
+          <Route path="/account" element={<AccountSettings />} />
           </Route>
 
           </Route>
