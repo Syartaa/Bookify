@@ -10,7 +10,7 @@ function UserLayout() {
             <NavBar />
 
             {/* Main content container */}
-            <div className="">
+            <div className="bg-[#fdf5f0]">
                 <Outlet />
                 <Footer/>
             </div>

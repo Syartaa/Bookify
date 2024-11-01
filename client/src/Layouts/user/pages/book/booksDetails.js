@@ -7,7 +7,8 @@ import { useUser } from '../../../../helper/userContext';
 const BookDetails = () => {
   const { id } = useParams();
   const [book, setBook] = useState(null);
-  const [isReserved, setIsReserved] = useState(false); // Track if the user has reserved the book
+  const [isReserved, setIsReserved] = useState(false);
+  const [reservedBySomeoneElse, setReservedBySomeoneElse] = useState(false);
   const user = useUser();
   const userId = user?.user?.id;
 
@@ -15,7 +16,15 @@ const BookDetails = () => {
     const fetchBook = async () => {
       try {
         const response = await axios.get(`http://localhost:3001/book/${id}`);
-        setBook(response.data);
+        const bookData = response.data;
+
+        // Check if the book is currently reserved by someone
+        const reservationResponse = await axios.get(`http://localhost:3001/reservation/book/${id}`);
+        const isReservedByOther = reservationResponse.data.isReserved && reservationResponse.data.reservation.userId !== userId;
+
+        // Set reserved status and availability
+        setReservedBySomeoneElse(isReservedByOther);
+        setBook({ ...bookData, availabilityStatus: isReservedByOther ? 'reserved' : bookData.availabilityStatus });
       } catch (error) {
         console.error('Error fetching book details:', error);
       }
@@ -23,8 +32,17 @@ const BookDetails = () => {
 
     const checkReservationStatus = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/reservation/user/${userId}/book/${id}`);
-        setIsReserved(response.data.isReserved);
+        // Check if the current user has reserved the book
+        const userReservation = await axios.get(`http://localhost:3001/reservation/user/${userId}/book/${id}`);
+        setIsReserved(userReservation.data.isReserved);
+
+        // If not reserved by the user, check if anyone else has reserved it
+        if (!userReservation.data.isReserved) {
+          const otherReservation = await axios.get(`http://localhost:3001/reservation/book/${id}`);
+          const isReservedByOther = otherReservation.data.isReserved && otherReservation.data.reservation.userId !== userId;
+          setReservedBySomeoneElse(isReservedByOther);
+          setBook((prevBook) => ({ ...prevBook, availabilityStatus: isReservedByOther ? 'reserved' : 'available' }));
+        }
       } catch (error) {
         console.error('Error checking reservation status:', error);
       }
@@ -42,19 +60,20 @@ const BookDetails = () => {
       alert('Unable to reserve the book. Please try again.');
       return;
     }
-  
+
     const reservationData = {
       reservationDate: new Date().toISOString(),
       status: 'active',
       bookId: book.id,
       userId: userId,
     };
-  
+
     try {
-      const response = await axios.post('http://localhost:3001/reservation', reservationData);
-      console.log('Reservation Response:', response.data);
+      await axios.post('http://localhost:3001/reservation', reservationData);
       alert(`You have reserved ${book.title}!`);
-      setIsReserved(true); // Update reservation status
+      setIsReserved(true);
+      setReservedBySomeoneElse(false);
+      setBook((prevBook) => ({ ...prevBook, availabilityStatus: 'reserved' }));
     } catch (error) {
       console.error('Error reserving book:', error);
       alert('Failed to reserve the book. Please try again.');
@@ -65,7 +84,8 @@ const BookDetails = () => {
     try {
       await axios.delete(`http://localhost:3001/reservation/user/${userId}/book/${id}`);
       alert(`You have unreserved ${book.title}!`);
-      setIsReserved(false); // Update reservation status
+      setIsReserved(false);
+      setBook((prevBook) => ({ ...prevBook, availabilityStatus: 'available' }));
     } catch (error) {
       console.error('Error unreserving book:', error);
       alert('Failed to unreserve the book. Please try again.');
@@ -93,6 +113,12 @@ const BookDetails = () => {
             </span>
           </div>
 
+          {reservedBySomeoneElse && !isReserved && (
+            <div className="bg-red-100 text-red-700 font-semibold p-4 rounded mb-6">
+              This book is currently reserved by another user.
+            </div>
+          )}
+
           <div className="mb-10">
             <h2 className="text-xl font-semibold text-gray-700 mb-2">
               About this ebook
@@ -103,16 +129,9 @@ const BookDetails = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-6 text-lg text-gray-700">
-            <p>
-              <strong>ISBN:</strong> {book.isbn}
-            </p>
-            <p>
-              <strong>Published on:</strong>{' '}
-              {new Date(book.publishedDate).toLocaleDateString()}
-            </p>
-            <p>
-              <strong>Category:</strong> {book.category.name}
-            </p>
+            <p><strong>ISBN:</strong> {book.isbn}</p>
+            <p><strong>Published on:</strong> {new Date(book.publishedDate).toLocaleDateString()}</p>
+            <p><strong>Category:</strong> {book.category.name}</p>
           </div>
 
           <div className="mt-8 flex gap-6">
@@ -126,10 +145,14 @@ const BookDetails = () => {
             ) : (
               <button
                 onClick={handleReserve}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300"
-                disabled={book.availabilityStatus !== 'available'}
+                className={`py-3 px-8 rounded-lg font-semibold transition duration-300 ${
+                  reservedBySomeoneElse
+                    ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                }`}
+                disabled={book.availabilityStatus !== 'available' || reservedBySomeoneElse}
               >
-                Reserve
+                {reservedBySomeoneElse ? 'Reserved by Another User' : 'Reserve'}
               </button>
             )}
             <button

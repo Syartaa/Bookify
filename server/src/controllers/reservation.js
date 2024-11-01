@@ -59,11 +59,18 @@ const checkReservationStatus = async (req, res) => {
     }
 };
 
-// Create a new reservation
 const createReservation = async (req, res) => {
     const { reservationDate, status, bookId, userId } = req.body;
 
     try {
+        const existingReservation = await Reservation.findOne({
+            where: { bookId, status: 'active' },
+        });
+
+        if (existingReservation) {
+            return res.status(400).json({ error: 'Book is already reserved by another user' });
+        }
+
         const reservation = await Reservation.create({
             reservationDate,
             status,
@@ -71,12 +78,31 @@ const createReservation = async (req, res) => {
             userId,
         });
 
+        // Log the book status before updating
+        const bookBeforeUpdate = await Book.findByPk(bookId);
+        console.log("Book status before update:", bookBeforeUpdate.availabilityStatus);
+
+        const [updateCount] = await Book.update(
+            { availabilityStatus: 'reserved' },
+            { where: { id: bookId } }
+        );
+
+        if (updateCount === 0) {
+            console.error("Failed to update book status.");
+            return res.status(500).json({ error: 'Failed to update book status' });
+        }
+
+        // Log the book status after updating
+        const bookAfterUpdate = await Book.findByPk(bookId);
+        console.log("Book status after update:", bookAfterUpdate.availabilityStatus);
+
         res.status(201).json(reservation);
     } catch (error) {
         console.error('Error creating reservation:', error.message);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 // Update a reservation
 const updateReservation = async (req, res) => {
@@ -130,10 +156,40 @@ const deleteReservationByUserAndBook = async (req, res) => {
             return res.status(404).json({ error: 'Reservation not found' });
         }
 
+        // Delete the reservation
         await reservation.destroy();
+
+        // Update the book's availability status back to 'available'
+        await Book.update(
+            { availabilityStatus: 'available' },
+            { where: { id: bookId } }
+        );
+
         res.json({ message: 'Reservation unreserved successfully' });
     } catch (error) {
         console.error('Error unreserving reservation:', error.message);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
+
+// Check if any reservation exists for a given book ID
+const checkReservationStatusForBook = async (req, res) => {
+    const { bookId } = req.params;
+
+    try {
+        const reservation = await Reservation.findOne({
+            where: { bookId },
+        });
+
+        if (reservation) {
+            return res.json({ isReserved: true, reservation });
+        }
+
+        res.json({ isReserved: false });
+    } catch (error) {
+        console.error('Error checking reservation status for book:', error.message);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
@@ -146,4 +202,5 @@ module.exports = {
     updateReservation,
     deleteReservation,
     deleteReservationByUserAndBook,
+    checkReservationStatusForBook,
 };
