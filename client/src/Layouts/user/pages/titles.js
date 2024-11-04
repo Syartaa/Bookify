@@ -39,6 +39,9 @@ const Titles = () => {
   };
 
   const fetchFavorites = async () => {
+    // Check if userId is defined before making the API call
+    if (!userId) return;
+
     try {
       const response = await axios.get(`${favoriteUrl}/${userId}`);
       setFavorites(response.data.map((fav) => fav.bookId));
@@ -50,29 +53,32 @@ const Titles = () => {
   useEffect(() => {
     fetchBooks();
     fetchCategories();
-    fetchFavorites();
   }, []);
+
+  // Add a separate useEffect for fetching favorites, with a dependency on userId
+  useEffect(() => {
+    if (userId) {
+      fetchFavorites();
+    }
+  }, [userId]);
 
   const handleFavoriteToggle = async (bookId) => {
     try {
-        if (favorites.includes(bookId)) {
-            // Remove from favorites if already present
-            await axios.delete(`${favoriteUrl}/${userId}/${bookId}`);
-            setFavorites(favorites.filter((id) => id !== bookId));
-        } else {
-            // Attempt to add to favorites
-            await axios.post(favoriteUrl, { userId, bookId });
-            setFavorites([...favorites, bookId]);
-        }
+      if (favorites.includes(bookId)) {
+        await axios.delete(`${favoriteUrl}/${userId}/${bookId}`);
+        setFavorites(favorites.filter((id) => id !== bookId));
+      } else {
+        await axios.post(favoriteUrl, { userId, bookId });
+        setFavorites([...favorites, bookId]);
+      }
     } catch (err) {
-        if (err.response && err.response.status === 409) {
-            console.error("Book is already in favorites.");
-        } else {
-            console.error("Error toggling favorite:", err.message);
-        }
+      if (err.response && err.response.status === 409) {
+        console.error("Book is already in favorites.");
+      } else {
+        console.error("Error toggling favorite:", err.message);
+      }
     }
-};
-
+  };
 
   const filteredBooks =
     selectedCategory === 'All'
