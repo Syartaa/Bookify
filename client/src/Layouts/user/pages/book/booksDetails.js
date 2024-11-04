@@ -9,34 +9,37 @@ const BookDetails = () => {
   const [book, setBook] = useState(null);
   const [isReserved, setIsReserved] = useState(false);
   const [reservedBySomeoneElse, setReservedBySomeoneElse] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const user = useUser();
   const userId = user?.user?.id;
 
   useEffect(() => {
     const fetchBook = async () => {
       try {
+        setLoading(true);
         const response = await axios.get(`http://localhost:3001/book/${id}`);
         const bookData = response.data;
 
-        // Check if the book is currently reserved by someone
+        // Check if the book is currently reserved or borrowed by someone else
         const reservationResponse = await axios.get(`http://localhost:3001/reservation/book/${id}`);
         const isReservedByOther = reservationResponse.data.isReserved && reservationResponse.data.reservation.userId !== userId;
 
-        // Set reserved status and availability
         setReservedBySomeoneElse(isReservedByOther);
         setBook({ ...bookData, availabilityStatus: isReservedByOther ? 'reserved' : bookData.availabilityStatus });
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching book details:', error);
+        setError("Failed to load book details. Please try again later.");
+        setLoading(false);
       }
     };
 
     const checkReservationStatus = async () => {
       try {
-        // Check if the current user has reserved the book
         const userReservation = await axios.get(`http://localhost:3001/reservation/user/${userId}/book/${id}`);
         setIsReserved(userReservation.data.isReserved);
 
-        // If not reserved by the user, check if anyone else has reserved it
         if (!userReservation.data.isReserved) {
           const otherReservation = await axios.get(`http://localhost:3001/reservation/book/${id}`);
           const isReservedByOther = otherReservation.data.isReserved && otherReservation.data.reservation.userId !== userId;
@@ -51,9 +54,6 @@ const BookDetails = () => {
     fetchBook();
     if (userId) checkReservationStatus();
   }, [id, userId]);
-
-  if (!book) return <div>Loading...</div>;
-  if (!user) return <div>Loading user data...</div>;
 
   const handleReserve = async () => {
     if (!userId || !book) {
@@ -92,6 +92,35 @@ const BookDetails = () => {
     }
   };
 
+  const handleLoan = async () => {
+    if (book.availabilityStatus === 'borrowed') {
+      alert('This book is currently borrowed by someone else and cannot be loaned.');
+      return;
+    }
+
+    if (!userId || !book) {
+        alert('Unable to loan the book. Please try again.');
+        return;
+    }
+
+    const loanData = {
+        bookId: book.id,
+        userId: userId,
+    };
+
+    try {
+        await axios.post('http://localhost:3001/loan', loanData);
+        alert(`You have loaned ${book.title}!`);
+        setBook((prevBook) => ({ ...prevBook, availabilityStatus: 'borrowed' }));
+    } catch (error) {
+        console.error('Error loaning book:', error);
+        alert('Failed to loan the book. Please try again.');
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div className="text-red-500">{error}</div>;
+
   return (
     <div className="min-h-screen bg-white p-16">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-12 items-start">
@@ -106,6 +135,8 @@ const BookDetails = () => {
               className={`px-4 py-2 rounded-full text-lg font-semibold ${
                 book.availabilityStatus === 'available'
                   ? 'bg-green-100 text-green-800'
+                  : book.availabilityStatus === 'reserved'
+                  ? 'bg-yellow-100 text-yellow-800'
                   : 'bg-red-100 text-red-800'
               }`}
             >
@@ -120,18 +151,14 @@ const BookDetails = () => {
           )}
 
           <div className="mb-10">
-            <h2 className="text-xl font-semibold text-gray-700 mb-2">
-              About this ebook
-            </h2>
-            <p className="text-lg text-gray-600 leading-relaxed">
-              {book.description}
-            </p>
+            <h2 className="text-xl font-semibold text-gray-700 mb-2">About this ebook</h2>
+            <p className="text-lg text-gray-600 leading-relaxed">{book.description}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-6 text-lg text-gray-700">
             <p><strong>ISBN:</strong> {book.isbn}</p>
             <p><strong>Published on:</strong> {new Date(book.publishedDate).toLocaleDateString()}</p>
-            <p><strong>Category:</strong> {book.category.name}</p>
+            <p><strong>Category:</strong> {book.category?.name || 'N/A'}</p>
           </div>
 
           <div className="mt-8 flex gap-6">
@@ -156,11 +183,11 @@ const BookDetails = () => {
               </button>
             )}
             <button
-              onClick={() => alert(`You have loaned ${book.title}!`)}
+              onClick={handleLoan}
               className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300"
-              disabled={book.availabilityStatus !== 'available'}
+              disabled={book.availabilityStatus === 'borrowed'}
             >
-              Loan
+              {book.availabilityStatus === 'borrowed' ? 'Not Available for Loan' : 'Loan'}
             </button>
           </div>
         </div>

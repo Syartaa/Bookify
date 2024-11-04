@@ -139,14 +139,13 @@ function ReservationsPage() {
               </div>
 
               {/* Loan Button */}
-              {reservation.book.availabilityStatus === "available" && (
+             
                 <button
                   onClick={() => handleLoan(reservation.book.id)}
                   className="mt-14 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors w-full"
                 >
                   Loan Book
                 </button>
-              )}
 
               {/* Unreserve Button */}
               <button

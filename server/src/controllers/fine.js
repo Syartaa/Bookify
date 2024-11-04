@@ -31,6 +31,27 @@ const getFineById = async (req, res) => {
     }
 };
 
+const updateFinePaymentStatus = async (req, res) => {
+    const { fineId } = req.params;
+    const { paymentStatus } = req.body;
+
+    try {
+        const fine = await Fine.findByPk(fineId);
+        if (!fine) {
+            return res.status(404).json({ error: 'Fine not found' });
+        }
+
+        // Update the fine's payment status
+        await fine.update({ paymentStatus });
+
+        res.json({ message: `Fine payment status updated to ${paymentStatus}.` });
+    } catch (error) {
+        console.error('Error updating fine:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
 // Create a new fine
 const createFine = async (req, res) => {
     const { amount, paymentStatus, loanId, userId } = req.body;
@@ -99,4 +120,5 @@ module.exports = {
     createFine,
     updateFine,
     deleteFine,
+    updateFinePaymentStatus
 };
