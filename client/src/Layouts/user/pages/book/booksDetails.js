@@ -92,6 +92,28 @@ const BookDetails = () => {
     }
   };
 
+  const handleLoan = async () => {
+    if (!userId || !book) {
+        alert('Unable to loan the book. Please try again.');
+        return;
+    }
+
+    const loanData = {
+        bookId: book.id,
+        userId: userId,
+    };
+
+    try {
+        await axios.post('http://localhost:3001/loan', loanData);
+        alert(`You have loaned ${book.title}!`);
+        setBook((prevBook) => ({ ...prevBook, availabilityStatus: 'borrowed' }));
+    } catch (error) {
+        console.error('Error loaning book:', error);
+        alert('Failed to loan the book. Please try again.');
+    }
+};
+
+
   return (
     <div className="min-h-screen bg-white p-16">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-12 items-start">
@@ -156,7 +178,7 @@ const BookDetails = () => {
               </button>
             )}
             <button
-              onClick={() => alert(`You have loaned ${book.title}!`)}
+              onClick={handleLoan}
               className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300"
               disabled={book.availabilityStatus !== 'available'}
             >

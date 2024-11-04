@@ -1,4 +1,5 @@
 const Book = require('../models/book');
+const Fine = require('../models/fine');
 const Loan = require('../models/loan');
 const User = require('../models/user');
 
@@ -42,7 +43,7 @@ const getLoanById = async (req, res) => {
 
 const createLoan = async (req, res) => {
     const { bookId, userId } = req.body;
-    const borrowDate = new Date(); // Current date
+    const borrowDate = new Date();
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 14); // Set due date 2 weeks from now
 
@@ -62,7 +63,15 @@ const createLoan = async (req, res) => {
         });
 
         // Update the book status to "borrowed"
-        await book.update({ availabilityStatus: 'borrowed' });
+        const [updatedCount] = await Book.update(
+            { availabilityStatus: 'borrowed' },
+            { where: { id: bookId } }
+        );
+
+        if (updatedCount === 0) {
+            console.error("Failed to update book status.");
+            return res.status(500).json({ error: 'Failed to update book status' });
+        }
 
         res.status(201).json(loan);
     } catch (error) {
@@ -72,33 +81,68 @@ const createLoan = async (req, res) => {
 };
 
 
+
 // Update a loan
+
+
 const updateLoan = async (req, res) => {
     const { id } = req.params;
-    const { borrowDate, returnDate, dueDate, status, bookId, userId } = req.body;
+    const { returnDate } = req.body;
 
     try {
-        const loan = await Loan.findByPk(id);
+        const loan = await Loan.findByPk(id, {
+            include: [{ model: Book, attributes: ['id', 'title', 'availabilityStatus'] }],
+        });
+
         if (!loan) {
             return res.status(404).json({ error: 'Loan not found' });
         }
 
-        // Update loan fields
-        await loan.update({
-            borrowDate: borrowDate || loan.borrowDate,
-            returnDate: returnDate || loan.returnDate,
-            dueDate: dueDate || loan.dueDate,
-            status: status || loan.status,
-            bookId: bookId || loan.bookId,
-            userId: userId || loan.userId,
-        });
+        // Update return date and calculate fine if overdue
+        let fineAmount = 0;
+        if (returnDate) {
+            const returnDateObj = new Date(returnDate);
+            const dueDateObj = new Date(loan.dueDate);
 
-        res.json(loan);
+            if (returnDateObj > dueDateObj) {
+                const diffTime = Math.abs(returnDateObj - dueDateObj);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Calculate days late
+                fineAmount = diffDays * 1; // Assuming $1 fine per day late
+
+                // Create a new fine entry
+                await Fine.create({
+                    amount: fineAmount,
+                    loanId: loan.id,
+                    userId: loan.userId,
+                    paymentStatus: 'unpaid',
+                });
+            }
+
+            // Update the loan's return date and status
+            await loan.update({
+                returnDate: returnDateObj,
+                status: 'returned',
+            });
+
+            // Update the book's availability status to 'available'
+            await Book.update(
+                { availabilityStatus: 'available' },
+                { where: { id: loan.bookId } }
+            );
+
+            return res.json({
+                loan,
+                fine: fineAmount > 0 ? `You have a fine of $${fineAmount}` : 'No fine',
+            });
+        }
+
+        res.json({ loan, message: 'Loan updated without return.' });
     } catch (error) {
-        console.log(error);
+        console.error('Error updating loan:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 // Delete a loan
 const deleteLoan = async (req, res) => {
@@ -117,10 +161,36 @@ const deleteLoan = async (req, res) => {
     }
 };
 
+// Check if a book is borrowed by another user
+const checkIfBookIsBorrowed = async (req, res) => {
+    const { bookId, userId } = req.params;
+
+    try {
+        // Find a loan record for the book where it’s not returned yet
+        const loan = await Loan.findOne({
+            where: { bookId, returnDate: null },
+            include: [{ model: Book, attributes: ['id', 'title', 'availabilityStatus'] }]
+        });
+
+        if (loan) {
+            // If the loan exists and the book is borrowed by a different user
+            const isBorrowedByOtherUser = loan.userId !== parseInt(userId);
+            return res.json({ isBorrowed: true, borrowedByAnotherUser: isBorrowedByOtherUser });
+        }
+
+        // If no active loan found, book is not borrowed
+        res.json({ isBorrowed: false });
+    } catch (error) {
+        console.error('Error checking if book is borrowed:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
 module.exports = {
     getAllLoans,
     getLoanById,
     createLoan,
     updateLoan,
     deleteLoan,
+    checkIfBookIsBorrowed,
 };

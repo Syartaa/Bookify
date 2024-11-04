@@ -8,5 +8,6 @@ router.get('/:id', FineController.getFineById);
 router.post('/', FineController.createFine);
 router.put('/:id', FineController.updateFine);
 router.delete('/:id', FineController.deleteFine);
+router.put('/:fineId/payment-status', FineController.updateFinePaymentStatus);
 
 module.exports = router;

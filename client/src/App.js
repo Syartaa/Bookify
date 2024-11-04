@@ -25,10 +25,11 @@ import Authors from "./Layouts/user/pages/authors";
 import ArticlesPage from "./Layouts/user/pages/articles";
 import ArticleDetail from "./Layouts/user/components/ArticleDetail";
 import Contact from "./Layouts/user/pages/contact";
-import LoanPage from "./Layouts/user/pages/loanpage";
+//import LoanPage from "./Layouts/user/pages/loanpage";
 import ReservationsPage from "./Layouts/user/pages/ReservationsPage";
 import FavoriteScreen from "./Layouts/user/pages/book/FavoriteScreen";
 import BookDetails from "./Layouts/user/pages/book/booksDetails";
+import LoanPage from "./Layouts/user/pages/book/LoanPage";
 
 function App() {
   return (
