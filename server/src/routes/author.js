@@ -20,5 +20,8 @@ router.get('/:id', AuthorController.getAuthorById);
 router.post('/', upload.single('image'), AuthorController.createAuthor); // Use multer middleware
 router.put('/:id', upload.single('image'), AuthorController.updateAuthor); // Use multer middleware
 router.delete('/:id', AuthorController.deleteAuthor);
+// Fetch books by author ID
+router.get('/:id/books', AuthorController.getBooksByAuthorId);
+
 
 module.exports = router;
