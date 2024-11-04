@@ -41,7 +41,7 @@ const addFavorite = async (req, res) => {
         // Check if the favorite already exists
         const existingFavorite = await Favorite.findOne({ where: { userId, bookId } });
         if (existingFavorite) {
-            return res.status(400).json({ error: 'Book is already in favorites.' });
+            return res.status(409).json({ error: 'Book is already in favorites.' });
         }
 
         const favorite = await Favorite.create({ userId, bookId });
@@ -51,6 +51,7 @@ const addFavorite = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 // Remove a book from favorites
 const removeFavorite = async (req, res) => {

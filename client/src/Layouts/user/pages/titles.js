@@ -55,17 +55,24 @@ const Titles = () => {
 
   const handleFavoriteToggle = async (bookId) => {
     try {
-      if (favorites.includes(bookId)) {
-        await axios.delete(`${favoriteUrl}/${userId}/${bookId}`);
-        setFavorites(favorites.filter((id) => id !== bookId));
-      } else {
-        await axios.post(favoriteUrl, { userId, bookId });
-        setFavorites([...favorites, bookId]);
-      }
+        if (favorites.includes(bookId)) {
+            // Remove from favorites if already present
+            await axios.delete(`${favoriteUrl}/${userId}/${bookId}`);
+            setFavorites(favorites.filter((id) => id !== bookId));
+        } else {
+            // Attempt to add to favorites
+            await axios.post(favoriteUrl, { userId, bookId });
+            setFavorites([...favorites, bookId]);
+        }
     } catch (err) {
-      console.error("Error toggling favorite:", err.message);
+        if (err.response && err.response.status === 409) {
+            console.error("Book is already in favorites.");
+        } else {
+            console.error("Error toggling favorite:", err.message);
+        }
     }
-  };
+};
+
 
   const filteredBooks =
     selectedCategory === 'All'
