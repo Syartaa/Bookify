@@ -1,36 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { FaBookOpen } from 'react-icons/fa';
 
-// Sample article data
-const articles = [
-  {
-    id: 1,
-    title: "The Future of Digital Reading",
-    author: "John Doe",
-    date: "October 28, 2024",
-    content: "With advancements in digital technologies, reading habits are shifting towards eBooks and mobile apps expanding...",
-    imageUrl: "https://pagedone.io/asset/uploads/1696244059.png",
-  },
-  {
-    id: 2,
-    title: "Top 10 Books to Read This Year",
-    author: "Jane Smith",
-    date: "September 15, 2024",
-    content: "Whether you're a fiction lover or a non-fiction enthusiast, our top 10 books for this year will keep you entertained for a very long time...",
-    imageUrl: "https://pagedone.io/asset/uploads/1696244074.png",
-  },
-  {
-    id: 3,
-    title: "Mastering Web Development in 2024",
-    author: "Alex Johnson",
-    date: "August 10, 2024",
-    content: "This article covers the latest trends in web development, including popular frameworks like the most popular ones..",
-    imageUrl: "https://pagedone.io/asset/uploads/1707713972.png",
-  },
-  // Add more articles as needed...
-];
-
 const ArticlesPage = () => {
+  const [articles, setArticles] = useState([]); // State to store articles
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
   const [selectedArticle, setSelectedArticle] = useState(null); // State for the selected article
 
@@ -43,6 +16,17 @@ const ArticlesPage = () => {
     setSelectedArticle(article); // Set the selected article
     setIsModalOpen(true); // Open the modal
   };
+
+  // Fetch articles from the API when the component mounts
+  useEffect(() => {
+    axios.get('http://localhost:3001/article') // Adjust the API URL accordingly
+      .then((response) => {
+        setArticles(response.data); // Set the fetched articles to state
+      })
+      .catch((error) => {
+        console.error('Error fetching articles:', error);
+      });
+  }, []);
 
   return (
     <section className="py-24 bg-[#fdf5f0]">

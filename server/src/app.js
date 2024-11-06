@@ -13,7 +13,8 @@ const loan = require('./models/loan');
 const reservation = require('./models/reservation');
 const fine = require('./models/fine');
 const review = require('./models/review');
-const favorite = require('./models/favortie');
+const favorite = require('./models/favorite');
+const article = require('./models/article'); // Import article model
 
 const authorRoutes = require('./routes/author');
 const categoryRoutes = require('./routes/category');
@@ -23,45 +24,46 @@ const loanRoutes = require('./routes/loan');
 const fineRoutes = require('./routes/fine');
 const reviewRoutes = require('./routes/review');
 const favoriteRoutes = require('./routes/favorite');
+const articleRoutes = require('./routes/article');
+
 
 const userAuthRoutes = require('./routes/auth/user.js');
 
- 
 // Initialize express
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors({ origin: 'http://localhost:3000',  credentials: true, }));
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(bodyParser.json());
 
 // Database synchronization and server start
 async function startServer() {
     try {
-      await sequelize.sync({logging: console.log, });
-      console.log('Database synchronized successfully');
-      app.listen(PORT, () => {
-        console.log(`Server is running and listening on port ${PORT}`);
-      });
+        await sequelize.sync({ logging: console.log });
+        console.log('Database synchronized successfully');
+        app.listen(PORT, () => {
+            console.log(`Server is running and listening on port ${PORT}`);
+        });
     } catch (error) {
-      console.error('Error occurred while synchronizing database:', error);
+        console.error('Error occurred while synchronizing database:', error);
     }
-  }
+}
 
-  app.use("/auth/user", userAuthRoutes);
+app.use("/auth/user", userAuthRoutes);
 
-  app.use(
-    '/user',userRoutes
-  )
-  app.use('/author', authorRoutes);
-  app.use('/category', categoryRoutes);
-  app.use('/book', bookRoutes);
-  app.use('/reservation', reservationRoutes);
-  app.use('/loan', loanRoutes);
-  app.use('/fine', fineRoutes);
-  app.use('/review', reviewRoutes);
-  app.use('/favorite', favoriteRoutes);
+app.use('/user', userRoutes);
+app.use('/author', authorRoutes);
+app.use('/category', categoryRoutes);
+app.use('/book', bookRoutes);
+app.use('/reservation', reservationRoutes);
+app.use('/loan', loanRoutes);
+app.use('/fine', fineRoutes);
+app.use('/review', reviewRoutes);
+app.use('/favorite', favoriteRoutes);
 
-  app.use('/uploads', express.static('uploads'));
 
-  
-  startServer();
+app.use('/article', articleRoutes); 
+
+app.use('/uploads', express.static('uploads'));
+
+startServer();
