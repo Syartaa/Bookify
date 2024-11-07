@@ -16,7 +16,7 @@ function DashboardSidebar() {
     Cookies.remove("token");
 
     // Redirect to the sign-in page
-    window.location.href = "/signup"; // Update with the correct sign-in path
+    window.location.href = "/login"; // Update with the correct sign-in path
   };
 
   return (
