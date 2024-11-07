@@ -14,7 +14,7 @@ const reservation = require('./models/reservation');
 const fine = require('./models/fine');
 const review = require('./models/review');
 const favorite = require('./models/favorite');
-const article = require('./models/article'); // Import article model
+const article = require('./models/article.js')
 
 const authorRoutes = require('./routes/author');
 const categoryRoutes = require('./routes/category');
@@ -25,7 +25,6 @@ const fineRoutes = require('./routes/fine');
 const reviewRoutes = require('./routes/review');
 const favoriteRoutes = require('./routes/favorite');
 const articleRoutes = require('./routes/article');
-
 
 const userAuthRoutes = require('./routes/auth/user.js');
 

@@ -1,5 +1,9 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database'); // Your sequelize instance
+// models/article.js
+// src/models/article.js
+const sequelize = require('../util/database'); // Adjusted to match the actual path
+
+
 
 const Article = sequelize.define('Article', {
   title: {

@@ -1,5 +1,4 @@
-// controllers/articleController.js
-const Article = require('../models/article');
+const Article = require('../models/article'); // Correct path to model
 
 // Create a new article
 exports.createArticle = async (req, res) => {

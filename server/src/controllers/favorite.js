@@ -3,7 +3,7 @@ const Book = require('../models/book');
 const User = require('../models/user');
 const Author = require('../models/author');
 const Category = require('../models/category');
-const Favorite = require('../models/favortie');
+const Favorite = require('../models/favorite');
 
 // Get all favorite books for a user
 const getFavoritesByUserId = async (req, res) => {
