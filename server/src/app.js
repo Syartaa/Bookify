@@ -23,6 +23,7 @@ const loanRoutes = require('./routes/loan');
 const fineRoutes = require('./routes/fine');
 const reviewRoutes = require('./routes/review');
 const favoriteRoutes = require('./routes/favorite');
+const contactRoutes = require('./routes/contactus');
 
 const userAuthRoutes = require('./routes/auth/user.js');
 
@@ -37,7 +38,7 @@ app.use(bodyParser.json());
 // Database synchronization and server start
 async function startServer() {
     try {
-      await sequelize.sync({logging: console.log, });
+      await sequelize.sync({logging: console.log,});
       console.log('Database synchronized successfully');
       app.listen(PORT, () => {
         console.log(`Server is running and listening on port ${PORT}`);
@@ -60,6 +61,7 @@ async function startServer() {
   app.use('/fine', fineRoutes);
   app.use('/review', reviewRoutes);
   app.use('/favorite', favoriteRoutes);
+  app.use('/contactus', contactRoutes);
 
   app.use('/uploads', express.static('uploads'));
 

@@ -4,7 +4,6 @@ import DashboardLayout from "./Layouts/dashboard/pages/dashboardLayout";
 import { ThemeProvider } from "@material-tailwind/react";
 
 import RequireAuth from "./helper/requireAuth";
-import UserHome from "./Layouts/user/pages/home"; // The user-specific page
 // Optional unauthorized page
 import Login from "./Layouts/user/pages/login";
 import Signup from "./Layouts/user/pages/sigup";
@@ -32,6 +31,7 @@ import BookDetails from "./Layouts/user/pages/book/booksDetails";
 import LoanPage from "./Layouts/user/pages/book/LoanPage";
 import AccountSettings from "./Layouts/user/pages/accountSettings";
 import AuthorDetails from "./Layouts/user/pages/book/AuthorDetails";
+import ContactList from "./Layouts/dashboard/pages/CountactUs.js/ContactList";
 
 function App() {
   return (
@@ -50,6 +50,7 @@ function App() {
                 <Route path="loan" element={<LoanList />} />
                 <Route path="review" element={<ReviewList />} />
                 <Route path="fine" element={<FineList />} />
+                <Route path="contact" element={<ContactList />} />
               </Route>
             </Route>
 

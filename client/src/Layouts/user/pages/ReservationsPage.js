@@ -26,21 +26,26 @@ function ReservationsPage() {
   }, []);
 
   const handleLoan = async (bookId) => {
+    console.log("Book ID:", bookId); // Log to check the value
+    console.log("User ID:", userId); // Log to check the value
+    
     try {
-        const userId = 1; // Replace with dynamic user ID if needed
-        await axios.post(`http://localhost:3001/loan`, { bookId, userId });
-        alert("Book loaned successfully!");
-
-        // Fetch updated reservations after loan creation
-        const response = await axios.get("http://localhost:3001/reservation");
-        setReservations(response.data);
+      await axios.post("http://localhost:3001/loan", { bookId, userId });
+      alert("Book loaned successfully!");
+  
+      // Fetch updated reservations after loan creation
+      const response = await axios.get("http://localhost:3001/reservation");
+      setReservations(response.data);
     } catch (err) {
-        console.error("Error loaning book:", err);
-        alert("Failed to loan book.");
+      console.error("Error loaning book:", err);
+      alert("Failed to loan book.");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
+  
+  
+  
 
   // New function to handle unreserving a book
   const handleUnreserve = async (reservationId) => {
@@ -141,7 +146,11 @@ function ReservationsPage() {
               {/* Loan Button */}
              
                 <button
-                  onClick={() => handleLoan(reservation.book.id)}
+                  onClick={() =>  {if (!reservation.book.id) {
+                    alert("Book ID is missing.");
+                    return;
+                  }
+                  handleLoan(reservation.book.id);}}
                   className="mt-14 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors w-full"
                 >
                   Loan Book
