@@ -62,7 +62,7 @@ function App() {
           <Route path="/authors" element={<Authors />} />
           <Route path="/articles" element={<ArticlesPage />} />
           <Route path="/articles/:id" element={<ArticleDetail />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/contactus" element={<Contact />} />
           <Route path="/books/:id" element={<BookDetails />} />
           <Route path="/reservations" element={<ReservationsPage />} />
           <Route path="/favorites" element={<FavoriteScreen />} />

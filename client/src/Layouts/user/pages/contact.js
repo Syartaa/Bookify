@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const Contact = () => {
   const [showContactInfo, setShowContactInfo] = useState(false);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -11,13 +13,29 @@ const Contact = () => {
     setFormSubmitted(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Email:', email);
-    console.log('Message:', message);
+
+    try {
+      const response = await axios.post('http://localhost:3001/contactus', {
+        name,
+        email,
+        message,
+      });
+
+      if (response.status === 200) {
+        console.log('Message sent:', response.data);
+        setFormSubmitted(true);
+      } else {
+        console.error('Error sending message:', response);
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+
+    setName('');
     setEmail('');
     setMessage('');
-    setFormSubmitted(true);
   };
 
   return (
@@ -42,6 +60,17 @@ const Contact = () => {
             </div>
             {showContactInfo && !formSubmitted && (
               <form onSubmit={handleSubmit} className="mt-4 text-center">
+                <div className="flex flex-col items-center mb-4">
+                  <label className="text-gray-500 text-sm font-medium leading-5 pb-3">Name</label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="border border-gray-300 rounded-lg p-4 w-80 lg:w-96 text-base focus:outline-none focus:border-pink-400 shadow-md"
+                    placeholder="Enter your name"
+                    required
+                  />
+                </div>
                 <div className="flex flex-col items-center mb-4">
                   <label className="text-gray-500 text-sm font-medium leading-5 pb-3">Email Address</label>
                   <input
@@ -87,34 +116,7 @@ const Contact = () => {
           </div>
         </div>
         <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-8">
-          <div className="h-96 relative flex justify-center">
-            <img src="https://pagedone.io/asset/uploads/1696246502.png" alt="United Kingdom" className="w-full h-full object-cover" />
-            <div className="absolute bottom-0 mb-6 text-center px-6">
-              <h5 className="text-white text-lg font-semibold leading-7 mb-2">United Kingdom</h5>
-              <p className="text-white text-base font-medium leading-6">123 High Street, Westminster, London</p>
-            </div>
-          </div>
-          <div className="h-96 relative flex justify-center">
-            <img src="https://pagedone.io/asset/uploads/1696246522.png" alt="Germany" className="w-full h-full object-cover" />
-            <div className="absolute bottom-0 mb-6 text-center px-6">
-              <h5 className="text-white text-lg font-semibold leading-7 mb-2">Germany</h5>
-              <p className="text-white text-base font-medium leading-6">101 Unter den Linden, Mitte <br />District, Berlin</p>
-            </div>
-          </div>
-          <div className="h-96 relative flex justify-center">
-            <img src="https://pagedone.io/asset/uploads/1696246551.png" alt="France" className="w-full h-full object-cover" />
-            <div className="absolute bottom-0 mb-6 text-center px-6">
-              <h5 className="text-white text-lg font-semibold leading-7 mb-2">France</h5>
-              <p className="text-white text-base font-medium leading-6">456 Rue de la Paix, 8th Arrondissement, Paris</p>
-            </div>
-          </div>
-          <div className="h-96 relative flex justify-center">
-            <img src="https://pagedone.io/asset/uploads/1696246565.png" alt="Switzerland" className="w-full h-full object-cover" />
-            <div className="absolute bottom-0 mb-6 text-center px-6">
-              <h5 className="text-white text-lg font-semibold leading-7 mb-2">Switzerland</h5>
-              <p className="text-white text-base font-medium leading-6">987 Bahnhofstrasse, Zurich <br /> City Center, Zurich</p>
-            </div>
-          </div>
+          {/* Locations content */}
         </div>
       </div>
     </section>

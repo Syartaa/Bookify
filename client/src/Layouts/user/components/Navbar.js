@@ -63,7 +63,7 @@ function Navbar() {
           Articles
         </a>
         <a
-          href="/contact"
+          href="/contactus"
           className="text-base font-medium text-white hover:text-orange-400 transition-colors"
           style={{ fontFamily: "Poppins, sans-serif" }}
         >
