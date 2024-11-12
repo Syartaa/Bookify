@@ -11,6 +11,7 @@ router.put('/:id', ReservationController.updateReservation);
 router.delete('/:id', ReservationController.deleteReservation);
 router.delete('/user/:userId/book/:bookId', ReservationController.deleteReservationByUserAndBook);
 router.get('/book/:bookId', ReservationController.checkReservationStatusForBook);
+router.get("/user/:userId", ReservationController.getUserReservations);
 
 
 module.exports = router;

@@ -25,6 +25,33 @@ const getAllReservations = async (req, res) => {
     }
 };
 
+
+// Get all reservations for a specific user
+const getUserReservations = async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const reservations = await Reservation.findAll({
+            where: { userId },
+            include: [
+                { 
+                    model: Book,
+                    include: [
+                        { model: Author, attributes: ["name"] },
+                        { model: Category, attributes: ["name"] }
+                    ]
+                },
+                { model: User, attributes: ['id', 'name'] }
+            ],
+        });
+
+        res.json(reservations);
+    } catch (error) {
+        console.error("Error fetching user reservations:", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
+
 // Get a reservation by ID
 const getReservationById = async (req, res) => {
     const { id } = req.params;
@@ -203,4 +230,5 @@ module.exports = {
     deleteReservation,
     deleteReservationByUserAndBook,
     checkReservationStatusForBook,
+    getUserReservations
 };

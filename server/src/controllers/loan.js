@@ -5,11 +5,8 @@ const User = require('../models/user');
 
 // Get all loans
 const getAllLoans = async (req, res) => {
-    const { userId } = req.query; // Get userId from query params
-
     try {
         const loans = await Loan.findAll({
-            where: { userId }, // Filter by the logged-in user's ID
             include: [
                 { model: Book, attributes: ['id', 'title'] },
                 { model: User, attributes: ['id', 'name'] }
@@ -17,10 +14,11 @@ const getAllLoans = async (req, res) => {
         });
         res.json(loans);
     } catch (error) {
-        console.error('Error fetching loans:', error);
+        
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 
 

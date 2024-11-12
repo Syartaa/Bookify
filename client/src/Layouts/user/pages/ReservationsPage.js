@@ -12,14 +12,15 @@ function ReservationsPage() {
   useEffect(() => {
     const fetchReservations = async () => {
       if (!userId) {
-        alert("Please log in to view your reservations.");
+        console.log("Please log in to view your reservations.");
         return;
       }
+
+      console.log("User ID:", userId); 
   
       try {
-        // Pass the userId as a query parameter correctly
-        const response = await axios.get(`http://localhost:3001/reservation`);
-
+        // Fetch only the logged-in user's reservations
+        const response = await axios.get(`http://localhost:3001/reservation/user/${userId}`);
         setReservations(response.data);
       } catch (err) {
         console.error("Error fetching reservations:", err);
@@ -30,8 +31,7 @@ function ReservationsPage() {
     };
   
     fetchReservations();
-  }, [userId]); // Only fetch when userId is available
-  
+  }, [userId]);
   
 
   const handleLoan = async (bookId) => {
