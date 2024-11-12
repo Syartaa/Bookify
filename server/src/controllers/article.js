@@ -1,13 +1,15 @@
-const Article = require('../models/article'); // Correct path to model
+const Article = require('../models/article');
 
 // Create a new article
-exports.createArticle = async (req, res) => {
+const createArticle = async (req, res) => {
+  const { title, content, userId } = req.body;
+  const imageUrl = req.file ? req.file.path : null; // Get the image path from the uploaded file
+
   try {
-    const { title, content, imageUrl, userId } = req.body;
     const article = await Article.create({
       title,
       content,
-      imageUrl,
+      imageUrl, // Save the image path
       userId, // assuming userId comes from the authenticated user
     });
     res.status(201).json(article);
@@ -18,7 +20,7 @@ exports.createArticle = async (req, res) => {
 };
 
 // Get all articles
-exports.getArticles = async (req, res) => {
+const getArticles = async (req, res) => {
   try {
     const articles = await Article.findAll();
     res.status(200).json(articles);
@@ -29,7 +31,7 @@ exports.getArticles = async (req, res) => {
 };
 
 // Get a single article by ID
-exports.getArticleById = async (req, res) => {
+const getArticleById = async (req, res) => {
   try {
     const article = await Article.findByPk(req.params.id);
     if (article) {
@@ -44,14 +46,17 @@ exports.getArticleById = async (req, res) => {
 };
 
 // Update an article by ID
-exports.updateArticle = async (req, res) => {
+const updateArticle = async (req, res) => {
+  const { title, content } = req.body;
+  const imageUrl = req.file ? req.file.path : null; // Get the new image path if uploaded
+
   try {
-    const { title, content, imageUrl } = req.body;
     const article = await Article.findByPk(req.params.id);
     if (article) {
+      // Update fields if provided
       article.title = title || article.title;
       article.content = content || article.content;
-      article.imageUrl = imageUrl || article.imageUrl;
+      article.imageUrl = imageUrl || article.imageUrl; // Update image only if a new one is uploaded
       await article.save();
       res.status(200).json(article);
     } else {
@@ -64,7 +69,7 @@ exports.updateArticle = async (req, res) => {
 };
 
 // Delete an article by ID
-exports.deleteArticle = async (req, res) => {
+const deleteArticle = async (req, res) => {
   try {
     const article = await Article.findByPk(req.params.id);
     if (article) {
@@ -77,4 +82,12 @@ exports.deleteArticle = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error deleting article' });
   }
+};
+
+module.exports = {
+  deleteArticle,
+  createArticle,
+  getArticleById,
+  getArticles,
+  updateArticle
 };

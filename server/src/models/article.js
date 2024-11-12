@@ -1,21 +1,25 @@
-const { DataTypes } = require('sequelize');
 // models/article.js
 // src/models/article.js
 const sequelize = require('../util/database'); // Adjusted to match the actual path
+const { Sequelize } = require("sequelize");
 
 
-
-const Article = sequelize.define('Article', {
+const Article = sequelize.define('article', {
+  id:{
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    },
   title: {
-    type: DataTypes.STRING,
+    type: Sequelize.STRING,
     allowNull: false,
   },
   content: {
-    type: DataTypes.TEXT,
+    type: Sequelize.TEXT('long'),
     allowNull: false,
   },
   imageUrl: {
-    type: DataTypes.STRING,
+    type: Sequelize.STRING,
     allowNull: true,
   },
 }, {

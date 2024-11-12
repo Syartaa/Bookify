@@ -41,7 +41,7 @@ app.use(bodyParser.json());
 async function startServer() {
     try {
      
-      await sequelize.sync({logging: console.log,});
+      await sequelize.sync({logging: console.log});
       console.log('Database synchronized successfully');
       app.listen(PORT, () => {
         console.log(`Server is running and listening on port ${PORT}`);
