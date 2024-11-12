@@ -4,6 +4,7 @@ import CreateReservation from "./CreateReservation"; // CreateReservation modal 
 import EditReservation from "./EditReservation"; // EditReservation modal component
 import { useUser } from "../../../../helper/userContext";
 import { Table, Alert } from "flowbite-react"; // Importing Alert for error handling
+import Pagination from "../../components/Pagination"; // Import Pagination component
 
 function ReservationList() {
     const [reservations, setReservations] = useState([]);
@@ -17,6 +18,8 @@ function ReservationList() {
     const [books, setBooks] = useState([]); // State for books
     const [users, setUsers] = useState([]); // State for users
     const { token } = useUser();
+    const [currentPage, setCurrentPage] = useState(1); // Current page state
+    const itemsPerPage = 5; // Number of items per page
 
     const fetchAllReservations = async () => {
         setLoading(true); // Start loading
@@ -99,6 +102,17 @@ function ReservationList() {
         setFilteredReservations(filtered);
     };
 
+    // Pagination logic
+    const totalPages = Math.ceil(filteredReservations.length / itemsPerPage);
+    const currentItems = filteredReservations.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
     return (
         <div className="bg-[#d9d9fb] p-5">
             {error && <Alert color="failure">{error}</Alert>} {/* Display error message */}
@@ -141,8 +155,8 @@ function ReservationList() {
                             <Table.Row>
                                 <Table.Cell colSpan="5" className="text-center">Loading...</Table.Cell>
                             </Table.Row>
-                        ) : filteredReservations.length > 0 ? (
-                            filteredReservations.map((item) => (
+                        ) : currentItems.length > 0 ? (
+                            currentItems.map((item) => (
                                 <Table.Row key={item.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                                         {new Date(item.reservationDate).toLocaleDateString()}
@@ -177,6 +191,12 @@ function ReservationList() {
                     </Table.Body>
                 </Table>
             </div>
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+            /> {/* Add Pagination component here */}
 
             {isCreateModalOpen && (
                 <div className="modal-container">

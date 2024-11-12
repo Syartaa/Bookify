@@ -16,6 +16,7 @@ function LoanList() {
     const [error, setError] = useState(null); // Error state
     const [books, setBooks] = useState([]); // State for books
     const [users, setUsers] = useState([]); // State for users
+    
     const { token } = useUser();
 
     const fetchAllLoans = async () => {

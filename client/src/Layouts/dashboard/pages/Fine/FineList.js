@@ -3,7 +3,7 @@ import axios from "axios";
 import CreateFine from "./CreateFine"; // CreateFine modal component
 import EditFine from "./EditFine"; // EditFine modal component
 import { useUser } from "../../../../helper/userContext";
-import { Table, Alert } from "flowbite-react"; // Importing Alert for error handling
+import { Table, Alert, Pagination } from "flowbite-react"; // Import Pagination component for pagination
 
 function FineList() {
     const [fines, setFines] = useState([]);
@@ -12,11 +12,16 @@ function FineList() {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedFineId, setSelectedFineId] = useState(null);
-    const [loading, setLoading] = useState(true); // Loading state
-    const [error, setError] = useState(null); // Error state
-    const [loans, setLoans] = useState([]); // State for loans
-    const [users, setUsers] = useState([]); // State for users
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [loans, setLoans] = useState([]);
+    const [users, setUsers] = useState([]);
     const { token } = useUser();
+
+    // Pagination states
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
+    const totalPages = Math.ceil(filteredFines.length / itemsPerPage);
 
     const fetchAllFines = async () => {
         setLoading(true);
@@ -29,8 +34,6 @@ function FineList() {
             };
             const res = await axios.get("http://localhost:3001/fine", config);
             setFines(res.data);
-            console.log("Fetched fines data:", res.data);
-
             setFilteredFines(res.data);
         } catch (err) {
             console.error("Error fetching fines:", err);
@@ -49,7 +52,6 @@ function FineList() {
             };
             const res = await axios.get("http://localhost:3001/loan", config);
             setLoans(res.data);
-
         } catch (err) {
             console.error("Error fetching loans:", err);
             setError("Failed to load loans. Please try again later.");
@@ -100,9 +102,18 @@ function FineList() {
             fine.paymentStatus.toLowerCase().includes(query.toLowerCase())
         );
         setFilteredFines(filtered);
+        setCurrentPage(1); // Reset to first page after search
     };
 
-    
+    // Get current page items
+    const currentFines = filteredFines.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
 
     return (
         <div className="bg-[#d9d9fb] p-5">
@@ -142,13 +153,12 @@ function FineList() {
                         </Table.HeadCell>
                     </Table.Head>
                     <Table.Body className="divide-y">
-                        
                         {loading ? (
                             <Table.Row>
                                 <Table.Cell colSpan="5" className="text-center">Loading...</Table.Cell>
                             </Table.Row>
-                        ) : filteredFines.length > 0 ? (
-                            filteredFines.map((item) => (
+                        ) : currentFines.length > 0 ? (
+                            currentFines.map((item) => (
                                 <Table.Row key={item.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                                         {item.amount != null ? Number(item.amount).toFixed(2) : "N/A"}
@@ -183,6 +193,13 @@ function FineList() {
                     </Table.Body>
                 </Table>
             </div>
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                className="mt-4"
+            />
 
             {isCreateModalOpen && (
                 <CreateFine

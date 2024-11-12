@@ -5,8 +5,11 @@ const User = require('../models/user');
 
 // Get all loans
 const getAllLoans = async (req, res) => {
+    const { userId } = req.query; // Get userId from query params
+
     try {
         const loans = await Loan.findAll({
+            where: { userId }, // Filter by the logged-in user's ID
             include: [
                 { model: Book, attributes: ['id', 'title'] },
                 { model: User, attributes: ['id', 'name'] }
@@ -14,10 +17,11 @@ const getAllLoans = async (req, res) => {
         });
         res.json(loans);
     } catch (error) {
-        
+        console.error('Error fetching loans:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 
 // Get a loan by ID
@@ -50,35 +54,38 @@ const createLoan = async (req, res) => {
     try {
         // Check if the book is available
         const book = await Book.findByPk(bookId);
-        if (!book || book.availabilityStatus !== 'available') {
-            return res.status(400).json({ error: 'Book is not available for loan.' });
+        if (!book) {
+            return res.status(404).json({ error: 'Book not found' });
         }
 
-        // Create the loan
+        // Check if the user exists
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Check if the book is already loaned out
+        const existingLoan = await Loan.findOne({ where: { bookId, returnDate: null } });
+        if (existingLoan) {
+            return res.status(400).json({ error: 'Book is already loaned out' });
+        }
+
+        // Create a new loan
         const loan = await Loan.create({
-            borrowDate,
-            dueDate,
             bookId,
             userId,
+            borrowDate,
+            dueDate,
+            returnDate: null, // Not returned yet
         });
 
-        // Update the book status to "borrowed"
-        const [updatedCount] = await Book.update(
-            { availabilityStatus: 'borrowed' },
-            { where: { id: bookId } }
-        );
-
-        if (updatedCount === 0) {
-            console.error("Failed to update book status.");
-            return res.status(500).json({ error: 'Failed to update book status' });
-        }
-
-        res.status(201).json(loan);
+        res.status(201).json({ message: 'Loan created successfully', loan });
     } catch (error) {
-        console.error('Error creating loan:', error.message);
+        console.error("Error creating loan:", error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 
 

@@ -5,11 +5,18 @@ const LoanPage = () => {
   const [loans, setLoans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const user = useUser(); // Access the user data
+  const userId = user?.user?.id;
 
   useEffect(() => {
     const fetchLoans = async () => {
+      if (!userId) {
+        alert("Please log in to view your reservations.");
+        return;
+      }
+
       try {
-        const response = await axios.get('http://localhost:3001/loan');
+        const response = await axios.get(`http://localhost:3001/loan?userId=${userId}`);
         setLoans(response.data);
       } catch (err) {
         setError('Could not fetch loans');

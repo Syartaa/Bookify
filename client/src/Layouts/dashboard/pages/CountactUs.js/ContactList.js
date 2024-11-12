@@ -4,6 +4,7 @@ import CreateContact from "./CreateContact"; // CreateContact modal component
 import ViewContact from "./ViewContact"; // ViewContact modal component
 import { useUser } from "../../../../helper/userContext";
 import { Table } from "flowbite-react";
+import Pagination from "../../components/Pagination"; // Import Pagination component
 
 function ContactList() {
     const [contacts, setContacts] = useState([]);
@@ -13,6 +14,9 @@ function ContactList() {
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
     const [selectedContactId, setSelectedContactId] = useState(null);
     const { token } = useUser();
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5; // Number of contacts per page
 
     const fetchAllContacts = async () => {
         try {
@@ -57,6 +61,17 @@ function ContactList() {
         setFilteredContacts(filtered);
     };
 
+    // Get the current page contacts
+    const currentContacts = filteredContacts.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    // Handle page change
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
     return (
         <div className="bg-[#d9d9fb] p-5">
             <div className="flex justify-between mb-4">
@@ -92,8 +107,8 @@ function ContactList() {
                         </Table.HeadCell>
                     </Table.Head>
                     <Table.Body className="divide-y">
-                        {filteredContacts.length > 0 ? (
-                            filteredContacts.map((item) => (
+                        {currentContacts.length > 0 ? (
+                            currentContacts.map((item) => (
                                 <Table.Row key={item.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                                         {item.name}
@@ -127,6 +142,13 @@ function ContactList() {
                     </Table.Body>
                 </Table>
             </div>
+
+            {/* Pagination Component */}
+            <Pagination
+                currentPage={currentPage}
+                totalPages={Math.ceil(filteredContacts.length / itemsPerPage)}
+                onPageChange={handlePageChange}
+            />
 
             {isCreateModalOpen && (
                 <div className="modal-container">
