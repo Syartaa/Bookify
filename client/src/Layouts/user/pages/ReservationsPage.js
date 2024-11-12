@@ -10,62 +10,65 @@ function ReservationsPage() {
   const userId = user?.user?.id; // Access the ID inside the nested 'user' object
 
   useEffect(() => {
-    const fetchReservations = async () => {
-      if (!userId) {
-        console.log("Please log in to view your reservations.");
-        return;
-      }
-
-      console.log("User ID:", userId); 
   
-      try {
-        // Fetch only the logged-in user's reservations
-        const response = await axios.get(`http://localhost:3001/reservation/user/${userId}`);
-        setReservations(response.data);
-      } catch (err) {
-        console.error("Error fetching reservations:", err);
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
   
     fetchReservations();
   }, [userId]);
   
+  const fetchReservations = async () => {
+    if (!userId) {
+      console.log("Please log in to view your reservations.");
+      return;
+    }
 
-  const handleLoan = async (bookId) => {
-  // Ensure userId is available
-  if (!userId) {
-    alert("You must be logged in to loan a book.");
-    return;
-  }
+    console.log("User ID:", userId); 
 
-  console.log("Book ID:", bookId);  // Log bookId to ensure it's passed correctly
-  console.log("User ID:", userId);  // Log userId to ensure it's passed correctly
+    try {
+      // Fetch only the logged-in user's reservations
+      const response = await axios.get(`http://localhost:3001/reservation/user/${userId}`);
 
-  const requestData = { bookId, userId };
-  console.log('Sending loan request with data:', requestData); // Log request data
+      setReservations(response.data);
+    } catch (err) {
+      console.error("Error fetching reservations:", err);
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  setLoading(true); // Set loading state to true before making the request
+  const handleLoan = async (bookId, reservationId) => {
+    if (!userId) {
+      alert("You must be logged in to loan a book.");
+      return;
+    }
+  
+    setLoading(true);
+    try {
+      const requestData = { bookId, userId };
+  
+      // Step 1: Loan the book
+      await axios.post("http://localhost:3001/loan", requestData);
+      alert("Book loaned successfully!");
+  
+      // Step 2: Unreserve the book by deleting the reservation
+      await axios.delete(`http://localhost:3001/reservation/${reservationId}`);
+      console.log('Attempting to delete reservation with ID:', reservationId);
 
-  try {
-    const response = await axios.post("http://localhost:3001/loan", requestData);
-    alert("Book loaned successfully!");
-
-    // Remove the loaned book from reservations
-    const updatedReservations = reservations.filter(
-      (reservation) => reservation.book.id !== bookId
+      setReservations(prevReservations =>
+        prevReservations.filter(reservation => reservation.id !== reservationId)
     );
-    setReservations(updatedReservations);  // Update the state with the new reservations
+  
+      // Step 3: Fetch updated reservations after deletion
+      await fetchReservations(); // Refreshes the list after deletion
+    } catch (err) {
+      console.error("Error loaning book:", err);
+      alert("Failed to loan book.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
-  } catch (err) {
-    console.error("Error loaning book:", err);
-    alert("Failed to loan book.");
-  } finally {
-    setLoading(false); // Set loading state back to false after the request completes
-  }
-};
 
 
   const handleUnreserve = async (reservationId) => {
@@ -161,12 +164,11 @@ function ReservationsPage() {
 
               {/* Loan Button */}
               <button
-                onClick={() => handleLoan(reservation.book.id)}
-                className="mt-14 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors w-full"
-              >
-                Loan Book
-              </button>
-
+  onClick={() => handleLoan(reservation.book.id, reservation.id)}
+  className="mt-14 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors w-full"
+>
+  Loan Book
+</button>
               {/* Unreserve Button */}
               <button
                 onClick={() => handleUnreserve(reservation.id)}

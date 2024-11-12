@@ -1,6 +1,7 @@
 const Book = require('../models/book');
 const Fine = require('../models/fine');
 const Loan = require('../models/loan');
+const Reservation = require('../models/reservation');
 const User = require('../models/user');
 
 // Get all loans
@@ -100,6 +101,12 @@ const createLoan = async (req, res) => {
             dueDate,
             returnDate: null, // Not returned yet
         });
+
+          // Find and delete the reservation associated with this book and user
+    const reservation = await Reservation.findOne({ where: { bookId, userId } });
+    if (reservation) {
+      await reservation.destroy();
+    }
 
         res.status(201).json({ message: 'Loan created successfully', loan });
     } catch (error) {
