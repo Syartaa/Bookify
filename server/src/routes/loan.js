@@ -10,4 +10,7 @@ router.put('/:id', LoanController.updateLoan);
 router.delete('/:id', LoanController.deleteLoan);
 router.get('/check-borrowed/:bookId/:userId', LoanController.checkIfBookIsBorrowed);
 
+router.get("/user/:userId", LoanController.getUserLoans);
+
+
 module.exports = router;

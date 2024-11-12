@@ -18,7 +18,31 @@ const getAllLoans = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
-
+const getUserLoans = async (req, res) => {
+    const { userId } = req.params;
+  
+    try {
+      const loans = await Loan.findAll({
+        where: { userId },
+        include: [
+          {
+            model: Book,
+            attributes: ['id', 'title']
+          },
+          {
+            model: User,
+            attributes: ['id', 'name']
+          }
+        ]
+      });
+  
+      res.json(loans);
+    } catch (error) {
+      console.error("Error fetching user loans:", error.message);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  };
+  
 
 
 
@@ -198,4 +222,5 @@ module.exports = {
     updateLoan,
     deleteLoan,
     checkIfBookIsBorrowed,
+    getUserLoans
 };
