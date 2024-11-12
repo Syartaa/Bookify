@@ -81,6 +81,11 @@ const createLoan = async (req, res) => {
             return res.status(404).json({ error: 'Book not found' });
         }
 
+        // Check if the book is already loaned out
+        if (book.availabilityStatus === 'borrowed') {
+            return res.status(400).json({ error: 'Book is already loaned out' });
+        }
+
         // Check if the user exists
         const user = await User.findByPk(userId);
         if (!user) {
@@ -102,11 +107,17 @@ const createLoan = async (req, res) => {
             returnDate: null, // Not returned yet
         });
 
-          // Find and delete the reservation associated with this book and user
-    const reservation = await Reservation.findOne({ where: { bookId, userId } });
-    if (reservation) {
-      await reservation.destroy();
-    }
+        // Update the book's availability status to 'borrowed'
+        await Book.update(
+            { availabilityStatus: 'borrowed' },
+            { where: { id: bookId } }
+        );
+
+        // Find and delete the reservation associated with this book and user
+        const reservation = await Reservation.findOne({ where: { bookId, userId } });
+        if (reservation) {
+            await reservation.destroy();
+        }
 
         res.status(201).json({ message: 'Loan created successfully', loan });
     } catch (error) {
