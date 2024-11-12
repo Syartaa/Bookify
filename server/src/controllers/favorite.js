@@ -34,8 +34,13 @@ const getFavoritesByUserId = async (req, res) => {
 };
 
 // Add a book to favorites
+// Add a book to favorites
 const addFavorite = async (req, res) => {
     const { userId, bookId } = req.body;
+
+    if (!userId || !bookId) {
+        return res.status(400).json({ error: 'User ID and Book ID are required.' });
+    }
 
     try {
         // Check if the favorite already exists
@@ -44,13 +49,20 @@ const addFavorite = async (req, res) => {
             return res.status(409).json({ error: 'Book is already in favorites.' });
         }
 
+        // Check if the book exists
+        const bookExists = await Book.findByPk(bookId);
+        if (!bookExists) {
+            return res.status(404).json({ error: 'Book not found.' });
+        }
+
         const favorite = await Favorite.create({ userId, bookId });
-        res.status(201).json(favorite);
+        res.status(201).json({ message: 'Book added to favorites', favorite: { userId, bookId } });
     } catch (error) {
         console.error('Error adding favorite:', error.message);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 
 // Remove a book from favorites

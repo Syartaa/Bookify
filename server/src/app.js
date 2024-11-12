@@ -14,6 +14,7 @@ const reservation = require('./models/reservation');
 const fine = require('./models/fine');
 const review = require('./models/review');
 const favorite = require('./models/favortie');
+const contact = require('./models/contactus');
 
 const authorRoutes = require('./routes/author');
 const categoryRoutes = require('./routes/category');
