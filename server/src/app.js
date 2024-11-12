@@ -15,7 +15,6 @@ const fine = require('./models/fine');
 const review = require('./models/review');
 const favorite = require('./models/favorite');
 const article = require('./models/article.js')
-const favorite = require('./models/favortie');
 const contact = require('./models/contactus');
 
 const authorRoutes = require('./routes/author');
@@ -41,11 +40,7 @@ app.use(bodyParser.json());
 // Database synchronization and server start
 async function startServer() {
     try {
-        await sequelize.sync({ logging: console.log });
-        console.log('Database synchronized successfully');
-        app.listen(PORT, () => {
-            console.log(`Server is running and listening on port ${PORT}`);
-        });
+     
       await sequelize.sync({logging: console.log,});
       console.log('Database synchronized successfully');
       app.listen(PORT, () => {
