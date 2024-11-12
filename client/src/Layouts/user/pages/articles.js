@@ -50,7 +50,7 @@ const ArticlesPage = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {articles.map((article) => (
                 <div key={article.id} className="flex flex-col items-center bg-white rounded-lg p-6 shadow-md transition-transform duration-300 hover:scale-105">
-                  <img src={article.imageUrl} alt={article.title} className="rounded-2xl w-full object-cover mb-4" />
+                  <img src={`http://localhost:3001/${article.imageUrl}`} alt={article.title} className="rounded-2xl w-full object-cover mb-4" />
                   <h3 className="text-xl text-gray-900 font-medium leading-8 mb-2">{article.title}</h3>
                   <p className="text-gray-500 leading-6 mb-2">{article.content}</p>
                   <button onClick={() => handleReadMore(article.id)} className="flex items-center gap-2 text-lg text-indigo-700 font-semibold">
@@ -71,7 +71,7 @@ const ArticlesPage = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white rounded-lg p-6 max-w-md mx-auto">
             <h2 className="text-2xl font-bold mb-4">{selectedArticle.title}</h2>
-            <img src={selectedArticle.imageUrl} alt={selectedArticle.title} className="rounded-2xl mb-4" />
+            <img src={`http://localhost:3001/${selectedArticle.imageUrl}`} alt={selectedArticle.title} className="rounded-2xl mb-4" />
             <p className="text-gray-700 mb-4">{selectedArticle.content}</p>
             <button onClick={toggleModal} className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
               Close
