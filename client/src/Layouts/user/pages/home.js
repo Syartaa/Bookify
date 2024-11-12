@@ -123,29 +123,31 @@ const Home = () => {
       <h2 className="text-3xl font-bold text-center mt-3">Popular Books</h2>
       {/* Books Grid */}
       <section className="w-full max-w-6xl mx-auto px-4 py-8 mt-16 bg-white rounded-lg shadow-md">
-      
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-             
-                {popularBooks.map((book) => (
-                    <div key={book.id} className="bg-[#fdf5f0] rounded-lg p-6 shadow-md">
-                        <img
-                            src={`http://localhost:3001/${book.image}`}
-                            alt={book.title}
-                            className="w-full object-contain rounded-lg mb-4"
-                            style={{ height: '300px' }} // Adjust height to make the image smaller
-                        />
-                        <h3 className="text-xl font-semibold text-gray-800">{book.title}</h3>
-                        <p className="text-gray-600 mt-2">Author: {book.author.name}</p>
-                        <Link
-                            to={`/books/${book.id}`}
-                            className="mt-4 inline-block bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600"
-                        >
-                            View Details
-                        </Link>
-                    </div>
-                ))}
-            </div>
-        </section>
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    {popularBooks.map((book) => (
+      <div
+        key={book.id}
+        className="bg-[#fdf5f0] rounded-lg p-6 shadow-md transform transition duration-300 hover:scale-105 hover:bg-[#f9ece5] hover:shadow-lg"
+      >
+        <img
+          src={`http://localhost:3001/${book.image}`}
+          alt={book.title}
+          className="w-full object-contain rounded-lg mb-4 transition-transform duration-300"
+          style={{ height: '300px' }} // Adjust height to make the image smaller
+        />
+        <h3 className="text-xl font-semibold text-gray-800">{book.title}</h3>
+        <p className="text-gray-600 mt-2">Author: {book.author.name}</p>
+        <Link
+          to={`/books/${book.id}`}
+          className="mt-4 inline-block bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600 transition-colors duration-300"
+        >
+          View Details
+        </Link>
+      </div>
+    ))}
+  </div>
+</section>
+
 
 
       {/* Modal */}

@@ -15,6 +15,8 @@ const fine = require('./models/fine');
 const review = require('./models/review');
 const favorite = require('./models/favorite');
 const article = require('./models/article.js')
+const favorite = require('./models/favortie');
+const contact = require('./models/contactus');
 
 const authorRoutes = require('./routes/author');
 const categoryRoutes = require('./routes/category');
@@ -25,6 +27,7 @@ const fineRoutes = require('./routes/fine');
 const reviewRoutes = require('./routes/review');
 const favoriteRoutes = require('./routes/favorite');
 const articleRoutes = require('./routes/article');
+const contactRoutes = require('./routes/contactus');
 
 const userAuthRoutes = require('./routes/auth/user.js');
 
@@ -43,6 +46,11 @@ async function startServer() {
         app.listen(PORT, () => {
             console.log(`Server is running and listening on port ${PORT}`);
         });
+      await sequelize.sync({logging: console.log,});
+      console.log('Database synchronized successfully');
+      app.listen(PORT, () => {
+        console.log(`Server is running and listening on port ${PORT}`);
+      });
     } catch (error) {
         console.error('Error occurred while synchronizing database:', error);
     }
@@ -59,6 +67,16 @@ app.use('/loan', loanRoutes);
 app.use('/fine', fineRoutes);
 app.use('/review', reviewRoutes);
 app.use('/favorite', favoriteRoutes);
+ 
+  app.use('/author', authorRoutes);
+  app.use('/category', categoryRoutes);
+  app.use('/book', bookRoutes);
+  app.use('/reservation', reservationRoutes);
+  app.use('/loan', loanRoutes);
+  app.use('/fine', fineRoutes);
+  app.use('/review', reviewRoutes);
+  app.use('/favorite', favoriteRoutes);
+  app.use('/contactus', contactRoutes);
 
 
 app.use('/article', articleRoutes); 

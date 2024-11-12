@@ -12,6 +12,18 @@ const getAllAuthors = async (req, res) => {
     }
 };
 
+// Get books by author ID
+const getBooksByAuthorId = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const books = await Book.findAll({ where: { authorId: id } }); // Ensure `authorId` is a foreign key in the `Book` model
+        res.json(books);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
 // Get an author by ID
 const getAuthorById = async (req, res) => {
     const { id } = req.params;
@@ -93,5 +105,6 @@ module.exports = {
     getAuthorById,
     createAuthor,
     updateAuthor,
-    deleteAuthor
+    deleteAuthor,
+    getBooksByAuthorId
 };

@@ -5,27 +5,33 @@ import { useUser } from '../../../../helper/userContext'; // Assuming you have t
 const LoanPage = () => {
   const [loans, setLoans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const user = useUser(); // Get the logged-in user
   const userId = user?.user?.id; // Access the user ID from the user object
 
   useEffect(() => {
-    if (userId) {
-      fetchLoans(); // Fetch loans once user ID is available
-    }
+    
+  
+    fetchLoans();
   }, [userId]);
 
   const fetchLoans = async () => {
-    const token = localStorage.getItem('token'); // Retrieve JWT token from local storage
+    if (!userId) {
+      console.log("Please log in to view your reservations.");
+      return;
+    }
+
+    console.log("User ID:", userId); 
+
     try {
-      const response = await axios.get(`http://localhost:3001/loan?userId=${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Send the token with the request
-        },
-      });
+      // Fetch only the logged-in user's reservations
+      const response = await axios.get(`http://localhost:3001/loan/user/${userId}`);
       setLoans(response.data);
       setLoading(false);
-    } catch (error) {
-      console.error('Error fetching loans:', error);
+    } catch (err) {
+      console.error("Error fetching loans:", err);
+      setError(err);
+    } finally {
       setLoading(false);
     }
   };
