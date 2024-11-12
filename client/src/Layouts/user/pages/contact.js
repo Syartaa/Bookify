@@ -116,7 +116,34 @@ const Contact = () => {
           </div>
         </div>
         <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-8">
-          {/* Locations content */}
+        <div className="h-96 relative flex justify-center">
+            <img src="https://pagedone.io/asset/uploads/1696246502.png" alt="United Kingdom" className="w-full h-full object-cover" />
+            <div className="absolute bottom-0 mb-6 text-center px-6">
+              <h5 className="text-white text-lg font-semibold leading-7 mb-2">United Kingdom</h5>
+              <p className="text-white text-base font-medium leading-6">123 High Street, Westminster, London</p>
+            </div>
+          </div>
+          <div className="h-96 relative flex justify-center">
+            <img src="https://pagedone.io/asset/uploads/1696246522.png" alt="Germany" className="w-full h-full object-cover" />
+            <div className="absolute bottom-0 mb-6 text-center px-6">
+              <h5 className="text-white text-lg font-semibold leading-7 mb-2">Germany</h5>
+              <p className="text-white text-base font-medium leading-6">101 Unter den Linden, Mitte <br />District, Berlin</p>
+            </div>
+          </div>
+          <div className="h-96 relative flex justify-center">
+            <img src="https://pagedone.io/asset/uploads/1696246551.png" alt="France" className="w-full h-full object-cover" />
+            <div className="absolute bottom-0 mb-6 text-center px-6">
+              <h5 className="text-white text-lg font-semibold leading-7 mb-2">France</h5>
+              <p className="text-white text-base font-medium leading-6">456 Rue de la Paix, 8th Arrondissement, Paris</p>
+            </div>
+          </div>
+          <div className="h-96 relative flex justify-center">
+            <img src="https://pagedone.io/asset/uploads/1696246565.png" alt="Switzerland" className="w-full h-full object-cover" />
+            <div className="absolute bottom-0 mb-6 text-center px-6">
+              <h5 className="text-white text-lg font-semibold leading-7 mb-2">Switzerland</h5>
+              <p className="text-white text-base font-medium leading-6">987 Bahnhofstrasse, Zurich <br /> City Center, Zurich</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
