@@ -134,7 +134,7 @@ const createLoan = async (req, res) => {
 
 const updateLoan = async (req, res) => {
     const { id } = req.params;
-    const { returnDate } = req.body;
+    const { returnDate } = req.body; // Only expect returnDate in the request
 
     try {
         const loan = await Loan.findByPk(id, {
@@ -145,12 +145,13 @@ const updateLoan = async (req, res) => {
             return res.status(404).json({ error: 'Loan not found' });
         }
 
-        // Update return date and calculate fine if overdue
         let fineAmount = 0;
+
         if (returnDate) {
             const returnDateObj = new Date(returnDate);
             const dueDateObj = new Date(loan.dueDate);
 
+            // Check if the book is returned late
             if (returnDateObj > dueDateObj) {
                 const diffTime = Math.abs(returnDateObj - dueDateObj);
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Calculate days late
@@ -161,17 +162,17 @@ const updateLoan = async (req, res) => {
                     amount: fineAmount,
                     loanId: loan.id,
                     userId: loan.userId,
-                    paymentStatus: 'unpaid',
+                    paymentStatus: 'unpaid', // Fine is unpaid initially
                 });
             }
 
-            // Update the loan's return date and status
+            // Update the loan's return date and status to "returned"
             await loan.update({
                 returnDate: returnDateObj,
                 status: 'returned',
             });
 
-            // Update the book's availability status to 'available'
+            // Update the book's availability status to "available"
             await Book.update(
                 { availabilityStatus: 'available' },
                 { where: { id: loan.bookId } }
@@ -183,7 +184,9 @@ const updateLoan = async (req, res) => {
             });
         }
 
-        res.json({ loan, message: 'Loan updated without return.' });
+        // If no returnDate is provided, return a message saying the loan was updated without return
+        res.json({ loan, message: 'Loan updated successfully (no return date provided)' });
+
     } catch (error) {
         console.error('Error updating loan:', error);
         res.status(500).json({ error: 'Internal server error' });

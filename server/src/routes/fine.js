@@ -9,5 +9,6 @@ router.post('/', FineController.createFine);
 router.put('/:id', FineController.updateFine);
 router.delete('/:id', FineController.deleteFine);
 router.put('/:fineId/payment-status', FineController.updateFinePaymentStatus);
+router.put('pay/:loanId', FineController.payFine);
 
 module.exports = router;
