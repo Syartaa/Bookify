@@ -33,6 +33,7 @@ import AccountSettings from "./Layouts/user/pages/accountSettings";
 import AuthorDetails from "./Layouts/user/pages/book/AuthorDetails";
 import ContactList from "./Layouts/dashboard/pages/CountactUs.js/ContactList";
 import ArticleList from "./Layouts/dashboard/pages/Article/articleList";
+import ArticleDetailPage from "./Layouts/user/pages/articleDetails";
 
 function App() {
   return (
@@ -63,7 +64,7 @@ function App() {
           <Route path="/titles" element={<Titles />} />
           <Route path="/authors" element={<Authors />} />
           <Route path="/articles" element={<ArticlesPage />} />
-          <Route path="/articles/:id" element={<ArticleDetail />} />
+          <Route path="/articles/:id" element={<ArticleDetailPage />} />
           <Route path="/contactus" element={<Contact />} />
           <Route path="/books/:id" element={<BookDetails />} />
           <Route path="/reservations" element={<ReservationsPage />} />
