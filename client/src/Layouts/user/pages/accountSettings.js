@@ -1,6 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios"; // Make sure to import axios for API calls
+import img from "../../../image/placeholder.png";
 
 // Dummy components for button, text field, and alert
 const Button = ({ variant, icon, onClick, children }) => (
@@ -42,10 +44,73 @@ const Alert = ({ variant, title, description, actions }) => (
 
 // Main Component
 function AccountSettings() {
+  const [userDetails, setUserDetails] = useState(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+
+  // Fetch the current user details from the backend
+useEffect(() => {
+  const fetchUserDetails = async () => {
+    try {
+      const response = await axios.get("http://localhost:3001/user/me", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // Assuming JWT is stored here
+        },
+      });
+      setUserDetails(response.data);
+      setName(response.data.name);
+      setEmail(response.data.email);
+    } catch (err) {
+      setError("Failed to fetch user details.");
+      console.error(err);
+    }
+  };
+
+  fetchUserDetails();
+}, []);
+
+  // Handle password change
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/user/change-password",
+        {
+          currentPassword,
+          newPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setMessage("Password updated successfully.");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err) {
+      setError("Error updating password.");
+      console.error(err);
+    }
+  };
+
+  if (!userDetails) return <p>Loading...</p>;
+
   return (
     <div className="flex h-full w-full items-center justify-center p-6 bg-gray-100">
       <div className="w-full max-w-lg bg-white rounded-lg shadow-lg p-8 space-y-8">
-        
         {/* Account Header */}
         <div className="flex flex-col items-center space-y-2">
           <h1 className="text-3xl font-semibold text-gray-800">Account Settings</h1>
@@ -58,7 +123,7 @@ function AccountSettings() {
           <div className="flex items-center space-x-6">
             <img
               className="h-20 w-20 object-cover rounded-full"
-              src="https://res.cloudinary.com/subframe/image/upload/v1711417513/shared/kwut7rhuyivweg8tmyzl.jpg"
+              src={img}
               alt="Avatar"
             />
             <Button variant="neutral-secondary" icon="FeatherUpload" onClick={() => {}}>
@@ -68,48 +133,68 @@ function AccountSettings() {
 
           {/* Personal Details */}
           <div className="flex flex-col space-y-4 w-full">
-            <TextField label="First Name">
-              <TextField.Input placeholder="Josef" onChange={() => {}} />
+            <TextField label="Name">
+              <TextField.Input
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
             </TextField>
-            <TextField label="Last Name">
-              <TextField.Input placeholder="Albers" onChange={() => {}} />
-            </TextField>
+
             <TextField label="Email">
-              <TextField.Input placeholder="josef@subframe.com" onChange={() => {}} />
+              <TextField.Input
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </TextField>
           </div>
         </div>
 
         {/* Password Section */}
         <div className="w-full space-y-6">
-          <h2 className="text-xl font-medium text-gray-800">Password</h2>
-          <TextField label="Current Password">
-            <TextField.Input type="password" placeholder="Enter current password" onChange={() => {}} />
-          </TextField>
-          <TextField label="New Password" helpText="At least 8 characters, including one uppercase letter and one number.">
-            <TextField.Input type="password" placeholder="Enter new password" onChange={() => {}} />
-          </TextField>
-          <TextField label="Confirm New Password">
-            <TextField.Input type="password" placeholder="Re-type new password" onChange={() => {}} />
-          </TextField>
-          <Button variant="brand-primary" onClick={() => {}}>
-            Change Password
-          </Button>
-        </div>
+          <h2 className="text-xl font-medium text-gray-800">Change Password</h2>
 
-        {/* Danger Zone */}
-        <div className="w-full space-y-4 mt-8">
-          <h2 className="text-xl font-medium text-red-600">Danger Zone</h2>
-          <Alert
-            variant="error"
-            title="Delete Account"
-            description="Permanently remove your account. This action cannot be undone."
-            actions={
-              <Button variant="destructive-secondary" onClick={() => {}}>
-                Delete Account
-              </Button>
-            }
-          />
+          {error && (
+            <Alert variant="error" title="Error" description={error} />
+          )}
+
+          {message && (
+            <Alert variant="success" title="Success" description={message} />
+          )}
+
+          <form onSubmit={handleChangePassword}>
+            <TextField label="Current Password">
+              <TextField.Input
+                type="password"
+                placeholder="Enter current password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+              />
+            </TextField>
+
+            <TextField label="New Password">
+              <TextField.Input
+                type="password"
+                placeholder="Enter new password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+            </TextField>
+
+            <TextField label="Confirm New Password">
+              <TextField.Input
+                type="password"
+                placeholder="Re-type new password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </TextField>
+
+            <Button variant="brand-primary" type="submit">
+              Change Password
+            </Button>
+          </form>
         </div>
       </div>
     </div>

@@ -1,106 +1,75 @@
-const User = require('../models/user');
-const bcrypt = require('bcrypt')
-const axios = require('axios');
-require('dotenv').config();
+const User = require('../models/user');  // Import the User model
 
-const getAllUsers = async (req, res) => {
+// Get all users (for listing in the dashboard)
+exports.getAllUsers = async (req, res, next) => {
     try {
-        const users = await User.findAll(); 
-        res.json(users);
+        const users = await User.findAll();
+        res.status(200).json({ users });
     } catch (error) {
-        res.status(500).json({ error: 'Internal server error' });
+        console.error(error);
+        res.status(500).json({ message: 'Failed to retrieve users' });
     }
 };
 
-
-const getUserById = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const user = await User.findByPk(id); 
-        if (!user) {
-            return res.status(404).json({ error: 'user not found' });
-        }
-        res.json(user);
-    } catch (error) {
-        res.status(500).json({ error: 'Internal server error' });
-    }
-};
-
-const createUser = async (req, res) => {
-    const { name, email, phone, password } = req.body;
-
-    try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const user = await User.create({
-            name,
-            email,
-            password: hashedPassword,
-            phone,
-        });
-
-        res.status(201).json(user);
-    } catch (error) {
-        console.error('Error creating user:', error.message); // More detailed error logging
-        res.status(500).json({ error: 'Internal server error' });
-    }
-};
-
-
-
-// Update an user
-const updateuser = async (req, res) => {
-    const { id } = req.params;
-    const { name, email, phone,  password} = req.body; // Include password here if needed
-    try {
-        const user = await user.findByPk(id);
-        if (!user) {
-            return res.status(404).json({ error: 'user not found' });
-        }
-
-        // Check if password is included and hash it
-        let hashedPassword;
-        if (password) {
-            hashedPassword = await bcrypt.hash(password, 10);
-        }
-
-        // Update user fields
-        await user.update({
-            name: name || user.name,
-            email: email || user.email,
-            phone: phone || user.phone,
-            password: hashedPassword || user.password, // Update password only if provided
-        });
-
-        res.json(user);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-};
-
-
-// Delete an user
-const deleteUser = async (req, res) => {
-    const { id } = Number(req.params);
-    try {
+// Get a single user by ID (for editing purposes)
+exports.getUserById = async (req, res, next) => {
+    const userId = req.params.id;
     
-        const deletedUser = await User.findByPk(id);
-        if (!deletedUser) {
-            return res.status(404).json({ error: 'user not found' });
+    try {
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
         }
-        await User.destroy({ where: { id } });
-        res.json({ message: 'user deleted successfully' });
+        res.status(200).json({ user });
     } catch (error) {
-        res.status(500).json({ error: 'Internal server error' });
+        console.error(error);
+        res.status(500).json({ message: 'Failed to retrieve the user' });
     }
 };
 
+// Edit user details
+exports.updateUser = async (req, res, next) => {
+    const userId = req.params.id;
+    const { name, email, phone, password, role } = req.body;
+    
+    try {
+        const user = await User.findByPk(userId);
+        
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        user.name = name || user.name;
+        user.email = email || user.email;
+        user.phone = phone || user.phone;
+        user.password = password || user.password;
+        user.role = role || user.role;
+        
+        await user.save();
+        
+        res.status(200).json({ message: 'User updated successfully', user });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to update the user' });
+    }
+};
 
-module.exports = {
-    getAllUsers,
-    getUserById,
-    createUser,
-    updateuser,
-    deleteUser
-}
+// Delete a user
+exports.deleteUser = async (req, res, next) => {
+    const userId = req.params.id;
+
+    try {
+        const user = await User.findByPk(userId);
+        
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        await user.destroy();
+        
+        res.status(200).json({ message: 'User deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to delete the user' });
+    }
+};

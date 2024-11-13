@@ -34,6 +34,7 @@ import AuthorDetails from "./Layouts/user/pages/book/AuthorDetails";
 import ContactList from "./Layouts/dashboard/pages/CountactUs.js/ContactList";
 import ArticleList from "./Layouts/dashboard/pages/Article/articleList";
 import ArticleDetailPage from "./Layouts/user/pages/articleDetails";
+import UserList from "./Layouts/dashboard/pages/user/UserList";
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
                 <Route path="fine" element={<FineList />} />
                 <Route path="contact" element={<ContactList />} />
                 <Route path="article" element={<ArticleList />} />
+                <Route path="user" element={<UserList />} />
               </Route>
             </Route>
 
