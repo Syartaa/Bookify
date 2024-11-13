@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import logoo from "../../../image/logoo.png";
 
 function Navbar() {
@@ -19,17 +19,16 @@ function Navbar() {
     <header className="w-full bg-gradient-to-r from-orange-200 via-orange-100 to-orange-200 shadow-md py-3 px-6 flex justify-between items-center sticky top-0 z-50">
       {/* Logo and App Name */}
       <div className="flex items-center space-x-2">
-        <img
-          src={logoo}
-          alt="Logo"
-          className="h-12 w-16 object-cover rounded-full shadow-lg"
-        />
-        <div
-          className="text-2xl font-bold text-white tracking-wide"
-          style={{ fontFamily: "Poppins, sans-serif" }}
-        >
+        <Link to="/home">
+          <img
+            src={logoo}
+            alt="Logo"
+            className="h-12 w-16 object-cover rounded-full shadow-lg"
+          />
+        </Link>
+        <Link to="/home" className="text-2xl font-bold text-white tracking-wide" style={{ fontFamily: "Poppins, sans-serif" }}>
           BOOKIFY
-        </div>
+        </Link>
       </div>
 
       {/* Navigation Links */}
