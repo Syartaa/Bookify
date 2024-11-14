@@ -30,7 +30,7 @@ function FineList() {
             const res = await axios.get("http://localhost:3001/fine", config);
             setFines(res.data);
             console.log("Fetched fines data:", res.data);
-
+    
             setFilteredFines(res.data);
         } catch (err) {
             console.error("Error fetching fines:", err);
@@ -39,6 +39,7 @@ function FineList() {
             setLoading(false);
         }
     };
+    
 
     const fetchLoans = async () => {
         try {

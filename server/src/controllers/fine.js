@@ -82,6 +82,9 @@ const updateFine = async (req, res) => {
             return res.status(404).json({ error: 'Fine not found' });
         }
 
+        // Log the received data for debugging purposes
+        console.log('Updating fine with data:', req.body);
+
         // Update fine fields
         await fine.update({
             amount: amount || fine.amount,
@@ -92,10 +95,11 @@ const updateFine = async (req, res) => {
 
         res.json(fine);
     } catch (error) {
-        console.log(error);
+        console.log('Error updating fine:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 // Delete a fine
 const deleteFine = async (req, res) => {
