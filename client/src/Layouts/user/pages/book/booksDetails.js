@@ -9,6 +9,7 @@ const BookDetails = () => {
   const { id } = useParams();
   const [book, setBook] = useState(null);
   const [isReserved, setIsReserved] = useState(false);
+  const [isBorrowed, setIsBorrowed] = useState(false);  // Track if the book is borrowed
   const [reservedBySomeoneElse, setReservedBySomeoneElse] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -48,10 +49,15 @@ const BookDetails = () => {
       }
     };
 
-    const checkReservationStatus = async () => {
+    const checkReservationAndBorrowStatus = async () => {
       try {
+        // Check if the user has reserved the book
         const userReservation = await axios.get(`http://localhost:3001/reservation/user/${userId}/book/${id}`);
         setIsReserved(userReservation.data.isReserved);
+
+        // Check if the book is borrowed
+        const borrowedResponse = await axios.get(`http://localhost:3001/borrowed/book/${id}`);
+        setIsBorrowed(borrowedResponse.data.isBorrowed);
 
         if (!userReservation.data.isReserved) {
           const otherReservation = await axios.get(`http://localhost:3001/reservation/book/${id}`);
@@ -60,13 +66,13 @@ const BookDetails = () => {
           setBook((prevBook) => ({ ...prevBook, availabilityStatus: isReservedByOther ? 'reserved' : 'available' }));
         }
       } catch (error) {
-        console.error('Error checking reservation status:', error);
+        console.error('Error checking reservation or borrowed status:', error);
       }
     };
 
     fetchBook();
     if (userId) fetchFavorites();
-    if (userId) checkReservationStatus();
+    if (userId) checkReservationAndBorrowStatus();
   }, [id, userId]);
 
   const handleFavoriteToggle = async () => {
@@ -132,9 +138,10 @@ const BookDetails = () => {
 
           <div className="flex items-center mb-6">
             <span
-              className={`px-4 py-2 rounded-full text-lg font-semibold ${book.availabilityStatus === 'available' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}
+              className={`px-4 py-2 rounded-full text-lg font-semibold ${book.availabilityStatus === 'available' ? 'bg-green-100 text-green-800' : 
+                book.availabilityStatus === 'reserved' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}
             >
-              {book.availabilityStatus}
+              {isBorrowed ? 'Borrowed' : book.availabilityStatus}
             </span>
           </div>
 

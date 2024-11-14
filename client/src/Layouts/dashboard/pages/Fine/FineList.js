@@ -64,7 +64,16 @@ function FineList() {
                 },
             };
             const res = await axios.get("http://localhost:3001/user", config);
-            setUsers(res.data);
+            
+            // Log the response to inspect the structure
+            console.log('Fetched users:', res.data);
+    
+            // Ensure users is an array
+            if (Array.isArray(res.data)) {
+                setUsers(res.data);
+            } else {
+               // setError("Unexpected response format for users.");
+            }
         } catch (err) {
             console.error("Error fetching users:", err);
             setError("Failed to load users. Please try again later.");
