@@ -55,7 +55,6 @@ function FineList() {
             setError("Failed to load loans. Please try again later.");
         }
     };
-
     const fetchUsers = async () => {
         try {
             const config = {
@@ -68,17 +67,18 @@ function FineList() {
             // Log the response to inspect the structure
             console.log('Fetched users:', res.data);
     
-            // Ensure users is an array
-            if (Array.isArray(res.data)) {
-                setUsers(res.data);
+            // Ensure users is an array and access the users from res.data.users
+            if (Array.isArray(res.data.users)) {
+                setUsers(res.data.users);  // Update state with the correct users array
             } else {
-               // setError("Unexpected response format for users.");
+                setError("Unexpected response format for users.");
             }
         } catch (err) {
             console.error("Error fetching users:", err);
             setError("Failed to load users. Please try again later.");
         }
     };
+    
 
     useEffect(() => {
         if (token) {
@@ -206,17 +206,17 @@ function FineList() {
                 />
             )}
             {isEditModalOpen && selectedFineId && (
-                <EditFine
-                    fineId={selectedFineId}
-                    isOpen={isEditModalOpen}
-                    onClose={() => setIsEditModalOpen(false)}
-                    onSave={() => {
-                        setIsEditModalOpen(false);
-                        fetchAllFines();
-                    }}
-                    loans={loans}
-                    users={users}
-                />
+          <EditFine
+          fineId={selectedFineId}  // Assuming you set this somewhere
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onSave={() => {
+              setIsEditModalOpen(false);
+              fetchAllFines();  // Assuming you have a function to refresh the fines list
+          }}
+          loans={loans}  // Make sure loans are available here
+          users={users}  // Ensure users are passed here
+      />
             )}
             {(isCreateModalOpen || isEditModalOpen) && <div className="modal-backdrop"></div>}
         </div>

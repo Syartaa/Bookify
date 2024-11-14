@@ -65,11 +65,11 @@ function ReviewList() {
             // Log the response to inspect the structure
             console.log('Fetched users:', res.data);
     
-            // Ensure users is an array
-            if (Array.isArray(res.data)) {
-                setUsers(res.data);
+            // Ensure users is an array and access the users from res.data.users
+            if (Array.isArray(res.data.users)) {
+                setUsers(res.data.users);  // Update state with the correct users array
             } else {
-               // setError("Unexpected response format for users.");
+                setError("Unexpected response format for users.");
             }
         } catch (err) {
             console.error("Error fetching users:", err);
