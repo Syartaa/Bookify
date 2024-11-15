@@ -4,6 +4,7 @@ import EditBook from "./editBook";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useUser } from "../../../../helper/userContext";
+import Pagination from "../../components/Pagination";  // Import Pagination component
 
 function BookList() {
   const [books, setBooks] = useState([]);
@@ -16,6 +17,9 @@ function BookList() {
   const [categories, setCategories] = useState([]); // State for categories
   const [authors, setAuthors] = useState([]); // State for authors
   const { token } = useUser();
+
+  const [currentPage, setCurrentPage] = useState(1);  // Current page
+  const [booksPerPage] = useState(6);  // Number of books per page
 
   const fetchAllBooks = async () => {
     try {
@@ -100,6 +104,16 @@ function BookList() {
     setFilteredBooks(filtered);
   };
 
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
+  const indexOfLastBook = currentPage * booksPerPage;
+  const indexOfFirstBook = indexOfLastBook - booksPerPage;
+  const currentBooks = filteredBooks.slice(indexOfFirstBook, indexOfLastBook);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <div className="bg-[#d9d9fb] ">
       <div className="flex flex-row justify-between items-center">
@@ -140,17 +154,17 @@ function BookList() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-5 mx-2">
-        {filteredBooks?.map((item, index) => (
+        {currentBooks?.map((item, index) => (
           <div
             key={index}
             className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
           >
             <div className="flex flex-col items-center pb-10 mt-5">
-            <img
-  className="w-24 h-32 mb-3 shadow-lg" // Changed to h-32 for better aspect ratio
-  src={`http://localhost:3001/uploads/${item.imageFilename}`}
-  alt="Book cover"
-/>
+              <img
+                className="w-24 h-32 mb-3 shadow-lg" // Changed to h-32 for better aspect ratio
+                src={`http://localhost:3001/uploads/${item.imageFilename}`}
+                alt="Book cover"
+              />
               <Link to={`/book/${item.id}`} className="no-underline">
                 <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
                   {item.title}
@@ -230,6 +244,13 @@ function BookList() {
           <div className="modal-backdrop"></div>
         )}
       </div>
+
+      {/* Pagination Component */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 }

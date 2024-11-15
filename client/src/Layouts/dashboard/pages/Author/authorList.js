@@ -4,7 +4,7 @@ import CreateAuthor from "./createAuthor"; // CreateAuthor modal component
 import EditAuthor from "./editAuthor"; // EditAuthor modal component
 import { useUser } from "../../../../helper/userContext";
 import { Table } from "flowbite-react"; // Import Flowbite Table
-// import '../../../../css/modal.css'; // Ensure this CSS file has the necessary styles
+import Pagination from "../../components/Pagination";
 
 function AuthorList() {
   const [authors, setAuthors] = useState([]);
@@ -15,6 +15,10 @@ function AuthorList() {
   const [selectedAuthorId, setSelectedAuthorId] = useState(null);
   const { token } = useUser();
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1); // Current page
+  const [authorsPerPage] = useState(6); // Authors per page
+
   const fetchAllAuthors = async () => {
     try {
       const config = {
@@ -24,7 +28,6 @@ function AuthorList() {
       };
       const res = await axios.get("http://localhost:3001/author", config);
       console.log("Fetched authors:", res.data); // Log the entire fetched data
-console.log("First author:", res.data[0]); // Log the first author object
 
       setAuthors(res.data);
       setFilteredAuthors(res.data);
@@ -61,6 +64,16 @@ console.log("First author:", res.data[0]); // Log the first author object
     setFilteredAuthors(filtered);
   };
 
+  // Pagination logic
+  const totalPages = Math.ceil(filteredAuthors.length / authorsPerPage);
+  const indexOfLastAuthor = currentPage * authorsPerPage;
+  const indexOfFirstAuthor = indexOfLastAuthor - authorsPerPage;
+  const currentAuthors = filteredAuthors.slice(indexOfFirstAuthor, indexOfLastAuthor);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <div className="bg-[#d9d9fb] p-5">
       <div className="flex justify-between mb-4">
@@ -87,7 +100,8 @@ console.log("First author:", res.data[0]); // Log the first author object
 
       <div className="overflow-x-auto">
         <Table hoverable>
-          <Table.Head><Table.HeadCell>Image</Table.HeadCell>
+          <Table.Head>
+            <Table.HeadCell>Image</Table.HeadCell>
             <Table.HeadCell>Name</Table.HeadCell>
             <Table.HeadCell>Bio</Table.HeadCell>
             <Table.HeadCell>
@@ -95,20 +109,20 @@ console.log("First author:", res.data[0]); // Log the first author object
             </Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {filteredAuthors.length > 0 ? (
-              filteredAuthors.map((item) => (
+            {currentAuthors.length > 0 ? (
+              currentAuthors.map((item) => (
                 <Table.Row key={item.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                   <Table.Cell>
-          {item.image ? (
-            <img
-              src={`http://localhost:3001/${item.image}`} // Adjust the path as needed
-              alt={item.name}
-              className="w-16 h-16 object-cover rounded"
-            />
-          ) : (
-            "No image"
-          )}
-        </Table.Cell>
+                  <Table.Cell>
+                    {item.image ? (
+                      <img
+                        src={`http://localhost:3001/${item.image}`} // Adjust the path as needed
+                        alt={item.name}
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                    ) : (
+                      "No image"
+                    )}
+                  </Table.Cell>
                   <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                     {item.name}
                   </Table.Cell>
@@ -134,7 +148,7 @@ console.log("First author:", res.data[0]); // Log the first author object
               ))
             ) : (
               <Table.Row>
-                <Table.Cell colSpan="3" className="text-center">No authors found</Table.Cell>
+                <Table.Cell colSpan="4" className="text-center">No authors found</Table.Cell>
               </Table.Row>
             )}
           </Table.Body>
@@ -145,7 +159,7 @@ console.log("First author:", res.data[0]); // Log the first author object
         <div className="modal-container">
           <div className="modal-content">
             <CreateAuthor
-             isOpen={isCreateModalOpen}
+              isOpen={isCreateModalOpen}
               onClose={() => setIsCreateModalOpen(false)}
               onSave={() => {
                 setIsCreateModalOpen(false);
@@ -171,6 +185,13 @@ console.log("First author:", res.data[0]); // Log the first author object
         </div>
       )}
       {(isCreateModalOpen || isEditModalOpen) && <div className="modal-backdrop"></div>}
+
+      {/* Pagination Controls */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 }

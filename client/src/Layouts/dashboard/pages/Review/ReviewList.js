@@ -4,6 +4,7 @@ import CreateReview from "./CreateReview";
 import EditReview from "./EditReview";
 import { useUser } from "../../../../helper/userContext";
 import { Table, Alert } from "flowbite-react";
+import Pagination from "../../components/Pagination";
 
 function ReviewList() {
     const [reviews, setReviews] = useState([]);
@@ -17,6 +18,10 @@ function ReviewList() {
     const [books, setBooks] = useState([]);
     const [users, setUsers] = useState([]);
     const { token } = useUser();
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1); // Current page
+    const [reviewsPerPage] = useState(6); // Reviews per page
 
     const fetchAllReviews = async () => {
         setLoading(true);
@@ -61,13 +66,8 @@ function ReviewList() {
                 },
             };
             const res = await axios.get("http://localhost:3001/user", config);
-            
-            // Log the response to inspect the structure
-            console.log('Fetched users:', res.data);
-    
-            // Ensure users is an array and access the users from res.data.users
             if (Array.isArray(res.data.users)) {
-                setUsers(res.data.users);  // Update state with the correct users array
+                setUsers(res.data.users);
             } else {
                 setError("Unexpected response format for users.");
             }
@@ -113,6 +113,16 @@ function ReviewList() {
         setFilteredReviews(filtered);
     };
 
+    // Calculate paginated reviews
+    const totalPages = Math.ceil(filteredReviews.length / reviewsPerPage);
+    const indexOfLastReview = currentPage * reviewsPerPage;
+    const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+    const currentReviews = filteredReviews.slice(indexOfFirstReview, indexOfLastReview);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
     return (
         <div className="bg-[#d9d9fb] p-5">
             {error && <Alert color="failure">{error}</Alert>}
@@ -155,8 +165,8 @@ function ReviewList() {
                             <Table.Row>
                                 <Table.Cell colSpan="5" className="text-center">Loading...</Table.Cell>
                             </Table.Row>
-                        ) : filteredReviews.length > 0 ? (
-                            filteredReviews.map((item) => (
+                        ) : currentReviews.length > 0 ? (
+                            currentReviews.map((item) => (
                                 <Table.Row key={item.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                                         {item.rating}
@@ -214,6 +224,13 @@ function ReviewList() {
                     users={users}
                 />
             )}
+
+            {/* Pagination Component */}
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+            />
         </div>
     );
 }

@@ -4,6 +4,7 @@ import CreateLoan from "./CreateLoan"; // CreateLoan modal component
 import EditLoan from "./EditLoan"; // EditLoan modal component
 import { useUser } from "../../../../helper/userContext";
 import { Table, Alert } from "flowbite-react"; // Importing Alert for error handling
+import Pagination from "../../components/Pagination"; // Import Pagination component
 
 function LoanList() {
     const [loans, setLoans] = useState([]);
@@ -18,6 +19,10 @@ function LoanList() {
     const [users, setUsers] = useState([]); // State for users
     
     const { token } = useUser();
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5; // Number of loans per page
 
     const fetchAllLoans = async () => {
         setLoading(true); // Start loading
@@ -53,6 +58,7 @@ function LoanList() {
             setError("Failed to load books. Please try again later.");
         }
     };
+
     const fetchUsers = async () => {
         try {
             const config = {
@@ -61,13 +67,8 @@ function LoanList() {
                 },
             };
             const res = await axios.get("http://localhost:3001/user", config);
-            
-            // Log the response to inspect the structure
-            console.log('Fetched users:', res.data);
-    
-            // Ensure users is an array and access the users from res.data.users
             if (Array.isArray(res.data.users)) {
-                setUsers(res.data.users);  // Update state with the correct users array
+                setUsers(res.data.users); // Update state with the correct users array
             } else {
                 setError("Unexpected response format for users.");
             }
@@ -85,6 +86,7 @@ function LoanList() {
         }
     }, [token]);
 
+    // Handle delete loan
     const handleDelete = async (id) => {
         try {
             const config = {
@@ -100,12 +102,24 @@ function LoanList() {
         }
     };
 
+    // Handle search query
     const handleSearch = (query) => {
         setSearchQuery(query);
         const filtered = loans.filter((loan) =>
             loan.status.toLowerCase().includes(query.toLowerCase())
         );
         setFilteredLoans(filtered);
+    };
+
+    // Get loans for the current page
+    const currentLoans = filteredLoans.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    // Handle page change
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
     };
 
     return (
@@ -152,18 +166,17 @@ function LoanList() {
                             <Table.Row>
                                 <Table.Cell colSpan="7" className="text-center">Loading...</Table.Cell>
                             </Table.Row>
-                        ) : filteredLoans.length > 0 ? (
-                            filteredLoans.map((item) => (
+                        ) : currentLoans.length > 0 ? (
+                            currentLoans.map((item) => (
                                 <Table.Row key={item.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                                         {new Date(item.borrowDate).toLocaleDateString()}
                                     </Table.Cell>
                                     <Table.Cell>{item.returnDate ? new Date(item.returnDate).toLocaleDateString() : "Not returned"}</Table.Cell>
-                <Table.Cell>{new Date(item.dueDate).toLocaleDateString()}</Table.Cell>
-                <Table.Cell>{item.status}</Table.Cell>
-                <Table.Cell>{item.book ? item.book.title : "Unknown Book"}</Table.Cell> {/* Book title */}
-                <Table.Cell>{item.user ? item.user.name : "Unknown User"}</Table.Cell> {/* User name */}
-
+                                    <Table.Cell>{new Date(item.dueDate).toLocaleDateString()}</Table.Cell>
+                                    <Table.Cell>{item.status}</Table.Cell>
+                                    <Table.Cell>{item.book ? item.book.title : "Unknown Book"}</Table.Cell> {/* Book title */}
+                                    <Table.Cell>{item.user ? item.user.name : "Unknown User"}</Table.Cell> {/* User name */}
                                     <Table.Cell>
                                         <button
                                             onClick={() => {
@@ -191,6 +204,13 @@ function LoanList() {
                     </Table.Body>
                 </Table>
             </div>
+
+            {/* Pagination Component */}
+            <Pagination
+                currentPage={currentPage}
+                totalPages={Math.ceil(filteredLoans.length / itemsPerPage)}
+                onPageChange={handlePageChange}
+            />
 
             {isCreateModalOpen && (
                 <div className="modal-container">

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useUser } from '../../../helper/userContext';
+import { useUser } from "../../../helper/userContext";
 
 function ReservationsPage() {
   const [reservations, setReservations] = useState([]);
@@ -12,27 +12,28 @@ function ReservationsPage() {
   useEffect(() => {
     fetchReservations();
   }, [userId]);
-  
+
   const fetchReservations = async () => {
     if (!userId) {
       console.log("Please log in to view your reservations.");
       return;
     }
 
-    console.log("User ID:", userId); 
+    console.log("User ID:", userId);
 
     try {
       // Fetch only the logged-in user's reservations
-      const response = await axios.get(`http://localhost:3001/reservation/user/${userId}`);
-      
+      const response = await axios.get(
+        `http://localhost:3001/reservation/user/${userId}`
+      );
+
       // Check if the book is loaned and update status accordingly
-      const updatedReservations = response.data.map(reservation => {
-        // Assuming the `availabilityStatus` exists in the response
+      const updatedReservations = response.data.map((reservation) => {
         const bookStatus = reservation.book.availabilityStatus;
-        if (bookStatus === 'borrowed') {
+        if (bookStatus === "borrowed") {
           return {
             ...reservation,
-            status: 'Not Available'  // Change the reservation status to "Not Available"
+            status: "Not Available", // Change the reservation status to "Not Available"
           };
         }
         return reservation;
@@ -52,25 +53,29 @@ function ReservationsPage() {
       alert("You must be logged in to loan a book.");
       return;
     }
-  
+
     setLoading(true);
     try {
       const requestData = { bookId, userId };
-  
-      // Step 1: Loan the book
-      await axios.post("http://localhost:3001/loan", requestData);
-      alert("Book loaned successfully!");
-  
-      // Step 2: Unreserve the book by deleting the reservation
-      await axios.delete(`http://localhost:3001/reservation/${reservationId}`);
-      console.log('Attempting to delete reservation with ID:', reservationId);
 
-      setReservations(prevReservations =>
-        prevReservations.filter(reservation => reservation.id !== reservationId)
-      );
-  
-      // Step 3: Fetch updated reservations after deletion
-      await fetchReservations(); // Refreshes the list after deletion
+      // Step 1: Loan the book
+      const loanResponse = await axios.post("http://localhost:3001/loan", requestData);
+      if (loanResponse.status === 200) {
+        alert("Book loaned successfully!");
+
+        // Step 2: Now delete the reservation after successful loan
+        const deleteReservationResponse = await axios.delete(
+          `http://localhost:3001/reservation/${reservationId}`
+        );
+        if (deleteReservationResponse.status === 200) {
+          // Step 3: Fetch updated reservations after loan and deletion
+          await fetchReservations(); // Refreshes the list after deletion
+        } else {
+          throw new Error("Failed to delete reservation.");
+        }
+      } else {
+        throw new Error("Failed to loan book.");
+      }
     } catch (err) {
       console.error("Error loaning book:", err);
       alert("Failed to loan book.");
@@ -84,9 +89,8 @@ function ReservationsPage() {
       await axios.delete(`http://localhost:3001/reservation/${reservationId}`);
       alert("Reservation cancelled successfully!");
 
-      // Fetch updated reservations after unreserving
-      const response = await axios.get("http://localhost:3001/reservation");
-      setReservations(response.data);
+      // Re-fetch reservations after unreserving
+      await fetchReservations();
     } catch (err) {
       console.error("Error cancelling reservation:", err);
       alert("Failed to cancel reservation.");
@@ -119,7 +123,7 @@ function ReservationsPage() {
             <div
               key={reservation.id}
               className="bg-white rounded-lg shadow-lg p-5 flex flex-col justify-between hover:shadow-2xl transition-shadow"
-              style={{ minHeight: '500px' }}
+              style={{ minHeight: "500px" }}
             >
               <div className="flex items-start space-x-4">
                 <img

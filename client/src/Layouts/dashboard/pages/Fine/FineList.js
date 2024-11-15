@@ -4,6 +4,7 @@ import CreateFine from "./CreateFine"; // CreateFine modal component
 import EditFine from "./EditFine"; // EditFine modal component
 import { useUser } from "../../../../helper/userContext";
 import { Table, Alert } from "flowbite-react"; // Importing Alert for error handling
+import Pagination from "../../components/Pagination"; // Import Pagination component
 
 function FineList() {
     const [fines, setFines] = useState([]);
@@ -18,6 +19,10 @@ function FineList() {
     const [users, setUsers] = useState([]); // State for users
     const { token } = useUser();
 
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5; // Number of fines per page
+
     const fetchAllFines = async () => {
         setLoading(true);
         setError(null);
@@ -29,8 +34,6 @@ function FineList() {
             };
             const res = await axios.get("http://localhost:3001/fine", config);
             setFines(res.data);
-            console.log("Fetched fines data:", res.data);
-    
             setFilteredFines(res.data);
         } catch (err) {
             console.error("Error fetching fines:", err);
@@ -39,7 +42,6 @@ function FineList() {
             setLoading(false);
         }
     };
-    
 
     const fetchLoans = async () => {
         try {
@@ -50,12 +52,12 @@ function FineList() {
             };
             const res = await axios.get("http://localhost:3001/loan", config);
             setLoans(res.data);
-
         } catch (err) {
             console.error("Error fetching loans:", err);
             setError("Failed to load loans. Please try again later.");
         }
     };
+
     const fetchUsers = async () => {
         try {
             const config = {
@@ -64,13 +66,8 @@ function FineList() {
                 },
             };
             const res = await axios.get("http://localhost:3001/user", config);
-            
-            // Log the response to inspect the structure
-            console.log('Fetched users:', res.data);
-    
-            // Ensure users is an array and access the users from res.data.users
             if (Array.isArray(res.data.users)) {
-                setUsers(res.data.users);  // Update state with the correct users array
+                setUsers(res.data.users);
             } else {
                 setError("Unexpected response format for users.");
             }
@@ -79,7 +76,6 @@ function FineList() {
             setError("Failed to load users. Please try again later.");
         }
     };
-    
 
     useEffect(() => {
         if (token) {
@@ -89,6 +85,7 @@ function FineList() {
         }
     }, [token]);
 
+    // Handle delete fine
     const handleDelete = async (id) => {
         try {
             const config = {
@@ -104,6 +101,7 @@ function FineList() {
         }
     };
 
+    // Handle search query
     const handleSearch = (query) => {
         setSearchQuery(query);
         const filtered = fines.filter((fine) =>
@@ -112,7 +110,16 @@ function FineList() {
         setFilteredFines(filtered);
     };
 
-    
+    // Get fines for the current page
+    const currentFines = filteredFines.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    // Handle page change
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
 
     return (
         <div className="bg-[#d9d9fb] p-5">
@@ -152,13 +159,12 @@ function FineList() {
                         </Table.HeadCell>
                     </Table.Head>
                     <Table.Body className="divide-y">
-                        
                         {loading ? (
                             <Table.Row>
                                 <Table.Cell colSpan="5" className="text-center">Loading...</Table.Cell>
                             </Table.Row>
-                        ) : filteredFines.length > 0 ? (
-                            filteredFines.map((item) => (
+                        ) : currentFines.length > 0 ? (
+                            currentFines.map((item) => (
                                 <Table.Row key={item.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                                         {item.amount != null ? Number(item.amount).toFixed(2) : "N/A"}
@@ -194,6 +200,13 @@ function FineList() {
                 </Table>
             </div>
 
+            {/* Pagination Component */}
+            <Pagination
+                currentPage={currentPage}
+                totalPages={Math.ceil(filteredFines.length / itemsPerPage)}
+                onPageChange={handlePageChange}
+            />
+
             {isCreateModalOpen && (
                 <CreateFine
                     isOpen={isCreateModalOpen}
@@ -206,19 +219,21 @@ function FineList() {
                     users={users}
                 />
             )}
+
             {isEditModalOpen && selectedFineId && (
-          <EditFine
-          fineId={selectedFineId}  // Assuming you set this somewhere
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          onSave={() => {
-              setIsEditModalOpen(false);
-              fetchAllFines();  // Assuming you have a function to refresh the fines list
-          }}
-          loans={loans}  // Make sure loans are available here
-          users={users}  // Ensure users are passed here
-      />
+                <EditFine
+                    fineId={selectedFineId}
+                    isOpen={isEditModalOpen}
+                    onClose={() => setIsEditModalOpen(false)}
+                    onSave={() => {
+                        setIsEditModalOpen(false);
+                        fetchAllFines(); // Refresh fines list after edit
+                    }}
+                    loans={loans}
+                    users={users}
+                />
             )}
+
             {(isCreateModalOpen || isEditModalOpen) && <div className="modal-backdrop"></div>}
         </div>
     );

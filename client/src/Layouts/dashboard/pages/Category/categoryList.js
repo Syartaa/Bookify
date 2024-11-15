@@ -1,10 +1,10 @@
-// components/CategoryList.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CreateCategory from "./createCategory"; // CreateCategory modal component
 import EditCategory from "./editCategory"; // EditCategory modal component
 import { useUser } from "../../../../helper/userContext";
 import { Table } from "flowbite-react";
+import Pagination from "../../components/Pagination";// Import the Pagination component
 
 function CategoryList() {
     const [categories, setCategories] = useState([]);
@@ -14,6 +14,9 @@ function CategoryList() {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
     const { token } = useUser();
+
+    const [currentPage, setCurrentPage] = useState(1); // Current page
+    const [categoriesPerPage] = useState(6); // Categories per page
 
     const fetchAllCategories = async () => {
         try {
@@ -58,6 +61,16 @@ function CategoryList() {
         setFilteredCategories(filtered);
     };
 
+    // Calculate paginated categories
+    const totalPages = Math.ceil(filteredCategories.length / categoriesPerPage);
+    const indexOfLastCategory = currentPage * categoriesPerPage;
+    const indexOfFirstCategory = indexOfLastCategory - categoriesPerPage;
+    const currentCategories = filteredCategories.slice(indexOfFirstCategory, indexOfLastCategory);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
     return (
         <div className="bg-[#d9d9fb] p-5">
             <div className="flex justify-between mb-4">
@@ -92,8 +105,8 @@ function CategoryList() {
                         </Table.HeadCell>
                     </Table.Head>
                     <Table.Body className="divide-y">
-                        {filteredCategories.length > 0 ? (
-                            filteredCategories.map((item) => (
+                        {currentCategories.length > 0 ? (
+                            currentCategories.map((item) => (
                                 <Table.Row key={item.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                                         {item.name}
@@ -157,6 +170,13 @@ function CategoryList() {
                 </div>
             )}
             {(isCreateModalOpen || isEditModalOpen) && <div className="modal-backdrop"></div>}
+
+            {/* Pagination Component */}
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+            />
         </div>
     );
 }
