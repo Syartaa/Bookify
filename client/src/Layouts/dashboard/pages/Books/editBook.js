@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useUser } from "../../../../helper/userContext";
-import { Button, Modal, Label, TextInput, Select } from "flowbite-react";
+import { Button, Modal, Label, TextInput, Select, Textarea } from "flowbite-react";
 
 function EditBook({ isOpen, onClose, onSave, bookId, categories, authors }) {
     const [title, setTitle] = useState("");
@@ -38,7 +38,7 @@ function EditBook({ isOpen, onClose, onSave, bookId, categories, authors }) {
             setCategoryId(book.categoryId);
             setAuthorId(book.authorId);
             setAvailabilityStatus(book.availabilityStatus);
-            setDescription(book.description);
+            setDescription(book.description); // Set initial description
             setImage(null); // Reset image
             setPopularity(0);
         } catch (err) {
@@ -157,11 +157,12 @@ function EditBook({ isOpen, onClose, onSave, bookId, categories, authors }) {
                     </div>
                     <div className="mb-4">
                         <Label htmlFor="description" value="Description" />
-                        <TextInput
+                        <Textarea
                             id="description"
                             required
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
+                            rows={4}  // Set a default height for the textarea
                         />
                     </div>
                     <div className="mb-4">

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useUser } from "../../../../helper/userContext";
-import { Modal, Button, Label, TextInput } from "flowbite-react";
+import { Modal, Button, Label, TextInput, Textarea } from "flowbite-react";
 
 function EditAuthor({ authorId, isOpen, onClose, onSave }) {
   const [name, setName] = useState("");
@@ -78,13 +78,12 @@ function EditAuthor({ authorId, isOpen, onClose, onSave }) {
             </div>
             <div>
               <Label htmlFor="editAuthorBio" value="Author Bio" />
-              <TextInput
+              <Textarea
                 id="editAuthorBio"
-                as="textarea"
-                rows={3}
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 placeholder="Enter author's bio"
+                rows={4} // Adjusted the rows to fit multi-line text input
                 required
               />
             </div>

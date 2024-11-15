@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Button, Modal, Label, TextInput, Select } from "flowbite-react";
+import { Button, Modal, Label, TextInput, Select, Textarea } from "flowbite-react";
 
 function EditReview({ isOpen, onClose, onSave, reviewId, books, users }) {
     const [rating, setRating] = useState(1);
@@ -67,13 +67,13 @@ function EditReview({ isOpen, onClose, onSave, reviewId, books, users }) {
                     </div>
                     <div className="mb-4">
                         <Label htmlFor="comment" value="Comment" />
-                        <TextInput
+                        <Textarea
                             id="comment"
-                            type="text"
                             required
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
                             placeholder="Write a review..."
+                            rows={4} // Set rows to adjust the height of the Textarea
                         />
                     </div>
                     <div className="mb-4">
