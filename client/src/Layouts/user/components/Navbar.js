@@ -98,13 +98,7 @@ function Navbar() {
               >
                 Loans
               </button>
-              <button
-                onClick={() => navigate("/account")}
-                className="block px-4 py-2 text-base text-gray-800 hover:bg-gray-100 w-full text-left"
-                style={{ fontFamily: "Poppins, sans-serif" }}
-              >
-                Account Settings
-              </button>
+             
               <hr className="my-1 border-t border-gray-200" />
               <button
                 onClick={handleLogout}

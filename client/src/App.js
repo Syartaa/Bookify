@@ -29,7 +29,6 @@ import ReservationsPage from "./Layouts/user/pages/ReservationsPage";
 import FavoriteScreen from "./Layouts/user/pages/book/FavoriteScreen";
 import BookDetails from "./Layouts/user/pages/book/booksDetails";
 import LoanPage from "./Layouts/user/pages/book/LoanPage";
-import AccountSettings from "./Layouts/user/pages/accountSettings";
 import AuthorDetails from "./Layouts/user/pages/book/AuthorDetails";
 import ContactList from "./Layouts/dashboard/pages/CountactUs.js/ContactList";
 import ArticleList from "./Layouts/dashboard/pages/Article/articleList";
@@ -69,7 +68,6 @@ function App() {
           <Route path="/reservations" element={<ReservationsPage />} />
           <Route path="/favorites" element={<FavoriteScreen />} />
           <Route path="/loans" element={<LoanPage />} />
-          <Route path="/account" element={<AccountSettings />} />
           <Route path="/authors/:id" element={<AuthorDetails />} />
           </Route>
 
