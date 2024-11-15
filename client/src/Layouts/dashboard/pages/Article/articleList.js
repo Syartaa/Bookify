@@ -3,6 +3,7 @@ import axios from "axios";
 import CreateArticle from "./createArticle"; // CreateArticle modal component
 import EditArticle from "./editArticle"; // EditArticle modal component
 import { Table } from "flowbite-react"; // Import Flowbite Table
+import Pagination from "../../components/Pagination";
 
 function ArticleList() {
   const [articles, setArticles] = useState([]);
@@ -11,6 +12,10 @@ function ArticleList() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedArticleId, setSelectedArticleId] = useState(null);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1); // Current page
+  const [articlesPerPage] = useState(6); // Articles per page
 
   const fetchAllArticles = async () => {
     try {
@@ -41,6 +46,16 @@ function ArticleList() {
       article.title.toLowerCase().includes(query.toLowerCase())
     );
     setFilteredArticles(filtered);
+  };
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredArticles.length / articlesPerPage);
+  const indexOfLastArticle = currentPage * articlesPerPage;
+  const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
+  const currentArticles = filteredArticles.slice(indexOfFirstArticle, indexOfLastArticle);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
@@ -78,8 +93,8 @@ function ArticleList() {
             </Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {filteredArticles.length > 0 ? (
-              filteredArticles.map((item) => (
+            {currentArticles.length > 0 ? (
+              currentArticles.map((item) => (
                 <Table.Row key={item.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                   <Table.Cell>
                     {item.imageUrl ? (
@@ -154,6 +169,13 @@ function ArticleList() {
         </div>
       )}
       {(isCreateModalOpen || isEditModalOpen) && <div className="modal-backdrop"></div>}
+
+      {/* Pagination Controls */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 }

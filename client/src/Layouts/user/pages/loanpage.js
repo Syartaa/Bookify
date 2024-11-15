@@ -5,6 +5,7 @@ const LoanPage = () => {
   const [loans, setLoans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [paymentLoading, setPaymentLoading] = useState(false); // For fine payment loading state
   const user = useUser(); // Access the user data
   const userId = user?.user?.id;
 
@@ -27,7 +28,34 @@ const LoanPage = () => {
     };
 
     fetchLoans();
-  }, []);
+  }, [userId]); // Make sure to re-fetch if userId changes
+
+  const handlePayFine = async (loanId) => {
+    setPaymentLoading(true); // Show loading state for the fine payment
+
+    try {
+      // Call the API to pay the fine
+      const response = await axios.put(`http://localhost:3001/fine/pay/${loanId}`);
+      
+      // Update the loan list to reflect the payment
+      setLoans((prevLoans) => {
+        return prevLoans.map((loan) => {
+          if (loan.id === loanId) {
+            loan.fineStatus = 'paid'; // Update the fine status to 'paid'
+            loan.status = 'completed'; // Optionally, update loan status to 'completed'
+          }
+          return loan;
+        });
+      });
+
+      alert(response.data.message); // Show success message
+    } catch (err) {
+      console.error('Error paying fine:', err);
+      alert('Failed to pay the fine. Please try again.');
+    } finally {
+      setPaymentLoading(false); // Hide loading state after request is complete
+    }
+  };
 
   if (loading) return <p>Loading loans...</p>;
   if (error) return <p>{error}</p>;
@@ -46,6 +74,8 @@ const LoanPage = () => {
                 <th className="py-3 px-4 text-left font-medium">Borrow Date</th>
                 <th className="py-3 px-4 text-left font-medium">Due Date</th>
                 <th className="py-3 px-4 text-left font-medium">Status</th>
+                <th className="py-3 px-4 text-left font-medium">Fine Status</th>
+                <th className="py-3 px-4 text-left font-medium">Pay Fine</th>
               </tr>
             </thead>
             <tbody>
@@ -70,6 +100,26 @@ const LoanPage = () => {
                     }`}
                   >
                     {loan.status}
+                  </td>
+                  <td
+                    className={`py-3 px-4 text-center font-semibold rounded-full w-24 mx-auto ${
+                      loan.fineStatus === 'unpaid'
+                        ? 'bg-red-200 text-red-600'
+                        : 'bg-green-200 text-green-600'
+                    }`}
+                  >
+                    {loan.fineStatus === 'unpaid' ? `Fine: $${loan.fineAmount}` : 'No Fine'}
+                  </td>
+                  <td className="py-3 px-4">
+                    {loan.fineStatus === 'unpaid' && loan.status === 'returned' && (
+                      <button
+                        onClick={() => handlePayFine(loan.id)}
+                        disabled={paymentLoading}
+                        className="bg-blue-500 text-white px-4 py-2 rounded-lg disabled:bg-gray-400"
+                      >
+                        {paymentLoading ? 'Processing...' : 'Pay Fine'}
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

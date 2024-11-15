@@ -1,21 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaBookOpen } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const ArticlesPage = () => {
   const [articles, setArticles] = useState([]); // State to store articles
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
-  const [selectedArticle, setSelectedArticle] = useState(null); // State for the selected article
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen); // Toggle modal visibility
-  };
-
-  const handleReadMore = (id) => {
-    const article = articles.find((article) => article.id === id);
-    setSelectedArticle(article); // Set the selected article
-    setIsModalOpen(true); // Open the modal
-  };
+  const navigate = useNavigate(); // Hook for navigation
 
   // Fetch articles from the API when the component mounts
   useEffect(() => {
@@ -27,6 +18,10 @@ const ArticlesPage = () => {
         console.error('Error fetching articles:', error);
       });
   }, []);
+
+  const handleReadMore = (id) => {
+    navigate(`/articles/${id}`); // Navigate to the article detail page
+  };
 
   return (
     <section className="py-24 bg-[#fdf5f0]">
@@ -40,7 +35,7 @@ const ArticlesPage = () => {
               <p className="text-gray-500 mb-10 max-lg:max-w-xl max-lg:mx-auto">
                 Welcome to our articles section, where knowledge meets inspiration. Explore insightful articles, expert tips, and the latest trends in our field.
               </p>
-              <button onClick={toggleModal} className="cursor-pointer border border-gray-300 shadow-sm rounded-full py-3.5 px-7 w-52 lg:mx-0 mx-auto flex justify-center text-gray-900 font-semibold transition-all duration-300 hover:bg-gray-100">
+              <button  className="cursor-pointer border border-gray-300 shadow-sm rounded-full py-3.5 px-7 w-52 lg:mx-0 mx-auto flex justify-center text-gray-900 font-semibold transition-all duration-300 hover:bg-gray-100">
                 View All
               </button>
             </div>
@@ -65,20 +60,6 @@ const ArticlesPage = () => {
           </div>
         </div>
       </div>
-
-      {/* Modal for selected article */}
-      {isModalOpen && selectedArticle && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md mx-auto">
-            <h2 className="text-2xl font-bold mb-4">{selectedArticle.title}</h2>
-            <img src={`http://localhost:3001/${selectedArticle.imageUrl}`} alt={selectedArticle.title} className="rounded-2xl mb-4" />
-            <p className="text-gray-700 mb-4">{selectedArticle.content}</p>
-            <button onClick={toggleModal} className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
-              Close
-            </button>
-          </div>
-        </div>
-      )}
     </section>
   );
 };

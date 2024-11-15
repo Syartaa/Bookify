@@ -15,7 +15,7 @@ function EditFine({ isOpen, onClose, onSave, fineId, loans, users }) {
                 const response = await axios.get(`http://localhost:3001/fine/${fineId}`);
                 const fine = response.data;
                 setAmount(fine.amount || "");
-                setStatus(fine.status || "unpaid");
+                setStatus(fine.paymentStatus || "unpaid"); // Correctly using `paymentStatus`
                 setLoanId(fine.loanId || "");
                 setUserId(fine.userId || "");
             } catch (err) {
@@ -35,13 +35,20 @@ function EditFine({ isOpen, onClose, onSave, fineId, loans, users }) {
         try {
             const updatedFine = {
                 amount,
-                status,
+                paymentStatus: status,  // Make sure the correct key is used here: `paymentStatus`
                 loanId,
                 userId,
             };
-            await axios.put(`http://localhost:3001/fine/${fineId}`, updatedFine);
-            onSave(); // Refresh the fine list after saving
-            onClose(); // Close the modal after saving
+
+            console.log('Updating fine with data:', updatedFine);  // Log to debug
+
+            // Send PUT request to update the fine
+            const response = await axios.put(`http://localhost:3001/fine/${fineId}`, updatedFine);
+
+            if (response.status === 200) {
+                onSave(); // Refresh the fine list after saving
+                onClose(); // Close the modal after saving
+            }
         } catch (err) {
             console.error("Error updating fine:", err);
             setError("Failed to update fine. Please try again.");

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const AuthorDetails = () => {
   const { id } = useParams();
@@ -64,11 +64,12 @@ const AuthorDetails = () => {
         {books.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {books.map((book) => (
-              <div key={book.id} className="bg-white rounded-lg p-6 shadow-md transform hover:scale-105 transition-transform duration-200">
+
+              <Link key={book.id} to={`/books/${book.id}`} className="bg-white rounded-lg p-6 shadow-md transform hover:scale-105 transition-transform duration-200">
                 <h3 className="text-xl font-semibold text-[#2a6478] mb-2">{book.title}</h3>
                 <p className="text-gray-600 mb-4">{book.description || 'No description available.'}</p>
                 <p className="text-sm text-gray-400">Published: {book.publishedDate || 'Unknown'}</p>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (

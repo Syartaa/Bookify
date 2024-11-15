@@ -82,6 +82,9 @@ const updateFine = async (req, res) => {
             return res.status(404).json({ error: 'Fine not found' });
         }
 
+        // Log the received data for debugging purposes
+        console.log('Updating fine with data:', req.body);
+
         // Update fine fields
         await fine.update({
             amount: amount || fine.amount,
@@ -92,10 +95,11 @@ const updateFine = async (req, res) => {
 
         res.json(fine);
     } catch (error) {
-        console.log(error);
+        console.log('Error updating fine:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 // Delete a fine
 const deleteFine = async (req, res) => {
@@ -114,11 +118,36 @@ const deleteFine = async (req, res) => {
     }
 };
 
+const payFine = async (req, res) => {
+    const { loanId } = req.params;
+
+    try {
+        // Find the unpaid fine related to this loan
+        const fine = await Fine.findOne({
+            where: { loanId, paymentStatus: 'unpaid' },
+        });
+
+        if (!fine) {
+            return res.status(404).json({ error: 'No unpaid fine found for this loan' });
+        }
+
+        // Mark the fine as paid
+        await fine.update({ paymentStatus: 'paid' });
+
+        return res.json({ message: 'Fine paid successfully' });
+    } catch (error) {
+        console.error('Error paying fine:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
 module.exports = {
     getAllFines,
     getFineById,
     createFine,
     updateFine,
     deleteFine,
-    updateFinePaymentStatus
+    updateFinePaymentStatus,
+    payFine
 };
