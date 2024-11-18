@@ -35,9 +35,9 @@ const ArticlesPage = () => {
               <p className="text-gray-500 mb-10 max-lg:max-w-xl max-lg:mx-auto">
                 Welcome to our articles section, where knowledge meets inspiration. Explore insightful articles, expert tips, and the latest trends in our field.
               </p>
-              <button  className="cursor-pointer border border-gray-300 shadow-sm rounded-full py-3.5 px-7 w-52 lg:mx-0 mx-auto flex justify-center text-gray-900 font-semibold transition-all duration-300 hover:bg-gray-100">
+              {/* <button  className="cursor-pointer border border-gray-300 shadow-sm rounded-full py-3.5 px-7 w-52 lg:mx-0 mx-auto flex justify-center text-gray-900 font-semibold transition-all duration-300 hover:bg-gray-100">
                 View All
-              </button>
+              </button> */}
             </div>
           </div>
 

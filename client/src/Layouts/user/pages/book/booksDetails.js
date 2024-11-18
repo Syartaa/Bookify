@@ -104,7 +104,7 @@ const BookDetails = () => {
 
     try {
       await axios.post('http://localhost:3001/reservation', reservationData);
-      alert(`You have reserved ${book.title}!`);
+      alert(`You have reserved ${book.title}! You will be notified when it becomes available.`);
       setIsReserved(true);
       setReservedBySomeoneElse(false);
       setBook((prevBook) => ({ ...prevBook, availabilityStatus: 'reserved' }));
@@ -151,6 +151,12 @@ const BookDetails = () => {
             </div>
           )}
 
+          {isBorrowed && !reservedBySomeoneElse && !isReserved && (
+            <div className="bg-yellow-100 text-yellow-800 font-semibold p-4 rounded mb-6">
+              This book is borrowed. You can reserve it for when it becomes available.
+            </div>
+          )}
+
           <div className="mb-10">
             <h2 className="text-xl font-semibold text-gray-700 mb-2">About this ebook</h2>
             <p className="text-lg text-gray-600 leading-relaxed">{book.description}</p>
@@ -168,7 +174,7 @@ const BookDetails = () => {
                 Unreserve
               </button>
             ) : (
-              <button onClick={handleReserve} className={`py-3 px-8 rounded-lg font-semibold transition duration-300 ${reservedBySomeoneElse ? 'bg-gray-400 text-gray-700 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'}`} disabled={book.availabilityStatus !== 'available' || reservedBySomeoneElse}>
+              <button onClick={handleReserve} className={`py-3 px-8 rounded-lg font-semibold transition duration-300 ${reservedBySomeoneElse ? 'bg-gray-400 text-gray-700 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'}`} disabled={reservedBySomeoneElse}>
                 {reservedBySomeoneElse ? 'Reserved by Another User' : 'Reserve'}
               </button>
             )}
@@ -193,5 +199,8 @@ const BookDetails = () => {
     </div>
   );
 };
+
+
+
 
 export default BookDetails;

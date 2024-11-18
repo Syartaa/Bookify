@@ -90,6 +90,12 @@ const createReservation = async (req, res) => {
     const { reservationDate, status, bookId, userId } = req.body;
 
     try {
+        // Check if the book is already reserved or borrowed
+        const book = await Book.findByPk(bookId);
+        if (book.availabilityStatus !== 'available') {
+            return res.status(400).json({ error: 'Book is not available for reservation' });
+        }
+
         const existingReservation = await Reservation.findOne({
             where: { bookId, status: 'active' },
         });
@@ -106,18 +112,13 @@ const createReservation = async (req, res) => {
         });
 
         // Log the book status before updating
-        const bookBeforeUpdate = await Book.findByPk(bookId);
-        console.log("Book status before update:", bookBeforeUpdate.availabilityStatus);
+        console.log("Book status before update:", book.availabilityStatus);
 
-        const [updateCount] = await Book.update(
+        // Update book status to 'reserved'
+        await Book.update(
             { availabilityStatus: 'reserved' },
             { where: { id: bookId } }
         );
-
-        if (updateCount === 0) {
-            console.error("Failed to update book status.");
-            return res.status(500).json({ error: 'Failed to update book status' });
-        }
 
         // Log the book status after updating
         const bookAfterUpdate = await Book.findByPk(bookId);
@@ -129,6 +130,7 @@ const createReservation = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 
 // Update a reservation
@@ -187,6 +189,12 @@ const deleteReservationByUserAndBook = async (req, res) => {
         await reservation.destroy();
 
         // Update the book's availability status back to 'available'
+        const book = await Book.findByPk(bookId);
+        if (!book) {
+            return res.status(404).json({ error: 'Book not found' });
+        }
+
+        // Update the book status to 'available'
         await Book.update(
             { availabilityStatus: 'available' },
             { where: { id: bookId } }
@@ -206,15 +214,28 @@ const checkReservationStatusForBook = async (req, res) => {
     const { bookId } = req.params;
 
     try {
+        // Check if there's an active reservation for this book
         const reservation = await Reservation.findOne({
-            where: { bookId },
+            where: { bookId, status: 'active' }, // assuming 'active' means reserved
         });
 
-        if (reservation) {
-            return res.json({ isReserved: true, reservation });
+        const book = await Book.findByPk(bookId);
+        if (!book) {
+            return res.status(404).json({ error: 'Book not found' });
         }
 
-        res.json({ isReserved: false });
+        if (reservation) {
+            return res.json({ 
+                isReserved: true,
+                reservationStatus: reservation.status,
+                bookStatus: book.availabilityStatus
+            });
+        }
+
+        res.json({
+            isReserved: false,
+            bookStatus: book.availabilityStatus
+        });
     } catch (error) {
         console.error('Error checking reservation status for book:', error.message);
         res.status(500).json({ error: 'Internal server error' });

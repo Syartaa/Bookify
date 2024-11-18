@@ -30,13 +30,17 @@ function ReservationsPage() {
       // Check if the book is loaned and update status accordingly
       const updatedReservations = response.data.map((reservation) => {
         const bookStatus = reservation.book.availabilityStatus;
+        let status = reservation.status;
+
+        // If the book is borrowed or reserved, update the status to reflect that
         if (bookStatus === "borrowed") {
-          return {
-            ...reservation,
-            status: "Not Available", // Change the reservation status to "Not Available"
-          };
+          status = "Not Available";
         }
-        return reservation;
+
+        return {
+          ...reservation,
+          status: status,
+        };
       });
 
       setReservations(updatedReservations);
@@ -84,10 +88,16 @@ function ReservationsPage() {
     }
   };
 
-  const handleUnreserve = async (reservationId) => {
+  const handleUnreserve = async (reservationId, bookId) => {
     try {
+      // First, delete the reservation
       await axios.delete(`http://localhost:3001/reservation/${reservationId}`);
       alert("Reservation cancelled successfully!");
+
+      // Update the book's status to 'available' after unreserving
+      await axios.put(`http://localhost:3001/book/${bookId}`, {
+        availabilityStatus: 'available'
+      });
 
       // Re-fetch reservations after unreserving
       await fetchReservations();
@@ -110,7 +120,7 @@ function ReservationsPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-6 ">
+    <div className="max-w-5xl mx-auto p-6">
       <h1
         className="text-3xl font-bold mb-6 text-gray-800"
         style={{ fontFamily: "Poppins, sans-serif" }}
@@ -162,12 +172,18 @@ function ReservationsPage() {
                       Status:{" "}
                       <span
                         className={`font-medium ${
-                          reservation.status === "Not Available"
+                          reservation.book.availabilityStatus === "borrowed"
                             ? "text-red-600"
+                            : reservation.book.availabilityStatus === "reserved"
+                            ? "text-yellow-600"
                             : "text-green-600"
                         }`}
                       >
-                        {reservation.status}
+                        {reservation.book.availabilityStatus === "borrowed"
+                          ? "Not Available"
+                          : reservation.book.availabilityStatus === "reserved"
+                          ? "Reserved"
+                          : "Available"}
                       </span>
                     </p>
                   </div>
@@ -175,17 +191,26 @@ function ReservationsPage() {
               </div>
 
               {/* Loan Button */}
-              <button
-                onClick={() => handleLoan(reservation.book.id, reservation.id)}
-                className="mt-14 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors w-full"
-                disabled={reservation.status === "Not Available"}
-              >
-                Loan Book
-              </button>
+              {reservation.book.availabilityStatus === "borrowed" ? (
+                <button
+                  className="mt-14 px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed w-full"
+                  disabled
+                >
+                  Not Available for Loan
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleLoan(reservation.book.id, reservation.id)}
+                  className="mt-14 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors w-full"
+                >
+                  Loan Book
+                </button>
+              )}
               {/* Unreserve Button */}
               <button
-                onClick={() => handleUnreserve(reservation.id)}
+                onClick={() => handleUnreserve(reservation.id, reservation.book.id)}
                 className="mb-6 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors w-full"
+                disabled={reservation.book.availabilityStatus === "available"}
               >
                 Unreserve Book
               </button>
