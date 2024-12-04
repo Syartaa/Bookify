@@ -66,7 +66,7 @@ export default function Login() {
       setError("Internal server error, please try again later.");
     } finally {
       setLoading(false);
-      setLoading(false);  // Stop the loading state
+      setLoading(false);  
     }
   };
   
